@@ -1,6 +1,6 @@
 import React from "react";
 
-const InsertionOrder = () => {
+const InsertionOrders = () => {
   return (
     <>
       <p>Insertion Order page</p>
@@ -8,4 +8,4 @@ const InsertionOrder = () => {
   );
 };
 
-export default InsertionOrder;
+export default InsertionOrders;
