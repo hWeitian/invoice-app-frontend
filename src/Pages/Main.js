@@ -122,7 +122,7 @@ const Main = () => {
       <div
         style={{
           width: "100%",
-          padding: "10px 20px",
+          padding: "20px 25px",
         }}
       >
         {currentPath === "/" ? <Home /> : <Outlet />}

@@ -12,6 +12,7 @@ import Invoices from "./Pages/Invoices";
 import CreditNotes from "./Pages/CreditNotes";
 import Reports from "./Pages/Reports";
 import Contacts from "./Pages/Contacts";
+import AddInsertionOrder from "./Pages/AddInsertionOrder";
 import Loading from "./Pages/Loading";
 
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -61,6 +62,14 @@ const theme = createTheme({
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px",
+          textTransform: "capitalize",
+        },
+      },
+    },
   },
 });
 
@@ -83,6 +92,7 @@ function App() {
             <Route path="credit-notes" element={<CreditNotes />} />
             <Route path="reports" element={<Reports />} />
             <Route path="contacts" element={<Contacts />} />
+            <Route path="add-io" element={<AddInsertionOrder />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

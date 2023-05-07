@@ -24,7 +24,7 @@ const Login = () => {
           variant="contained"
           color="secondary"
           onClick={() => loginWithRedirect()}
-          sx={{ width: "200px", mt: 3, borderRadius: "8px" }}
+          sx={{ width: "200px", mt: 3 }}
         >
           Log in
         </Button>
