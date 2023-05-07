@@ -1,35 +1,35 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import Loading from "./Loading";
+import { Button, Grid, Typography } from "@mui/material";
 
 const Login = () => {
-  const { loginWithRedirect, isAuthenticated, user, appState } = useAuth0();
-  const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (user) {
-  //     console.log("Inside useEffect");
-  //     navigate("/");
-  //   } else {
-  //     console.log("not authenticated");
-  //   }
-  // });
-
-  // const handleClick = () => {
-  //   console.log("HERE");
-  //   loginWithRedirect();
-  // };
+  const { loginWithRedirect } = useAuth0();
 
   return (
-    <>
-      <p>Login page</p>
-      <Button variant="contained" onClick={() => loginWithRedirect()}>
-        Log in
-      </Button>
-      <p>{isAuthenticated && `Hi ${user.name}`}</p>
-    </>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      sx={{ minHeight: "100vh" }}
+    >
+      <Grid item sx={{ textAlign: "center" }}>
+        <img src={require("../Assets/Logo.png")} alt="logo" width="350px" />
+        <Typography sx={{ fontSize: "1.2rem", fontWeight: 700, mt: 3 }}>
+          Authentication required
+        </Typography>
+        <Typography sx={{ fontSize: "1rem" }}>
+          Please log in to access this page
+        </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => loginWithRedirect()}
+          sx={{ width: "200px", mt: 3, borderRadius: "8px" }}
+        >
+          Log in
+        </Button>
+      </Grid>
+    </Grid>
   );
 };
 
