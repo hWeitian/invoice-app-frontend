@@ -70,6 +70,15 @@ const theme = createTheme({
         },
       },
     },
+    datePicker: {
+      styleOverrides: {
+        root: {
+          "& .MuiTextField-root": {
+            width: "300px",
+          },
+        },
+      },
+    },
   },
 });
 

@@ -1,6 +1,6 @@
 import React from "react";
 import PageTitle from "../Components/PageTitle";
-import InsertionOrderForm from "../Components/InsertionOrderForm";
+import InsertionOrderForm from "./InsertionOrderForm";
 
 const AddInsertionOrder = (props) => {
   return (
