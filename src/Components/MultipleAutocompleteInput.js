@@ -13,7 +13,6 @@ const MultipleAutocompleteInput = ({
   width,
   placeholder,
 }) => {
-  console.log(error);
   return (
     <Autocomplete
       multiple
@@ -34,6 +33,7 @@ const MultipleAutocompleteInput = ({
           placeholder={placeholder}
           error={Boolean(error)}
           helperText={error}
+          InputProps={{ ...params.InputProps, style: { fontSize: "15px" } }}
         />
       )}
     />

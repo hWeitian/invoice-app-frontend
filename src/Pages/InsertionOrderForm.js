@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Paper, Grid, Divider, Button, TextField } from "@mui/material";
+import {
+  Paper,
+  Grid,
+  Divider,
+  Button,
+  TextField,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import AsyncAutocomplete from "../Components/AsyncAutocomplete";
 import DatePickerInput from "../Components/DatePickerInput";
 import AutocompleteInput from "../Components/AutocompleteInput";
 import MultipleAutocompleteInput from "../Components/MultipleAutocompleteInput";
+import DollarInput from "../Components/DollarInput";
 
 const InsertionOrderForm = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -27,7 +37,7 @@ const InsertionOrderForm = () => {
   } = useForm({
     defaultValues: {
       orderItems: [
-        { product: "", position: "", colour: "", regions: "", amount: 0 },
+        { products: "", position: "", colour: "", regions: "", amount: "" },
       ],
     },
   });
@@ -35,17 +45,14 @@ const InsertionOrderForm = () => {
   const {
     fields: items,
     append,
-    prepend,
     remove,
-    swap,
-    move,
-    insert,
   } = useFieldArray({
     control,
     name: "orderItems",
   });
   const onSubmit = (data) => {
     console.log(data);
+    resetField("discount");
     reset();
   };
 
@@ -215,7 +222,6 @@ const InsertionOrderForm = () => {
             />
           </Grid>
         </Grid>
-
         <Grid container sx={{ mt: 5 }}>
           <Grid item xs={6}>
             <label className="form-label">Insertion Order Date</label>
@@ -278,12 +284,13 @@ const InsertionOrderForm = () => {
             <label className="form-label">Amount</label>
           </Grid>
         </Grid>
+
         {items.map((field, index) => (
           <Grid container key={field.id} sx={{ mt: 2 }}>
-            <Grid item xs={2}>
+            <Grid item xs={3}>
               <Controller
                 control={control}
-                name={`products-${index}`}
+                name={`orderItems.${index}.products`}
                 defaultValue=""
                 rules={{ required: "Please select a product" }}
                 render={({
@@ -308,7 +315,7 @@ const InsertionOrderForm = () => {
             <Grid item xs={2}>
               <Controller
                 control={control}
-                name={`position-${index}`}
+                name={`orderItems.${index}.position`}
                 defaultValue=""
                 rules={{ required: "Please enter a position" }}
                 render={({
@@ -322,6 +329,8 @@ const InsertionOrderForm = () => {
                     error={error}
                     onChange={onChange}
                     helperText={error?.message}
+                    placeholder="Position"
+                    sx={{ width: "150px" }}
                   />
                 )}
               />
@@ -329,9 +338,9 @@ const InsertionOrderForm = () => {
             <Grid item xs={2}>
               <Controller
                 control={control}
-                name={`colour-${index}`}
+                name={`orderItems.${index}.colour`}
                 defaultValue=""
-                rules={{ required: "Please enter a position" }}
+                rules={{ required: "Please enter a colour" }}
                 render={({
                   field: { ref, onChange, ...field },
                   fieldState: { error },
@@ -343,6 +352,8 @@ const InsertionOrderForm = () => {
                     error={error}
                     onChange={onChange}
                     helperText={error?.message}
+                    placeholder="Colour"
+                    sx={{ width: "150px" }}
                   />
                 )}
               />
@@ -350,7 +361,7 @@ const InsertionOrderForm = () => {
             <Grid item xs={2}>
               <Controller
                 control={control}
-                name={`regions-${index}`}
+                name={`orderItems.${index}.regions`}
                 defaultValue=""
                 rules={{ required: "Please select a region" }}
                 render={({
@@ -367,11 +378,50 @@ const InsertionOrderForm = () => {
                     value={field.value}
                     onChange={onChange}
                     error={error?.message}
-                    width="200px"
+                    width="180px"
                   />
                 )}
               />
             </Grid>
+            <Grid item xs={2}>
+              <Controller
+                control={control}
+                name={`orderItems.${index}.amount`}
+                defaultValue=""
+                rules={{
+                  required: "Please add a cost",
+                  valueAsNumber: true,
+                  pattern: {
+                    value: /^(0|[1-9]\d*)(\.\d+)?$/,
+                  },
+                }}
+                render={({
+                  field: { ref, onChange, ...field },
+                  fieldState: { error },
+                }) => (
+                  <DollarInput
+                    id={`amount-${index}`}
+                    placeholder="Amount"
+                    value={field.value}
+                    onChange={onChange}
+                    error={error}
+                    currency="USD"
+                    width="180px"
+                  />
+                )}
+              />
+            </Grid>
+            {index > 0 && (
+              <Grid item xs={1}>
+                <IconButton
+                  onClick={() => {
+                    remove(index);
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Grid>
+            )}
           </Grid>
         ))}
         <Button
@@ -379,14 +429,75 @@ const InsertionOrderForm = () => {
           color="secondary"
           onClick={() => {
             append({
-              product: "",
+              products: "",
+              position: "",
+              colour: "",
+              regions: "",
+              amount: "",
             });
           }}
         >
           Add Item
         </Button>
-
-        <input type="submit" />
+        <Grid container sx={{ mt: 2 }}>
+          <Grid item xs={12}>
+            <label className="form-label">Discount</label>
+            <Controller
+              control={control}
+              name="discount"
+              defaultValue=""
+              rules={{
+                valueAsNumber: true,
+                pattern: {
+                  value: /^(0|[1-9]\d*)(\.\d+)?$/,
+                },
+              }}
+              render={({
+                field: { ref, onChange, ...field },
+                fieldState: { error },
+              }) => (
+                <DollarInput
+                  id="discount"
+                  placeholder="Discount"
+                  onChange={onChange}
+                  error={error}
+                  value={field.value}
+                  currency="USD"
+                  width="250px"
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={12} sx={{ mt: 2, mb: 5 }}>
+            <label className="form-label">Sales Notes</label>
+            <Controller
+              control={control}
+              name="notes"
+              defaultValue=""
+              render={({
+                field: { ref, onChange, ...field },
+                fieldState: { error },
+              }) => (
+                <TextField
+                  id={`notes`}
+                  multiline
+                  variant="outlined"
+                  size="small"
+                  error={error}
+                  value={field.value}
+                  onChange={onChange}
+                  helperText={error?.message}
+                  placeholder="Sales Notes"
+                  sx={{ width: "100%" }}
+                  rows={4}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+        <Button type="submit" color="secondary" variant="contained">
+          Preview
+        </Button>
       </Paper>
     </form>
   );

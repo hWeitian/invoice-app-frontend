@@ -11,6 +11,7 @@ const AutocompleteInput = ({
   value,
   onChange,
   width,
+  placeholder,
 }) => {
   return (
     <Autocomplete
@@ -48,6 +49,7 @@ const AutocompleteInput = ({
           size="small"
           error={Boolean(error)}
           helperText={error}
+          placeholder={placeholder}
         />
       )}
     />
