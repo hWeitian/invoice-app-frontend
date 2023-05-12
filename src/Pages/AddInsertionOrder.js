@@ -6,7 +6,7 @@ const AddInsertionOrder = (props) => {
   return (
     <>
       <PageTitle>Add Insertion Order</PageTitle>
-      <InsertionOrderForm />
+      <InsertionOrderForm userId={props.userId} />
     </>
   );
 };

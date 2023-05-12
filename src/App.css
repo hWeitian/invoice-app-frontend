@@ -10,3 +10,23 @@
   font-size: 0.875rem !important;
   display: block;
 }
+
+#io p {
+  padding: 0;
+  margin: 0;
+}
+
+.io-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.io-text {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.io-text-bold {
+  font-size: 12px;
+  font-weight: 700;
+}

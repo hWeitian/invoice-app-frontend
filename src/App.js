@@ -1,5 +1,6 @@
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Login from "./Pages/Login";
 import Main from "./Pages/Main";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -83,7 +84,36 @@ const theme = createTheme({
 });
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading, user, getAccessTokenSilently } =
+    useAuth0();
+  // const [userId, setUserId] = useState();
+
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     getAdminId();
+  //   }
+  // });
+
+  // const getAdminId = async () => {
+  //   try {
+  //     const accessToken = await getAccessTokenSilently({
+  //       authorizationParams: {
+  //         audience: process.env.REACT_APP_AUDIENCE,
+  //         scope: "read:current_user",
+  //       },
+  //     });
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_DB_SERVER}/contacts/email/${user.email}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     );
+  //     console.log(response.data.id);
+  //     setUserId(response.data.id);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   if (isLoading) {
     return <Loading />;
