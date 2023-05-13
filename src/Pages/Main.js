@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
   Drawer,
@@ -10,6 +10,7 @@ import {
   List,
   Avatar,
   IconButton,
+  Collapse,
 } from "@mui/material";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import HomeIcon from "@mui/icons-material/Home";
@@ -21,6 +22,8 @@ import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 
 import { getFirstLetter } from "../utils";
 import Home from "./Home";
@@ -42,6 +45,7 @@ const navMenu = [
     "Insertion Orders",
     "insertion-orders",
     <StickyNote2Icon sx={{ color: "#FFFFFF" }} />,
+    ["Add Orders", "add-io", <StickyNote2Icon sx={{ color: "#FFFFFF" }} />],
   ],
   ["Invoices", "invoices", <RequestQuoteIcon sx={{ color: "#FFFFFF" }} />],
   ["Credit Notes", "credit-notes", <MoneyOffIcon sx={{ color: "#FFFFFF" }} />],
@@ -50,9 +54,16 @@ const navMenu = [
 
 const Main = () => {
   const { logout, isAuthenticated, user } = useAuth0();
+  // const [open, setOpen] = useState(false);
 
   const avatarName = getFirstLetter(user.name);
   const currentPath = useLocation().pathname;
+
+  // useEffect(() => {
+  //   if (currentPath !== "add-io") {
+  //     setOpen(false);
+  //   }
+  // }, [currentPath]);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -88,16 +99,53 @@ const Main = () => {
           />
         </Toolbar>
         <List>
-          {navMenu.map((item, index) => (
-            <ListItem key={`${item}-${index}`}>
-              <Link to={`/${item[1]}`} className="nav-link">
-                <ListItemButton selected={currentPath === `/${item[1]}`}>
-                  <ListItemIcon>{item[2]}</ListItemIcon>
-                  <ListItemText primary={item[0]} />
-                </ListItemButton>
-              </Link>
-            </ListItem>
-          ))}
+          {navMenu.map(
+            (item, index) => (
+              // item.length > 3 ? (
+              //   <ListItem
+              //     key={`${item}-${index}`}
+              //     sx={{ display: "flex", flexWrap: "wrap" }}
+              //   >
+              //     <Link to={`/${item[1]}`} className="nav-link">
+              //       <ListItemButton
+              //         selected={currentPath === `/${item[1]}`}
+              //         onClick={() => setOpen(!open)}
+              //       >
+              //         <ListItemIcon>{item[2]}</ListItemIcon>
+              //         <ListItemText primary={item[0]} />
+              //         {open ? <ExpandLess /> : <ExpandMore />}
+              //       </ListItemButton>
+              //     </Link>
+              //     <Link to={`/${item[3][1]}`} className="nav-link">
+              //       <Collapse in={open} timeout="auto" unmountOnExit>
+              //         <List component="div" disablePadding>
+              //           <ListItemButton
+              //             selected={currentPath === `/${item[3][1]}`}
+              //           >
+              //             <ListItemIcon>{item[3][2]}</ListItemIcon>
+              //             <ListItemText primary={item[3][1]} />
+              //           </ListItemButton>
+              //         </List>
+              //       </Collapse>
+              //     </Link>
+              //   </ListItem>
+              // ) : (
+              <ListItem key={`${item}-${index}`}>
+                <Link to={`/${item[1]}`} className="nav-link">
+                  <ListItemButton
+                    selected={
+                      currentPath === `/${item[1]}` ||
+                      (item[3] && currentPath === `/${item[3][1]}`)
+                    }
+                  >
+                    <ListItemIcon>{item[2]}</ListItemIcon>
+                    <ListItemText primary={item[0]} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            )
+            // )
+          )}
         </List>
         <List style={{ marginTop: "auto" }}>
           <ListItem>
