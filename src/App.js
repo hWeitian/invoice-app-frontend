@@ -68,6 +68,7 @@ const theme = createTheme({
         root: {
           borderRadius: "8px",
           textTransform: "capitalize",
+          height: "36px",
         },
       },
     },

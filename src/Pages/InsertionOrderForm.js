@@ -26,6 +26,7 @@ import {
   calculateGST,
   calculateNetAmount,
 } from "../utils";
+import LoadingScreen from "../Components/LoadingScreen";
 
 const InsertionOrderForm = (props) => {
   const { getAccessTokenSilently, user } = useAuth0();
@@ -40,6 +41,7 @@ const InsertionOrderForm = (props) => {
   const [regions, setRegions] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
   const [formData, setFormData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   // const [pdfUrl, setPdfurl] = useState("");
 
   // Get magazines when page load
@@ -84,6 +86,10 @@ const InsertionOrderForm = (props) => {
       const adminId = await getAdminId();
       await getInsertionOrderNum(adminId);
       await Promise.all(promises);
+      const timer = setTimeout(() => {
+        handleLoadingClose();
+      }, 500);
+      return () => clearTimeout(timer);
     } catch (e) {
       console.log(e);
     }
@@ -124,6 +130,9 @@ const InsertionOrderForm = (props) => {
 
   const handlePreviewOpen = () => setOpenPreview(true);
   const handlePreviewClose = () => setOpenPreview(false);
+
+  const handleLoadingOpen = () => setIsLoading(true);
+  const handleLoadingClose = () => setIsLoading(false);
 
   const getAccessToken = async () => {
     const accessToken = await getAccessTokenSilently({
@@ -269,14 +278,15 @@ const InsertionOrderForm = (props) => {
 
   const updateDatabase = async (data, pdfUrl) => {
     data.url = pdfUrl;
-    console.log(data);
-    console.log(insertionOrderNum);
     try {
       const accessToken = await getAccessToken();
-      const insertOder = await addInsertionOrdersToDb(accessToken, data);
-      const orderNums = await addOrdersToDb(accessToken, data);
-      //console.log(insertOder);
-      console.log(orderNums);
+      const promises = [
+        addInsertionOrdersToDb(accessToken, data),
+        addOrdersToDb(accessToken, data),
+      ];
+      await Promise.all(promises);
+      // const insertOder = await addInsertionOrdersToDb(accessToken, data);
+      // const orderNums = await addOrdersToDb(accessToken, data);
     } catch (e) {
       console.log(e);
     }
@@ -322,8 +332,14 @@ const InsertionOrderForm = (props) => {
   };
 
   const saveInsertionOrder = async () => {
-    const pdfUrl = await uploadPdf();
-    await updateDatabase(formData, pdfUrl);
+    try {
+      const pdfUrl = await uploadPdf();
+      await updateDatabase(formData, pdfUrl);
+      await getInsertionOrderNum(userId);
+      handlePreviewClose();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   // Reset the contacts field if the selected company changes
@@ -684,6 +700,7 @@ const InsertionOrderForm = (props) => {
         insertionOrderNum={insertionOrderNum}
         saveInsertionOrder={saveInsertionOrder}
       />
+      <LoadingScreen open={isLoading} handleClose={handleLoadingClose} />
     </>
   );
 };

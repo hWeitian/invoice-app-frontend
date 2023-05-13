@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
 import "../App.css";
-import { convertDate } from "../utils";
+import { convertDate, createStringDate } from "../utils";
 
 const style = {
   position: "absolute",
@@ -14,6 +14,7 @@ const style = {
   backgroundColor: "#FFFFFF",
   border: "2px solid #000",
   boxShadow: 24,
+  overflowY: "scroll",
 };
 
 const Preview = ({
@@ -22,7 +23,6 @@ const Preview = ({
   handlePreviewClose,
   saveInsertionOrder,
 }) => {
-  console.log(formData);
   return (
     <>
       <Modal
@@ -102,13 +102,13 @@ const Preview = ({
                       <p className="io-text-bold">
                         Closing Date:{" "}
                         <span className="io-text">
-                          {formData.magazine.month} {formData.magazine.year}
+                          {createStringDate(formData.magazine.closingDate)}
                         </span>
                       </p>
                       <p className="io-text-bold">
                         Material Deadline:{" "}
                         <span className="io-text">
-                          {formData.magazine.month} {formData.magazine.year}
+                          {createStringDate(formData.magazine.materialDeadline)}
                         </span>
                       </p>
                     </div>
@@ -125,80 +125,82 @@ const Preview = ({
                       <hr />
                     </div>
                     <table style={{ fontSize: "12px", width: "100%" }}>
-                      <tr>
-                        <th style={{ width: "30%", textAlign: "left" }}>
-                          Ad Size
-                        </th>
-                        <th style={{ width: "10%", textAlign: "left" }}>
-                          Position
-                        </th>
-                        <th style={{ width: "10%", textAlign: "left" }}>
-                          Colour
-                        </th>
-                        <th style={{ width: "35%", textAlign: "left" }}>
-                          Regions
-                        </th>
-                        <th style={{ width: "15%", textAlign: "left" }}>
-                          Amount
-                        </th>
-                      </tr>
-                      {formData.orderItems.map((item, index) => (
+                      <tbody>
                         <tr>
-                          <td>{item.products.name}</td>
-                          <td>{item.position}</td>
-                          <td>{item.colour}</td>
-                          <td>
-                            {item.regions.map((region, index) => (
-                              <p>{region.name} </p>
-                            ))}
-                          </td>
-                          <td>$ {item.amount}</td>
+                          <th style={{ width: "30%", textAlign: "left" }}>
+                            Ad Size
+                          </th>
+                          <th style={{ width: "10%", textAlign: "left" }}>
+                            Position
+                          </th>
+                          <th style={{ width: "10%", textAlign: "left" }}>
+                            Colour
+                          </th>
+                          <th style={{ width: "35%", textAlign: "left" }}>
+                            Regions
+                          </th>
+                          <th style={{ width: "15%", textAlign: "left" }}>
+                            Amount
+                          </th>
                         </tr>
-                      ))}
-                      <tr>
-                        <td colSpan="4" style={{ textAlign: "right" }}>
-                          <p
-                            className="io-text-bold"
-                            style={{ marginRight: "5px" }}
-                          >
-                            Discount:
-                          </p>
-                        </td>
-                        <td>- $ {formData.discount}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="4" style={{ textAlign: "right" }}>
-                          <p
-                            className="io-text-bold"
-                            style={{ marginRight: "5px" }}
-                          >
-                            Net Amount:
-                          </p>
-                        </td>
-                        <td>$ {formData.netAmount}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="4" style={{ textAlign: "right" }}>
-                          <p
-                            className="io-text-bold"
-                            style={{ marginRight: "5px" }}
-                          >
-                            GST @ 8%:
-                          </p>
-                        </td>
-                        <td>$ {formData.usdGst}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="4" style={{ textAlign: "right" }}>
-                          <p
-                            className="io-text-bold"
-                            style={{ marginRight: "5px" }}
-                          >
-                            Total Amount:
-                          </p>
-                        </td>
-                        <td>$ {formData.totalAmount}</td>
-                      </tr>
+                        {formData.orderItems.map((item, index) => (
+                          <tr key={index}>
+                            <td>{item.products.name}</td>
+                            <td>{item.position}</td>
+                            <td>{item.colour}</td>
+                            <td>
+                              {item.regions.map((region, index) => (
+                                <p key={index}>{region.name} </p>
+                              ))}
+                            </td>
+                            <td>$ {item.amount}</td>
+                          </tr>
+                        ))}
+                        <tr>
+                          <td colSpan="4" style={{ textAlign: "right" }}>
+                            <p
+                              className="io-text-bold"
+                              style={{ marginRight: "5px" }}
+                            >
+                              Discount:
+                            </p>
+                          </td>
+                          <td>- $ {formData.discount}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="4" style={{ textAlign: "right" }}>
+                            <p
+                              className="io-text-bold"
+                              style={{ marginRight: "5px" }}
+                            >
+                              Net Amount:
+                            </p>
+                          </td>
+                          <td>$ {formData.netAmount}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="4" style={{ textAlign: "right" }}>
+                            <p
+                              className="io-text-bold"
+                              style={{ marginRight: "5px" }}
+                            >
+                              GST @ 8%:
+                            </p>
+                          </td>
+                          <td>$ {formData.usdGst}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="4" style={{ textAlign: "right" }}>
+                            <p
+                              className="io-text-bold"
+                              style={{ marginRight: "5px" }}
+                            >
+                              Total Amount:
+                            </p>
+                          </td>
+                          <td>$ {formData.totalAmount}</td>
+                        </tr>
+                      </tbody>
                     </table>
                     <div style={{ width: "100%", marginTop: "10px" }}>
                       <hr />

@@ -60,40 +60,68 @@ const getMonth = (stringNum) => {
   let month;
   switch (stringNum) {
     case "0":
-      month = "January";
+      month = "Jan";
       break;
     case "1":
-      month = "February";
+      month = "Feb";
       break;
     case "2":
-      month = "March";
+      month = "Mar";
       break;
     case "3":
-      month = "April";
+      month = "Apr";
       break;
     case "4":
       month = "May";
       break;
     case "5":
-      month = "June";
+      month = "Jun";
       break;
     case "6":
-      month = "July";
+      month = "Jul";
       break;
     case "7":
-      month = "August";
+      month = "Aug";
       break;
     case "8":
-      month = "September";
+      month = "Sept";
       break;
     case "9":
-      month = "October";
+      month = "Oct";
       break;
     case "10":
-      month = "November";
+      month = "Nov";
       break;
     default:
-      month = "December";
+      month = "Dec";
   }
   return month;
+};
+
+/**
+ * Function to convert a string of date and time into date
+ * @param {string} dateString
+ * @returns {string} date
+ */
+export const createStringDate = (dateString) => {
+  const dateTimeArr = dateString.split("T");
+  const dateArr = dateTimeArr[0].split("-");
+  const year = dateArr[0];
+  const month = Number(dateArr[1]);
+  const fullMonth = getMonth(month);
+  const day = dateArr[2];
+  const stringDate = day + "-" + fullMonth + "-" + year;
+  return stringDate;
+};
+
+export const combineProducts = (orders) => {
+  let productString = "";
+  orders.forEach((order, index) => {
+    if (index === orders.length - 1) {
+      productString += order.product.name;
+    } else {
+      productString += order.product.name + ", ";
+    }
+  });
+  return productString;
 };
