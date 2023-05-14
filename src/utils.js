@@ -1,3 +1,5 @@
+import { jsPDF } from "jspdf";
+
 /**
  * Function to get the first letter of the name in caps
  * @param {string} name
@@ -114,6 +116,11 @@ export const createStringDate = (dateString) => {
   return stringDate;
 };
 
+/**
+ * Function to combine multiple products into a string
+ * @param {array} orders
+ * @returns {string} Sentence that list all products
+ */
 export const combineProducts = (orders) => {
   let productString = "";
   orders.forEach((order, index) => {
@@ -124,4 +131,55 @@ export const combineProducts = (orders) => {
     }
   });
   return productString;
+};
+
+/**
+ * Function to generate a description for the invoice item based on insertion order item
+ * @param {object} order
+ * @returns {string} description for invoice item
+ */
+export const generateDescription = (order) => {
+  let description = "";
+  const productType = order.product.name;
+  const position = order.position;
+  const magazineIssue = `${order.magazine.month} ${order.magazine.year}`;
+  description = `${productType} ${position} in the Magazine ${magazineIssue} issue`;
+  return description;
+};
+
+/**
+ * Function to convert GST in USD to SGD based on the given exchange rate
+ * @param {number} gstAmount
+ * @param {object} exchangeRate
+ * @returns {number} GST in SGD
+ */
+export const convertGstToSgd = (gstAmount, exchangeRate) => {
+  const rate = Number(exchangeRate.rate);
+  console.log(rate);
+  console.log(gstAmount);
+  const gstSgd = Math.round(Math.abs(rate * gstAmount * 100)) / 100;
+  return gstSgd;
+};
+
+/**
+ * Function to generate PDF from a component
+ * @param {string} selector
+ * @param {string} fileName
+ * @returns {object} a blob file which will be used to uplaod onto Firebase
+ */
+export const generatePDF = async (selector, fileName) => {
+  // Create a new pdf instance
+  const report = new jsPDF("portrait", "pt", "a4");
+
+  // Add html content into the pdf instance and download the pdf
+  await report.html(document.querySelector(selector), {
+    callback: function (report) {
+      report.save(fileName);
+    },
+  });
+
+  // Convert the pdf into a blob that will be used to upload onto Firebase
+  const fileForStorage = report.output("blob");
+
+  return fileForStorage;
 };

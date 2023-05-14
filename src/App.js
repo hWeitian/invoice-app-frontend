@@ -14,6 +14,7 @@ import CreditNotes from "./Pages/CreditNotes";
 import Reports from "./Pages/Reports";
 import Contacts from "./Pages/Contacts";
 import AddInsertionOrder from "./Pages/AddInsertionOrder";
+import AddInvoice from "./Pages/AddInvoice";
 import Loading from "./Pages/Loading";
 
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -133,6 +134,7 @@ function App() {
             <Route path="reports" element={<Reports />} />
             <Route path="contacts" element={<Contacts />} />
             <Route path="add-io" element={<AddInsertionOrder />} />
+            <Route path="add-invoice" element={<AddInvoice />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -5,7 +5,7 @@ import InsertionOrderForm from "./InsertionOrderForm";
 const AddInsertionOrder = (props) => {
   return (
     <>
-      <PageTitle>Add Insertion Order</PageTitle>
+      <PageTitle>Create Insertion Order</PageTitle>
       <InsertionOrderForm userId={props.userId} />
     </>
   );

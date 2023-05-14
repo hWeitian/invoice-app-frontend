@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PageTitle from "../Components/PageTitle";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import AsyncAutocomplete from "../Components/AsyncAutocomplete";
@@ -17,42 +18,36 @@ import DatePickerInput from "../Components/DatePickerInput";
 import AutocompleteInput from "../Components/AutocompleteInput";
 import MultipleAutocompleteInput from "../Components/MultipleAutocompleteInput";
 import DollarInput from "../Components/DollarInput";
-import InsertionOrderPreview from "../Components/InsertionOrderPreview";
-import { jsPDF } from "jspdf";
+import PreviewModal from "../Components/PreviewModal";
+import InvoicePreview from "../Components/InvoicePreview";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../firebase";
 import {
+  generateDescription,
   calculateTotalAmount,
   calculateGST,
   calculateNetAmount,
+  convertGstToSgd,
   generatePDF,
 } from "../utils";
-import LoadingScreen from "../Components/LoadingScreen";
-import PreviewModal from "../Components/PreviewModal";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
-const InsertionOrderForm = (props) => {
+const AddInvoice = () => {
   const { getAccessTokenSilently, user } = useAuth0();
   const [userId, setUserId] = useState();
-  const [insertionOrderNum, setInsertionOrderNum] = useState();
-  const [companies, setCompanies] = useState();
-  const [selectedCompany, setSelectedCompany] = useState({});
+  const [invoiceNum, setInvoiceNum] = useState();
+  const [companies, setCompanies] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState(null);
   const [contacts, setContacts] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState();
-  const [magazines, setMagazines] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [regions, setRegions] = useState([]);
-  const [openPreview, setOpenPreview] = useState(false);
+  const [insertionOrders, setInsertionOrders] = useState();
+  const [selectedIO, setSelectedIO] = useState();
+  const [exchangeRate, setExchangeRate] = useState();
   const [formData, setFormData] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [openPreview, setOpenPreview] = useState(false);
 
   const navigate = useNavigate();
   const [setOpenFeedback, setFeedbackMsg] = useOutletContext();
-
-  // Get magazines when page load
-  useEffect(() => {
-    getStartingData();
-  }, []);
 
   const {
     handleSubmit,
@@ -60,11 +55,10 @@ const InsertionOrderForm = (props) => {
     control,
     reset,
     resetField,
+    setValue,
   } = useForm({
     defaultValues: {
-      orderItems: [
-        { products: "", position: "", colour: "", regions: "", amount: "" },
-      ],
+      invoiceItems: [{ description: "", amount: "" }],
     },
   });
 
@@ -74,27 +68,50 @@ const InsertionOrderForm = (props) => {
     remove,
   } = useFieldArray({
     control,
-    name: "orderItems",
+    name: "invoiceItems",
   });
 
+  useEffect(() => {
+    getStartingData();
+  }, []);
+
+  // Reset the contacts field if the selected company changes
+  useEffect(() => {
+    if (!selectedIO) {
+      resetField("contacts");
+    }
+  }, [selectedCompany]);
+
   const onSubmit = (data) => {
-    data["insertionId"] = insertionOrderNum;
+    data["invoiceNum"] = invoiceNum;
+    data["exchangeRate"] = exchangeRate;
     const newData = calculateData(data);
     setFormData(newData);
-    reset();
     handlePreviewOpen();
   };
 
+  const handlePreviewOpen = () => setOpenPreview(true);
+  const handlePreviewClose = () => setOpenPreview(false);
+
+  const getAccessToken = async () => {
+    const accessToken = await getAccessTokenSilently({
+      authorizationParams: {
+        audience: process.env.REACT_APP_AUDIENCE,
+        scope: "read:current_user",
+      },
+    });
+    return accessToken;
+  };
+
   const getStartingData = async () => {
-    const promises = [getMagazine(), getProducts(), getRegions()];
     try {
       const adminId = await getAdminId();
-      await getInsertionOrderNum(adminId);
-      await Promise.all(promises);
-      const timer = setTimeout(() => {
-        handleLoadingClose();
-      }, 500);
-      return () => clearTimeout(timer);
+      await getInvoiceNum(adminId);
+      getExchangeRate();
+      // const timer = setTimeout(() => {
+      //   handleLoadingClose();
+      // }, 500);
+      // return () => clearTimeout(timer);
     } catch (e) {
       console.log(e);
     }
@@ -111,95 +128,6 @@ const InsertionOrderForm = (props) => {
       );
       setUserId(response.data.id);
       return response.data.id;
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const handlePreviewOpen = () => setOpenPreview(true);
-  const handlePreviewClose = () => setOpenPreview(false);
-
-  const handleLoadingOpen = () => setIsLoading(true);
-  const handleLoadingClose = () => setIsLoading(false);
-
-  const getAccessToken = async () => {
-    const accessToken = await getAccessTokenSilently({
-      authorizationParams: {
-        audience: process.env.REACT_APP_AUDIENCE,
-        scope: "read:current_user",
-      },
-    });
-    return accessToken;
-  };
-
-  const getInsertionOrderNum = async (adminId) => {
-    try {
-      const accessToken = await getAccessToken();
-      const response = await axios.post(
-        `${process.env.REACT_APP_DB_SERVER}/insertion-orders`,
-        {
-          date: new Date(),
-          companyId: null,
-          contactId: null,
-          adminId: adminId,
-          discount: 0,
-          usdGst: 0,
-          netAmount: 0,
-          totalAmount: 0,
-          isSigned: false,
-          isDraft: true,
-          url: null,
-        },
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      setInsertionOrderNum(response.data.id);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const getRegions = async () => {
-    try {
-      const accessToken = await getAccessToken();
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/regions`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      setRegions(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const getProducts = async () => {
-    try {
-      const accessToken = await getAccessToken();
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/products`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      setProducts(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const getMagazine = async () => {
-    try {
-      const accessToken = await getAccessToken();
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/magazines`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      setMagazines(response.data);
     } catch (e) {
       console.log(e);
     }
@@ -246,14 +174,147 @@ const InsertionOrderForm = (props) => {
     }
   };
 
+  const getInvoiceNum = async (adminId) => {
+    try {
+      const accessToken = await getAccessToken();
+      const response = await axios.post(
+        `${process.env.REACT_APP_DB_SERVER}/invoices/add-empty`,
+        {
+          invoiceDate: new Date(),
+          companyId: null,
+          contactId: null,
+          dueDate: null,
+          discount: 0,
+          netAmount: 0,
+          totalAmount: 0,
+          usdGst: 0,
+          sgdGst: 0,
+          exchangeRateId: 0,
+          amountPaid: 0,
+          adminId: adminId,
+          isDraft: true,
+          url: null,
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      setInvoiceNum(response.data.id);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getInsertionOrders = async () => {
+    try {
+      const accessToken = await getAccessToken();
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/invoice-data`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      setInsertionOrders(response.data);
+      return response.data;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getExchangeRate = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      const response = await axios.get(
+        `${process.env.REACT_APP_DB_SERVER}/exchange-rates/latest`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      setExchangeRate(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const calculateData = (data) => {
+    data.discount = parseFloat(data.discount);
+    data.netAmount = calculateTotalAmount(data.invoiceItems, data.discount);
+    data.usdGst = calculateGST(data.netAmount);
+    data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
+    data.adminId = userId;
+    data.sgdGst = convertGstToSgd(data.usdGst, exchangeRate);
+    return data;
+  };
+
+  // Function to control the prefilling of data once an insertion order is selected
+  const prefillData = (option) => {
+    setSelectedIO(option);
+    console.log(option);
+    // If an option is selected
+    if (option) {
+      const company = {
+        label: option.company.name,
+        id: option.company.id,
+        billingAddress: option.company.billingAddress,
+      };
+      // Prefill value in company input
+      setValue("companies", company);
+      // Update state of selectedCompany so that it can be read by the contact input
+      setSelectedCompany(company);
+      const contact = {
+        name: `${option.contact.firstName} ${option.contact.lastName}`,
+        id: option.contact.id,
+        designation: option.contact.designation,
+        email: option.contact.email,
+      };
+      // Prefill value in contact input and update state
+      setValue("contacts", contact);
+      setSelectedContacts(contact);
+
+      // Add the number of desciption and amount input based on the number of orders in the insertion order
+      for (let i = 1; i < option.orders.length; i++) {
+        append({
+          description: "",
+          amount: "",
+        });
+      }
+
+      // After the correct number of description and amount input is added, prefill the data according to the order items from the selected insertion order
+      option.orders.forEach((order, index) => {
+        const description = generateDescription(order);
+        setValue(`invoiceItems.${index}.description`, description);
+        setValue(`invoiceItems.${index}.amount`, order.cost);
+        setValue(`invoiceItems.${index}.id`, order.id);
+      });
+
+      // Set the discount given in the insertion order
+      setValue("discount", option.discount);
+    } else {
+      // If insertion order is removed, reset the company and contact fields
+      setValue("companies", null);
+      setSelectedCompany(null);
+      setValue("contacts", null);
+      setSelectedContacts(null);
+      setValue("discount", 0);
+
+      // Remove the additional input field for description and amount
+      for (let i = 1; i < items.length; i++) {
+        remove(i);
+      }
+
+      // Reset the input field for desciption and amount to empty string
+      reset({
+        invoiceItems: [{ description: "", amount: "" }],
+      });
+    }
+  };
+
   const uploadPdf = async () => {
-    const storageRef = ref(
-      storage,
-      `insertion-orders/${insertionOrderNum}.pdf`
-    );
+    const storageRef = ref(storage, `invoices/${invoiceNum}.pdf`);
     try {
       // Generate the pdf from this component
-      const pdf = await generatePDF("#io", "insertion-order.pdf");
+      const pdf = await generatePDF("#invoice", "invoice.pdf");
       // Upload the pdf onto Firebase storage
       const snapshot = await uploadBytes(storageRef, pdf);
       // Get the download url for the uploaded pdf
@@ -264,26 +325,10 @@ const InsertionOrderForm = (props) => {
     }
   };
 
-  const updateDatabase = async (data, pdfUrl) => {
-    data.url = pdfUrl;
-    try {
-      const accessToken = await getAccessToken();
-      const promises = [
-        addInsertionOrdersToDb(accessToken, data),
-        addOrdersToDb(accessToken, data),
-      ];
-      await Promise.all(promises);
-      // const insertOder = await addInsertionOrdersToDb(accessToken, data);
-      // const orderNums = await addOrdersToDb(accessToken, data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const addInsertionOrdersToDb = async (accessToken, data) => {
+  const addInvoiceToDb = async (accessToken, data) => {
     try {
       const response = await axios.put(
-        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/${insertionOrderNum}`,
+        `${process.env.REACT_APP_DB_SERVER}/invoices/${invoiceNum}`,
         data,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -297,7 +342,7 @@ const InsertionOrderForm = (props) => {
 
   const addOrdersToDb = async (accessToken, data) => {
     try {
-      const response = await axios.post(
+      const response = await axios.put(
         `${process.env.REACT_APP_DB_SERVER}/orders`,
         data,
         {
@@ -310,21 +355,26 @@ const InsertionOrderForm = (props) => {
     }
   };
 
-  const calculateData = (data) => {
-    data.discount = parseFloat(data.discount);
-    data.netAmount = calculateTotalAmount(data.orderItems, data.discount);
-    data.usdGst = calculateGST(data.netAmount);
-    data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
-    data.adminId = userId;
-    return data;
+  const updateDatabase = async (data, pdfUrl) => {
+    data.url = pdfUrl;
+    try {
+      const accessToken = await getAccessToken();
+      const promises = [
+        addInvoiceToDb(accessToken, data),
+        addOrdersToDb(accessToken, data),
+      ];
+      await Promise.all(promises);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const saveInsertionOrder = async () => {
+  const saveInvoice = async () => {
     try {
       const pdfUrl = await uploadPdf();
       await updateDatabase(formData, pdfUrl);
-      navigate("/insertion-orders");
-      setFeedbackMsg("Insertion Order Created");
+      navigate("/invoices");
+      setFeedbackMsg("Invoice Created");
       setOpenFeedback(true);
       handlePreviewClose();
     } catch (e) {
@@ -332,23 +382,50 @@ const InsertionOrderForm = (props) => {
     }
   };
 
-  // Reset the contacts field if the selected company changes
-  useEffect(() => {
-    resetField("contacts");
-  }, [selectedCompany]);
-
   return (
     <>
+      <PageTitle>Create Invoice</PageTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Paper elevation={0} sx={{ backgroundColor: "#F9FAFB", p: 2 }}>
           <Typography sx={{ fontWeight: 700, mb: 2 }}>
-            Insertion Order{" "}
+            Invoice{" "}
             <span style={{ color: "#00B5C5", marginLeft: "10px" }}>
-              #{insertionOrderNum && insertionOrderNum}
+              #{invoiceNum && invoiceNum}
             </span>
           </Typography>
           <Grid container>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
+              <label className="form-label">
+                Insertion Order - Select to prefill data
+              </label>
+              <Controller
+                control={control}
+                name="insertionOrder"
+                defaultValue=""
+                render={({ field: { ref, onChange, ...field } }) => (
+                  <AsyncAutocomplete
+                    id="insertionOrder-input"
+                    placeholder="Select an Insertion Order"
+                    options={selectedIO}
+                    setOptions={setSelectedIO}
+                    getData={getInsertionOrders}
+                    prerequisiteData=""
+                    prerequisite={false}
+                    columnName="label"
+                    value={field.value}
+                    onOptionSelected={(option) => {
+                      prefillData(option);
+                      onChange(option);
+                    }}
+                    error={errors.insertionOrder?.message}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container sx={{ mt: 4 }}>
+            <Grid item xs={4}>
               <label className="form-label">Bill To</label>
               <Controller
                 control={control}
@@ -375,7 +452,7 @@ const InsertionOrderForm = (props) => {
                 )}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <label className="form-label">Contact Person</label>
               <Controller
                 control={control}
@@ -402,13 +479,36 @@ const InsertionOrderForm = (props) => {
                 )}
               />
             </Grid>
-          </Grid>
-          <Grid container sx={{ mt: 5 }}>
-            <Grid item xs={6}>
-              <label className="form-label">Insertion Order Date</label>
+            <Grid item xs={4}>
+              <label className="form-label">Purchase Order</label>
               <Controller
                 control={control}
-                name="ioDate"
+                name="purchaseOrder"
+                defaultValue=""
+                render={({
+                  field: { ref, onChange, ...field },
+                  fieldState: { error },
+                }) => (
+                  <TextField
+                    id={`notes`}
+                    variant="outlined"
+                    size="small"
+                    error={error}
+                    value={field.value}
+                    onChange={onChange}
+                    helperText={error?.message}
+                    placeholder="Purchase Order"
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+          <Grid container sx={{ mt: 5 }}>
+            <Grid item xs={4}>
+              <label className="form-label">Invoice Date</label>
+              <Controller
+                control={control}
+                name="invoiceDate"
                 defaultValue=""
                 rules={{ required: "Please select a date" }}
                 render={({
@@ -416,32 +516,28 @@ const InsertionOrderForm = (props) => {
                   fieldState,
                 }) => (
                   <DatePickerInput
-                    error={errors.ioDate?.message}
+                    error={errors.invoiceDate?.message}
                     value={field.value}
                     onChange={onChange}
                   />
                 )}
               />
             </Grid>
-            <Grid item xs={6}>
-              <label className="form-label">Magazine Issue</label>
+            <Grid item xs={4}>
+              <label className="form-label">Due Date</label>
               <Controller
                 control={control}
-                name="magazine"
+                name="dueDate"
                 defaultValue=""
-                rules={{ required: "Please select an issue" }}
-                render={({ field: { ref, onChange, onBlur, ...field } }) => (
-                  <AutocompleteInput
-                    id="magazine-input"
-                    placeholder="Select an issue"
-                    options={magazines}
-                    columnName="year"
-                    hasTwoColumns={true}
-                    columnNameTwo="month"
+                rules={{ required: "Please select a date" }}
+                render={({
+                  field: { ref, onChange, onBlur, ...field },
+                  fieldState,
+                }) => (
+                  <DatePickerInput
+                    error={errors.dueDate?.message}
                     value={field.value}
                     onChange={onChange}
-                    error={errors.magazine?.message}
-                    width="300px"
                   />
                 )}
               />
@@ -449,56 +545,39 @@ const InsertionOrderForm = (props) => {
           </Grid>
           <Divider sx={{ mt: 5, mb: 5 }} />
           <Grid container>
+            <Grid item xs={9}>
+              <label className="form-label">Description</label>
+            </Grid>
             <Grid item xs={3}>
-              <label className="form-label">Product Type</label>
-            </Grid>
-            <Grid item xs={2}>
-              <label className="form-label">Position</label>
-            </Grid>
-            <Grid item xs={2}>
-              <label className="form-label">Colour</label>
-            </Grid>
-            <Grid item xs={2}>
-              <label className="form-label">Regions</label>
-            </Grid>
-            <Grid item xs={2}>
               <label className="form-label">Amount</label>
             </Grid>
           </Grid>
-
           {items.map((field, index) => (
             <Grid container key={field.id} sx={{ mt: 2 }}>
-              <Grid item xs={3}>
+              <Grid item xs={9}>
                 <Controller
                   control={control}
-                  name={`orderItems.${index}.products`}
+                  name={`invoiceItems.${index}.id`}
                   defaultValue=""
-                  rules={{ required: "Please select a product" }}
+                  type="hidden"
                   render={({
                     field: { ref, onChange, ...field },
                     fieldState: { error },
                   }) => (
-                    <AutocompleteInput
-                      id={`products-${index}`}
-                      placeholder="Select a product"
-                      options={products}
-                      columnName="name"
-                      hasTwoColumns={false}
-                      columnNameTwo=""
+                    <input
+                      id={`position-${index}`}
+                      variant="outlined"
+                      hidden
                       value={field.value}
                       onChange={onChange}
-                      error={error?.message}
-                      width="250px"
                     />
                   )}
                 />
-              </Grid>
-              <Grid item xs={2}>
                 <Controller
                   control={control}
-                  name={`orderItems.${index}.position`}
+                  name={`invoiceItems.${index}.description`}
                   defaultValue=""
-                  rules={{ required: "Please enter a position" }}
+                  rules={{ required: "Please enter a description" }}
                   render={({
                     field: { ref, onChange, ...field },
                     fieldState: { error },
@@ -508,58 +587,11 @@ const InsertionOrderForm = (props) => {
                       variant="outlined"
                       size="small"
                       error={error}
-                      onChange={onChange}
-                      helperText={error?.message}
-                      placeholder="Position"
-                      sx={{ width: "150px" }}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <Controller
-                  control={control}
-                  name={`orderItems.${index}.colour`}
-                  defaultValue=""
-                  rules={{ required: "Please enter a colour" }}
-                  render={({
-                    field: { ref, onChange, ...field },
-                    fieldState: { error },
-                  }) => (
-                    <TextField
-                      id={`position-${index}`}
-                      variant="outlined"
-                      size="small"
-                      error={error}
-                      onChange={onChange}
-                      helperText={error?.message}
-                      placeholder="Colour"
-                      sx={{ width: "150px" }}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <Controller
-                  control={control}
-                  name={`orderItems.${index}.regions`}
-                  defaultValue=""
-                  rules={{ required: "Please select a region" }}
-                  render={({
-                    field: { ref, onChange, ...field },
-                    fieldState: { error },
-                  }) => (
-                    <MultipleAutocompleteInput
-                      id={`regions-${index}`}
-                      placeholder="Select a region"
-                      options={regions}
-                      columnName="name"
-                      hasTwoColumns={false}
-                      columnNameTwo=""
                       value={field.value}
                       onChange={onChange}
-                      error={error?.message}
-                      width="180px"
+                      helperText={error?.message}
+                      placeholder="Description"
+                      sx={{ width: "850px" }}
                     />
                   )}
                 />
@@ -567,10 +599,10 @@ const InsertionOrderForm = (props) => {
               <Grid item xs={2}>
                 <Controller
                   control={control}
-                  name={`orderItems.${index}.amount`}
+                  name={`invoiceItems.${index}.amount`}
                   defaultValue=""
                   rules={{
-                    required: "Please add a cost",
+                    required: "Please add an amount",
                     valueAsNumber: true,
                     pattern: {
                       value: /^(0|[1-9]\d*)(\.\d+)?$/,
@@ -587,13 +619,13 @@ const InsertionOrderForm = (props) => {
                       onChange={onChange}
                       error={error}
                       currency="USD"
-                      width="180px"
+                      width="200px"
                     />
                   )}
                 />
               </Grid>
               {index > 0 && (
-                <Grid item xs={1}>
+                <Grid item xs={1} sx={{ textAlign: "center" }}>
                   <IconButton
                     onClick={() => {
                       remove(index);
@@ -605,15 +637,13 @@ const InsertionOrderForm = (props) => {
               )}
             </Grid>
           ))}
+
           <Button
             type="button"
             color="secondary"
             onClick={() => {
               append({
-                products: "",
-                position: "",
-                colour: "",
-                regions: "",
+                description: "",
                 amount: "",
               });
             }}
@@ -649,34 +679,13 @@ const InsertionOrderForm = (props) => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sx={{ mt: 2, mb: 5 }}>
-              <label className="form-label">Sales Notes</label>
-              <Controller
-                control={control}
-                name="notes"
-                defaultValue=""
-                render={({
-                  field: { ref, onChange, ...field },
-                  fieldState: { error },
-                }) => (
-                  <TextField
-                    id={`notes`}
-                    multiline
-                    variant="outlined"
-                    size="small"
-                    error={error}
-                    value={field.value}
-                    onChange={onChange}
-                    helperText={error?.message}
-                    placeholder="Sales Notes"
-                    sx={{ width: "100%" }}
-                    rows={4}
-                  />
-                )}
-              />
-            </Grid>
           </Grid>
-          <Button type="submit" color="secondary" variant="contained">
+          <Button
+            type="submit"
+            color="secondary"
+            variant="contained"
+            sx={{ mt: 4, mb: 2 }}
+          >
             Preview
           </Button>
         </Paper>
@@ -685,13 +694,12 @@ const InsertionOrderForm = (props) => {
         handlePreviewOpen={handlePreviewOpen}
         handlePreviewClose={handlePreviewClose}
         open={openPreview}
-        save={saveInsertionOrder}
+        save={saveInvoice}
       >
-        <InsertionOrderPreview formData={formData} />
+        <InvoicePreview formData={formData} />
       </PreviewModal>
-      <LoadingScreen open={isLoading} handleClose={handleLoadingClose} />
     </>
   );
 };
 
-export default InsertionOrderForm;
+export default AddInvoice;

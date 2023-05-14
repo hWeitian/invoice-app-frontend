@@ -11,7 +11,8 @@
   display: block;
 }
 
-#io p {
+#io p,
+#invoice p {
   padding: 0;
   margin: 0;
 }
@@ -29,4 +30,13 @@
 .io-text-bold {
   font-size: 12px;
   font-weight: 700;
+}
+
+#invoice table td,
+th {
+  padding: 5px;
+}
+
+#invoice .total-table td {
+  padding: 0px;
 }

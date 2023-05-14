@@ -35,7 +35,7 @@ const AsyncAutocomplete = ({
   useEffect(() => {
     if (open) {
       // If dropdown is opened, check if the options have been loaded
-      if (options.length === 0) {
+      if (options === null || options.length === 0) {
         // If options are not loaded, get data from server
         setLoading(true);
         // Check if the dropdown options of this input depends on the input of another field
