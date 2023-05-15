@@ -43,6 +43,11 @@ const AutocompleteInput = ({
           </li>
         );
       }}
+      ListboxProps={{
+        style: {
+          maxHeight: "150px",
+        },
+      }}
       renderInput={(params) => (
         <TextField
           {...params}

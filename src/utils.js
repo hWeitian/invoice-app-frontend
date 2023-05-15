@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import axios from "axios";
 
 /**
  * Function to get the first letter of the name in caps
@@ -59,39 +60,40 @@ export const convertDate = (dateObj) => {
  * @returns {string}
  */
 const getMonth = (stringNum) => {
+  const num = Number(stringNum);
   let month;
-  switch (stringNum) {
-    case "0":
+  switch (num) {
+    case 0:
       month = "Jan";
       break;
-    case "1":
+    case 1:
       month = "Feb";
       break;
-    case "2":
+    case 2:
       month = "Mar";
       break;
-    case "3":
+    case 3:
       month = "Apr";
       break;
-    case "4":
+    case 4:
       month = "May";
       break;
-    case "5":
+    case 5:
       month = "Jun";
       break;
-    case "6":
+    case 6:
       month = "Jul";
       break;
-    case "7":
+    case 7:
       month = "Aug";
       break;
-    case "8":
+    case 8:
       month = "Sept";
       break;
-    case "9":
+    case 9:
       month = "Oct";
       break;
-    case "10":
+    case 10:
       month = "Nov";
       break;
     default:
@@ -182,4 +184,53 @@ export const generatePDF = async (selector, fileName) => {
   const fileForStorage = report.output("blob");
 
   return fileForStorage;
+};
+
+/**
+ * Function to get data from database according to the provided endpoint
+ * @param {string} accessToken
+ * @param {string} endPoint
+ * @returns {array} data from database
+ */
+export const getData = async (accessToken, endPoint) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_DB_SERVER}/${endPoint}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+/**
+ * Function to calculate total amount for orders based on the given type of amount to calculate
+ * @param {array} orders
+ * @param {string} type
+ * @returns {number} total amount for oders
+ */
+export const calculateOrdersAmount = (orders, type) => {
+  let totalAmount = 0;
+  for (let i = 0; i < orders.length; i++) {
+    totalAmount += Number(orders[i].invoice[type]);
+  }
+
+  return totalAmount;
+};
+
+/**
+ * Function to calculate outstanding amount for the orders
+ * @param {array} orders
+ * @returns {number} outstanding amount
+ */
+export const calculateOutstanding = (orders) => {
+  const amountPaid = calculateOrdersAmount(orders, "amountPaid");
+  const invoicedAmount = calculateOrdersAmount(orders, "totalAmount");
+
+  const outstanding = Math.abs(invoicedAmount - amountPaid);
+
+  return outstanding;
 };

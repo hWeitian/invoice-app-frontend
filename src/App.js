@@ -29,6 +29,26 @@ const theme = createTheme({
       main: "#00b5c5",
       contrastText: "#ffffff",
     },
+    chipLightBlue: {
+      main: "#EFF8FF",
+      contrastText: "#175CD3",
+    },
+    chipDarkBlue: {
+      main: "#EEF4FF",
+      contrastText: "#3538CD",
+    },
+    chipPurple: {
+      main: "#F9F5FF",
+      contrastText: "#6941C6",
+    },
+    chipGreen: {
+      main: "#ECFDF3",
+      contrastText: "#027A48",
+    },
+    chipOrange: {
+      main: "#FFFAEB",
+      contrastText: "#B54708",
+    },
   },
   typography: {
     fontFamily: "Inter",

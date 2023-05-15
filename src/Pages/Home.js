@@ -1,9 +1,146 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import PageTitle from "../Components/PageTitle";
+import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
+import { Grid, Box, Typography } from "@mui/material";
+import OverviewTable from "../Components/OverviewTable";
+import AutocompleteInput from "../Components/AutocompleteInput";
+import { getData, calculateOrdersAmount, calculateOutstanding } from "../utils";
+import OverviewCard from "../Components/OverviewCard";
 
 const Home = () => {
+  const { getAccessTokenSilently } = useAuth0();
+  const [orders, setOrders] = useState([]);
+  const [magazines, setMagazines] = useState();
+  const [selectedMag, setSelectedMag] = useState(null);
+
+  useEffect(() => {
+    getStartingData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedMag) {
+      updateTableData(selectedMag.id);
+    } else {
+      setOrders([]);
+    }
+  }, [selectedMag]);
+
+  const getAccessToken = async () => {
+    const accessToken = await getAccessTokenSilently({
+      authorizationParams: {
+        audience: process.env.REACT_APP_AUDIENCE,
+        scope: "read:current_user",
+      },
+    });
+    return accessToken;
+  };
+
+  const getStartingData = async () => {
+    const accessToken = await getAccessToken();
+    const currentIssue = await getData(accessToken, "magazines/current-issue");
+    setSelectedMag(currentIssue[0]);
+    const promises = [
+      getData(accessToken, `orders/magazine/${currentIssue[0].id}`),
+      getData(accessToken, "magazines"),
+    ];
+    const [ordersData, issueData] = await Promise.all(promises);
+    setOrders(ordersData);
+    setMagazines(issueData);
+  };
+
+  const updateTableData = async (id) => {
+    const accessToken = await getAccessToken();
+    const newOrdersData = await getData(accessToken, `orders/magazine/${id}`);
+    setOrders(newOrdersData);
+  };
+
   return (
     <>
-      <p>Home page</p>
+      <Grid container>
+        <Grid item xs={6}>
+          <PageTitle>Overview</PageTitle>
+        </Grid>
+        <Grid item xs={6}>
+          <Grid container sx={{ justifyContent: "flexEnd" }}>
+            <Grid item xs={7} sx={{ textAlign: "right", m: "auto", pr: 1 }}>
+              <Typography style={{ margin: 0, padding: 0, fontWeight: 700 }}>
+                Magazine Issue:
+              </Typography>
+            </Grid>
+            <Grid item xs={5}>
+              <AutocompleteInput
+                id="magazine-input"
+                placeholder="Select an issue"
+                options={magazines}
+                columnName="year"
+                hasTwoColumns={true}
+                columnNameTwo="month"
+                value={selectedMag}
+                onChange={(e) => setSelectedMag(e)}
+                error={false}
+                width="250px"
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid container>
+        {selectedMag && (
+          <Typography
+            sx={{ mb: 3, mt: 3, p: 0, fontWeight: 700, fontSize: "1.1rem" }}
+          >
+            Advertisements for {`${selectedMag.month} ${selectedMag.year}`}{" "}
+            Issue
+          </Typography>
+        )}
+      </Grid>
+      <Grid container justifyContent="space-between">
+        <Grid item>
+          <OverviewCard title="Advertisements" content={orders.length} />
+        </Grid>
+        <Grid item>
+          <OverviewCard
+            title="Total Invoiced"
+            content={`${calculateOrdersAmount(
+              orders,
+              "totalAmount"
+            ).toLocaleString("en-US")} USD`}
+            // content={`${calculateOrdersAmount(orders, "totalAmount")} USD`}
+          />
+        </Grid>
+        <Grid item>
+          <OverviewCard
+            title="Outstanding"
+            content={`${calculateOutstanding(
+              orders,
+              "totalAmount"
+            ).toLocaleString("en-US")} USD`}
+          />
+        </Grid>
+        <Grid item>
+          <OverviewCard
+            title="Paid"
+            content={`${calculateOrdersAmount(
+              orders,
+              "amountPaid"
+            ).toLocaleString("en-US")} USD`}
+          />
+        </Grid>
+      </Grid>
+      <Grid container>
+        <Grid item xs={12} sx={{ mt: 5 }}>
+          {/* {selectedMag && (
+            <Typography
+              sx={{ mb: 1, p: 0, fontWeight: 700, fontSize: "1.1rem" }}
+            >
+              Advertisements for {`${selectedMag.month} ${selectedMag.year}`}
+            </Typography>
+          )} */}
+
+          <OverviewTable data={orders} />
+        </Grid>
+      </Grid>
     </>
   );
 };

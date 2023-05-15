@@ -18,7 +18,6 @@ import AutocompleteInput from "../Components/AutocompleteInput";
 import MultipleAutocompleteInput from "../Components/MultipleAutocompleteInput";
 import DollarInput from "../Components/DollarInput";
 import InsertionOrderPreview from "../Components/InsertionOrderPreview";
-import { jsPDF } from "jspdf";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../firebase";
 import {
@@ -81,7 +80,6 @@ const InsertionOrderForm = (props) => {
     data["insertionId"] = insertionOrderNum;
     const newData = calculateData(data);
     setFormData(newData);
-    reset();
     handlePreviewOpen();
   };
 
@@ -323,6 +321,7 @@ const InsertionOrderForm = (props) => {
     try {
       const pdfUrl = await uploadPdf();
       await updateDatabase(formData, pdfUrl);
+      reset();
       navigate("/insertion-orders");
       setFeedbackMsg("Insertion Order Created");
       setOpenFeedback(true);

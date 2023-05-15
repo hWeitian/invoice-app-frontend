@@ -31,25 +31,22 @@ const InvoiceTable = ({ data }) => {
           const cellValue = params.row["status"];
           let output = "";
           let color = "";
-          let icon = "";
           if (cellValue === "paid") {
             output = "Paid";
-            color = "success";
-            icon = <DoneIcon fontSize="small" />;
+            color = "chipGreen";
           } else {
             output = "Pending";
-            color = "default";
-            icon = <HourglassEmptyIcon fontSize="small" />;
+            color = "chipOrange";
           }
-          return <Chip label={output} color={color} icon={icon}></Chip>;
+          return <Chip label={output} color={color} size="small"></Chip>;
         },
       },
       {
         field: "company",
         headerName: "Company",
-        width: 500,
+        width: 450,
       },
-      { field: "totalAmount", headerName: "Amount", width: 130 },
+      { field: "totalAmount", headerName: "Amount", width: 180 },
       {
         field: "url",
         headerName: "File",
@@ -90,11 +87,11 @@ const InvoiceTable = ({ data }) => {
     ];
 
     rows = data.map((invoice, index) => ({
-      id: invoice.id,
+      id: `${invoice.id}.INV`,
       date: createStringDate(invoice.invoiceDate),
       status: invoice.status,
       company: invoice.company.name,
-      totalAmount: invoice.totalAmount,
+      totalAmount: `${invoice.totalAmount} USD`,
       url: invoice.url,
       more: "",
     }));
@@ -136,9 +133,10 @@ const InvoiceTable = ({ data }) => {
 
   return (
     <>
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ width: "100%" }}>
         {data && (
           <DataGrid
+            autoHeight
             rows={rows}
             columns={columns}
             initialState={{
