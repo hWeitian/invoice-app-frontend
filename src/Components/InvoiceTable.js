@@ -1,24 +1,25 @@
-import React, { useState } from "react";
-import { DataGrid, GridCellParams } from "@mui/x-data-grid";
-import { createStringDate, combineProducts } from "../utils";
-import { Button, Chip, IconButton, Menu, MenuItem } from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
-import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import React from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { createStringDate } from "../utils";
+import { Button, Chip } from "@mui/material";
+
 import TableMenu from "./TableMenu";
 
-const InvoiceTable = ({ data }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
+const InvoiceTable = ({ data, getInvoices }) => {
   let columns = [];
   let rows = [];
+
+  const currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+
+  const usdPrice = {
+    type: "number",
+    valueFormatter: ({ value }) => currencyFormatter.format(value),
+    cellClassName: "font-tabular-nums",
+  };
+
   if (data) {
     columns = [
       { field: "id", headerName: "Invoice #", width: 100 },
@@ -31,12 +32,15 @@ const InvoiceTable = ({ data }) => {
           const cellValue = params.row["status"];
           let output = "";
           let color = "";
-          if (cellValue === "paid") {
+          if (cellValue === "Paid") {
             output = "Paid";
             color = "chipGreen";
+          } else if (cellValue === "Partial Paid") {
+            output = "Partial Paid";
+            color = "chipOrange";
           } else {
             output = "Pending";
-            color = "chipOrange";
+            color = "chipRed";
           }
           return <Chip label={output} color={color} size="small"></Chip>;
         },
@@ -44,9 +48,24 @@ const InvoiceTable = ({ data }) => {
       {
         field: "company",
         headerName: "Company",
-        width: 450,
+        width: 290,
       },
-      { field: "totalAmount", headerName: "Amount", width: 180 },
+      {
+        field: "totalAmount",
+        headerName: "Amount",
+        width: 160,
+        ...usdPrice,
+        align: "left",
+        headerAlign: "left",
+      },
+      {
+        field: "outstanding",
+        headerName: "Outstanding Amount",
+        width: 190,
+        ...usdPrice,
+        align: "left",
+        headerAlign: "left",
+      },
       {
         field: "url",
         headerName: "File",
@@ -78,10 +97,7 @@ const InvoiceTable = ({ data }) => {
         sortable: false,
         disableClickEventBubbling: true,
         renderCell: (params) => (
-          <TableMenu
-            menuOptions={["Add Payment", "View Payment"]}
-            rowData={params.row}
-          />
+          <TableMenu rowData={params.row} getInvoices={getInvoices} />
         ),
       },
     ];
@@ -91,45 +107,13 @@ const InvoiceTable = ({ data }) => {
       date: createStringDate(invoice.invoiceDate),
       status: invoice.status,
       company: invoice.company.name,
-      totalAmount: `${invoice.totalAmount} USD`,
+      totalAmount: invoice.totalAmount,
+      outstanding: invoice.outstanding,
       url: invoice.url,
-      more: "",
+      //Data pass in but will not be shown. Use to update payment.
+      companyId: invoice.company.id,
     }));
   }
-
-  // const ActionsCell = ({ menuOptions }) => {
-  //   const [anchorEl, setAnchorEl] = useState(null);
-
-  //   const handleMenuOpen = (event) => {
-  //     setAnchorEl(event.currentTarget);
-  //   };
-
-  //   const handleMenuClose = () => {
-  //     setAnchorEl(null);
-  //   };
-
-  //   return (
-  //     <div>
-  //       <IconButton onClick={handleMenuOpen}>
-  //         <MoreVertIcon />
-  //         {/* Add your icon component here */}
-  //       </IconButton>
-  //       <Menu
-  //         anchorEl={anchorEl}
-  //         open={Boolean(anchorEl)}
-  //         onClose={handleMenuClose}
-  //       >
-  //         {menuOptions.map((option) => (
-  //           <MenuItem key={option} onClick={handleMenuClose}>
-  //             {option}
-  //           </MenuItem>
-  //         ))}
-  //       </Menu>
-  //     </div>
-  //   );
-  // };
-
-  console.log(data);
 
   return (
     <>
@@ -141,7 +125,7 @@ const InvoiceTable = ({ data }) => {
             columns={columns}
             initialState={{
               pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
+                paginationModel: { page: 0, pageSize: 10 },
               },
               sorting: {
                 sortModel: [{ field: "id", sort: "desc" }],

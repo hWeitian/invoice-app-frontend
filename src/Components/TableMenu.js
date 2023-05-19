@@ -1,17 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PaymentModal from "./PaymentModal";
+import ViewPaymentModal from "./ViewPaymentModal";
+import useGetAccessToken from "../Hooks/useGetAccessToken";
+import { getData } from "../utils";
+import { useOutletContext } from "react-router-dom";
 
-const TableMenu = ({ menuOptions, rowData }) => {
+const TableMenu = ({ rowData, getInvoices }) => {
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [viewPaymentModalOpen, setViewPaymentModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [setOpenFeedback, setFeedbackMsg] = useOutletContext();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClick = () => {
+  const openAddPayment = () => {
     handleMenuClose();
-    alert(rowData.company);
+    setPaymentModalOpen(true);
+  };
+
+  const openViewPayment = () => {
+    handleMenuClose();
+    setViewPaymentModalOpen(true);
   };
 
   const handleMenuClose = () => {
@@ -28,12 +41,22 @@ const TableMenu = ({ menuOptions, rowData }) => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        {menuOptions.map((option) => (
-          <MenuItem key={option} onClick={handleClick}>
-            {option}
-          </MenuItem>
-        ))}
+        <MenuItem onClick={openAddPayment}>Add Payment</MenuItem>
+        <MenuItem onClick={openViewPayment}>View Payment</MenuItem>
       </Menu>
+      <PaymentModal
+        open={paymentModalOpen}
+        setPaymentModalOpen={setPaymentModalOpen}
+        data={rowData}
+        setOpenFeedback={setOpenFeedback}
+        setFeedbackMsg={setFeedbackMsg}
+        getInvoices={getInvoices}
+      />
+      <ViewPaymentModal
+        setViewPaymentModalOpen={setViewPaymentModalOpen}
+        open={viewPaymentModalOpen}
+        data={rowData}
+      />
     </div>
   );
 };

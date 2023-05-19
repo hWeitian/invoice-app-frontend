@@ -49,6 +49,10 @@ const theme = createTheme({
       main: "#FFFAEB",
       contrastText: "#B54708",
     },
+    chipRed: {
+      main: "#FDF2FA",
+      contrastText: "#C01674",
+    },
   },
   typography: {
     fontFamily: "Inter",

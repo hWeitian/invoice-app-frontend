@@ -234,3 +234,13 @@ export const calculateOutstanding = (orders) => {
 
   return outstanding;
 };
+
+/**
+ * Function to convert numbers to USD currency
+ */
+export const formatToUsdCurrency = (value) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(Number(value));
+};

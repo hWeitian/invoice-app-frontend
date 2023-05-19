@@ -106,7 +106,6 @@ const Home = () => {
               orders,
               "totalAmount"
             ).toLocaleString("en-US")} USD`}
-            // content={`${calculateOrdersAmount(orders, "totalAmount")} USD`}
           />
         </Grid>
         <Grid item>
