@@ -132,6 +132,8 @@ const InvoiceTable = ({ data, getInvoices }) => {
               },
             }}
             pageSizeOptions={[5, 10]}
+            disableColumnFilter
+            disableColumnMenu
           />
         )}
       </div>

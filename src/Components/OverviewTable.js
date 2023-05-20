@@ -53,19 +53,22 @@ const OverviewTable = ({ data }) => {
         width: 100,
       },
       {
-        field: "payment",
+        field: "status",
         headerName: "Payment",
         width: 120,
         renderCell: (params) => {
           const cellValue = params.row["status"];
           let output = "";
           let color = "";
-          if (cellValue === "paid") {
+          if (cellValue === "Paid") {
             output = "Paid";
             color = "chipGreen";
+          } else if (cellValue === "Partial Paid") {
+            output = "Partial Paid";
+            color = "chipOrange";
           } else {
             output = "Pending";
-            color = "chipOrange";
+            color = "chipRed";
           }
           return <Chip label={output} color={color} size="small"></Chip>;
         },
@@ -79,7 +82,7 @@ const OverviewTable = ({ data }) => {
       colour: order.colour,
       regions: order.regions,
       invoice: `${order.invoice.id}.INV`,
-      payment: order.status,
+      status: order.status,
       id: order.id,
     }));
   }
@@ -101,6 +104,8 @@ const OverviewTable = ({ data }) => {
               },
             }}
             pageSizeOptions={[5, 10]}
+            disableColumnFilter
+            disableColumnMenu
           />
         )}
       </div>

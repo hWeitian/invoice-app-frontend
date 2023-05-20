@@ -58,7 +58,6 @@ const PaymentModal = ({
     formState: { errors },
     control,
     reset,
-    resetField,
     setValue,
   } = useForm({
     defaultValues: {
@@ -313,7 +312,13 @@ const PaymentModal = ({
                 render={({
                   field: { ref, onChange, ...field },
                   fieldState: { error },
-                }) => <DragDropInput onChange={onChange} error={error} />}
+                }) => (
+                  <DragDropInput
+                    onChange={onChange}
+                    error={error}
+                    errorMsg="Please attached a transaction advice"
+                  />
+                )}
               />
               <div style={{ width: "48%", marginTop: "20px" }}>
                 <Button

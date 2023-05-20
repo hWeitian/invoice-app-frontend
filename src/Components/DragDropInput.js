@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const DragDropInput = ({ onChange, error }) => {
+const DragDropInput = ({ onChange, error, errorMsg }) => {
   const [file, setFile] = useState("");
   const inputRef = useRef(null);
 
@@ -114,7 +114,7 @@ const DragDropInput = ({ onChange, error }) => {
             margin: "2px 0 0 0",
           }}
         >
-          Please attached a transaction advice
+          {errorMsg}
         </p>
       )}
     </>
