@@ -7,9 +7,10 @@ import OverviewTable from "../Components/OverviewTable";
 import AutocompleteInput from "../Components/AutocompleteInput";
 import { getData, calculateOrdersAmount, calculateOutstanding } from "../utils";
 import OverviewCard from "../Components/OverviewCard";
+import useGetAccessToken from "../Hooks/useGetAccessToken";
 
 const Home = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  const getAccessToken = useGetAccessToken();
   const [orders, setOrders] = useState([]);
   const [magazines, setMagazines] = useState();
   const [selectedMag, setSelectedMag] = useState(null);
@@ -25,16 +26,6 @@ const Home = () => {
       setOrders([]);
     }
   }, [selectedMag]);
-
-  const getAccessToken = async () => {
-    const accessToken = await getAccessTokenSilently({
-      authorizationParams: {
-        audience: process.env.REACT_APP_AUDIENCE,
-        scope: "read:current_user",
-      },
-    });
-    return accessToken;
-  };
 
   const getStartingData = async () => {
     const accessToken = await getAccessToken();
@@ -129,15 +120,7 @@ const Home = () => {
       </Grid>
       <Grid container>
         <Grid item xs={12} sx={{ mt: 5 }}>
-          {/* {selectedMag && (
-            <Typography
-              sx={{ mb: 1, p: 0, fontWeight: 700, fontSize: "1.1rem" }}
-            >
-              Advertisements for {`${selectedMag.month} ${selectedMag.year}`}
-            </Typography>
-          )} */}
-
-          <OverviewTable data={orders} />
+          <OverviewTable magazineIssue={selectedMag && selectedMag.id} />
         </Grid>
       </Grid>
     </>

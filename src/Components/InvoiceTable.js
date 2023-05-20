@@ -1,13 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { createStringDate } from "../utils";
 import { Button, Chip } from "@mui/material";
+import axios from "axios";
+import useGetAccessToken from "../Hooks/useGetAccessToken";
 
 import TableMenu from "./TableMenu";
 
-const InvoiceTable = ({ data, getInvoices }) => {
+const InvoiceTable = () => {
+  const getAccessToken = useGetAccessToken();
+  const [invoices, setInvoices] = useState();
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
   let columns = [];
   let rows = [];
+
+  useEffect(() => {
+    getInvoices();
+  }, [paginationModel]);
+
+  const getInvoices = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await axios.get(
+        `${process.env.REACT_APP_DB_SERVER}/invoices/table-data/${paginationModel.page}/${paginationModel.pageSize}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      setTotalPages(response.data.count);
+      setInvoices(response.data.rows);
+      setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -20,7 +52,7 @@ const InvoiceTable = ({ data, getInvoices }) => {
     cellClassName: "font-tabular-nums",
   };
 
-  if (data) {
+  if (invoices) {
     columns = [
       { field: "id", headerName: "Invoice #", width: 100 },
       { field: "date", headerName: "Date", width: 130 },
@@ -102,7 +134,7 @@ const InvoiceTable = ({ data, getInvoices }) => {
       },
     ];
 
-    rows = data.map((invoice, index) => ({
+    rows = invoices.map((invoice, index) => ({
       id: `${invoice.id}.INV`,
       date: createStringDate(invoice.invoiceDate),
       status: invoice.status,
@@ -118,22 +150,19 @@ const InvoiceTable = ({ data, getInvoices }) => {
   return (
     <>
       <div style={{ width: "100%" }}>
-        {data && (
+        {invoices && (
           <DataGrid
             autoHeight
             rows={rows}
             columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
-              },
-              sorting: {
-                sortModel: [{ field: "id", sort: "desc" }],
-              },
-            }}
             pageSizeOptions={[5, 10]}
             disableColumnFilter
             disableColumnMenu
+            paginationMode="server"
+            rowCount={totalPages}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            loading={isLoading}
           />
         )}
       </div>

@@ -1,11 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Chip } from "@mui/material";
+import axios from "axios";
+import useGetAccessToken from "../Hooks/useGetAccessToken";
 
-const OverviewTable = ({ data }) => {
+const OverviewTable = ({ magazineIssue }) => {
+  const getAccessToken = useGetAccessToken();
+  const [orders, setOrders] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+
   let columns = [];
   let rows = [];
-  if (data) {
+
+  useEffect(() => {
+    getOrders();
+  }, [paginationModel, magazineIssue]);
+
+  const getOrders = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await axios.get(
+        `${process.env.REACT_APP_DB_SERVER}/orders/magazine/${magazineIssue}/${paginationModel.page}/${paginationModel.pageSize}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      setTotalPages(response.data.count);
+      setOrders(response.data.rows);
+      setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  if (orders) {
     columns = [
       { field: "company", headerName: "Company", width: 220 },
       { field: "position", headerName: "Position", width: 130 },
@@ -75,7 +109,7 @@ const OverviewTable = ({ data }) => {
       },
     ];
 
-    rows = data.map((order, index) => ({
+    rows = orders.map((order, index) => ({
       company: order.invoice.company.name,
       position: order.position,
       size: order.product.name,
@@ -90,22 +124,19 @@ const OverviewTable = ({ data }) => {
   return (
     <>
       <div style={{ height: "100%", width: "100%" }}>
-        {data && (
+        {orders && (
           <DataGrid
             autoHeight
             rows={rows}
             columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
-              },
-              sorting: {
-                sortModel: [{ field: "company", sort: "desc" }],
-              },
-            }}
             pageSizeOptions={[5, 10]}
             disableColumnFilter
             disableColumnMenu
+            paginationMode="server"
+            rowCount={totalPages}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            loading={isLoading}
           />
         )}
       </div>
