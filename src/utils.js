@@ -111,9 +111,9 @@ export const createStringDate = (dateString) => {
   const dateTimeArr = dateString.split("T");
   const dateArr = dateTimeArr[0].split("-");
   const year = dateArr[0];
-  const month = Number(dateArr[1]);
+  const month = Number(dateArr[1]) - 1;
   const fullMonth = getMonth(month);
-  const day = dateArr[2];
+  const day = Number(dateArr[2]);
   const stringDate = day + "-" + fullMonth + "-" + year;
   return stringDate;
 };

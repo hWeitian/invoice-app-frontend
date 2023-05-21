@@ -16,6 +16,7 @@ import Contacts from "./Pages/Contacts";
 import AddInsertionOrder from "./Pages/AddInsertionOrder";
 import AddInvoice from "./Pages/AddInvoice";
 import Loading from "./Pages/Loading";
+import MagazineForm from "./Components/MagazineForm";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 

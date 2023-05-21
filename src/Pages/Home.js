@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import PageTitle from "../Components/PageTitle";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { Grid, Box, Typography } from "@mui/material";
 import OverviewTable from "../Components/OverviewTable";
 import AutocompleteInput from "../Components/AutocompleteInput";

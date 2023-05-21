@@ -11,7 +11,8 @@ const TableMenu = ({ rowData, getInvoices }) => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [viewPaymentModalOpen, setViewPaymentModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [setOpenFeedback, setFeedbackMsg] = useOutletContext();
+  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
+    useOutletContext();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -50,6 +51,7 @@ const TableMenu = ({ rowData, getInvoices }) => {
         data={rowData}
         setOpenFeedback={setOpenFeedback}
         setFeedbackMsg={setFeedbackMsg}
+        setFeedbackSeverity={setFeedbackSeverity}
         getInvoices={getInvoices}
       />
       <ViewPaymentModal

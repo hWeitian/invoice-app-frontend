@@ -64,6 +64,7 @@ const navMenu = [
 
 const Main = () => {
   const { logout, isAuthenticated, user } = useAuth0();
+  const [feedbackSeverity, setFeedbackSeverity] = useState("success");
   const [openFeedback, setOpenFeedback] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState("");
   // const [open, setOpen] = useState(false);
@@ -189,12 +190,14 @@ const Main = () => {
           {currentPath === "/" ? (
             <Home />
           ) : (
-            <Outlet context={[setOpenFeedback, setFeedbackMsg]} />
+            <Outlet
+              context={[setOpenFeedback, setFeedbackMsg, setFeedbackSeverity]}
+            />
           )}
         </div>
       </Box>
       <FeedbackMesssage
-        severity="success"
+        severity={feedbackSeverity}
         handleOpen={setOpenFeedback}
         open={openFeedback}
       >

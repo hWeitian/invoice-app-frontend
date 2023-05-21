@@ -47,7 +47,8 @@ const AddInvoice = () => {
   const [openPreview, setOpenPreview] = useState(false);
 
   const navigate = useNavigate();
-  const [setOpenFeedback, setFeedbackMsg] = useOutletContext();
+  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
+    useOutletContext();
 
   const {
     handleSubmit,
@@ -108,10 +109,6 @@ const AddInvoice = () => {
       const adminId = await getAdminId();
       await getInvoiceNum(adminId);
       getExchangeRate();
-      // const timer = setTimeout(() => {
-      //   handleLoadingClose();
-      // }, 500);
-      // return () => clearTimeout(timer);
     } catch (e) {
       console.log(e);
     }
@@ -250,7 +247,6 @@ const AddInvoice = () => {
   // Function to control the prefilling of data once an insertion order is selected
   const prefillData = (option) => {
     setSelectedIO(option);
-    console.log(option);
     // If an option is selected
     if (option) {
       const company = {
@@ -374,6 +370,7 @@ const AddInvoice = () => {
       const pdfUrl = await uploadPdf();
       await updateDatabase(formData, pdfUrl);
       navigate("/invoices");
+      setFeedbackSeverity("success");
       setFeedbackMsg("Invoice Created");
       setOpenFeedback(true);
       handlePreviewClose();
@@ -519,6 +516,7 @@ const AddInvoice = () => {
                     error={errors.invoiceDate?.message}
                     value={field.value}
                     onChange={onChange}
+                    width="300px"
                   />
                 )}
               />
@@ -538,6 +536,7 @@ const AddInvoice = () => {
                     error={errors.dueDate?.message}
                     value={field.value}
                     onChange={onChange}
+                    width="300px"
                   />
                 )}
               />

@@ -33,7 +33,8 @@ const style = {
 };
 
 const SignedIoModal = ({ setOpenUploadIo, open, data, getInsertionOrders }) => {
-  const [setOpenFeedback, setFeedbackMsg] = useOutletContext();
+  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
+    useOutletContext();
   const getAccessToken = useGetAccessToken();
 
   const {
@@ -91,6 +92,7 @@ const SignedIoModal = ({ setOpenUploadIo, open, data, getInsertionOrders }) => {
     await updateSignedStatus();
     await getInsertionOrders();
     handleModalClose();
+    setFeedbackSeverity("success");
     setFeedbackMsg("Signed Insertion Order Uploaded");
     setOpenFeedback(true);
   };

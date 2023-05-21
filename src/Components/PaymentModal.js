@@ -42,6 +42,7 @@ const PaymentModal = ({
   data,
   setFeedbackMsg,
   setOpenFeedback,
+  setFeedbackSeverity,
   getInvoices,
 }) => {
   const getAccessToken = useGetAccessToken();
@@ -120,6 +121,7 @@ const PaymentModal = ({
     reset();
     await getInvoices();
     handleModalClose();
+    setFeedbackSeverity("success");
     setFeedbackMsg("Payment Added");
     setOpenFeedback(true);
   };

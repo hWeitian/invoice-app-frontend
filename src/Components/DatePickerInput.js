@@ -10,12 +10,14 @@ const DatePickerInput = (props) => {
       <DatePicker
         value={typeof props.value === "object" ? props.value : null}
         onChange={props.onChange}
-        sx={{ display: "block", width: 300 }}
+        views={props.specialView && props.viewOnly}
+        sx={{ display: "block", width: props.width }}
         slotProps={{
           textField: {
             error: Boolean(props.error),
             helperText: props.error,
             size: "small",
+            fullWidth: true,
           },
         }}
       />

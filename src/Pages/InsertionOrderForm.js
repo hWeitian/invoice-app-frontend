@@ -46,7 +46,8 @@ const InsertionOrderForm = (props) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
-  const [setOpenFeedback, setFeedbackMsg] = useOutletContext();
+  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
+    useOutletContext();
 
   // Get magazines when page load
   useEffect(() => {
@@ -323,6 +324,7 @@ const InsertionOrderForm = (props) => {
       await updateDatabase(formData, pdfUrl);
       reset();
       navigate("/insertion-orders");
+      setFeedbackSeverity("success");
       setFeedbackMsg("Insertion Order Created");
       setOpenFeedback(true);
       handlePreviewClose();
@@ -418,6 +420,7 @@ const InsertionOrderForm = (props) => {
                     error={errors.ioDate?.message}
                     value={field.value}
                     onChange={onChange}
+                    width={300}
                   />
                 )}
               />
