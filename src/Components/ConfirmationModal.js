@@ -20,7 +20,13 @@ const style = {
   overflowY: "auto",
 };
 
-const ConfirmationModal = ({ open, setOpenConfirmation, handleDelete }) => {
+const ConfirmationModal = ({
+  open,
+  setOpenConfirmation,
+  handleDelete,
+  children,
+  title,
+}) => {
   return (
     <>
       <Modal
@@ -30,12 +36,11 @@ const ConfirmationModal = ({ open, setOpenConfirmation, handleDelete }) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <PageTitle>Delete Issue</PageTitle>
+          <PageTitle>{title}</PageTitle>
           <Typography
             sx={{ mt: -1, p: 0, color: "#000000", fontSize: "0.9rem" }}
           >
-            Are you sure you want to delete this issue? This action cannot be
-            undone.
+            {children}
           </Typography>
           <Grid
             container

@@ -41,7 +41,6 @@ const Magazines = () => {
         accessToken,
         `magazines/${paginationModel.page}/${paginationModel.pageSize}`
       );
-      console.log(response);
       setTotalPages(response.count);
       setMagazines(response.rows);
       setIsLoading(false);
@@ -227,7 +226,11 @@ const Magazines = () => {
         open={openConfirmation}
         setOpenConfirmation={setOpenConfirmation}
         handleDelete={handleDelete}
-      />
+        title="Delete Issue"
+      >
+        Are you sure you want to delete this issue? This action cannot be
+        undone.
+      </ConfirmationModal>
     </>
   );
 };

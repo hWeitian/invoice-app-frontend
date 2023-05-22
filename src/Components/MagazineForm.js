@@ -22,7 +22,6 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
   } = useForm();
 
   const onSubmit = (formData) => {
-    console.log(formData);
     const dataToUpdate = {
       year: formData.year.$y,
       month: formData.month.month,
