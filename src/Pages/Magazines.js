@@ -180,12 +180,14 @@ const Magazines = () => {
               }}
             >
               {openForm ? (
-                <MagazineForm
-                  setOpenForm={setOpenForm}
-                  data={selectedRow}
-                  setSelectedRow={setSelectedRow}
-                  getMagazines={getMagazines}
-                />
+                <div style={{ minHeight: "490px" }}>
+                  <MagazineForm
+                    setOpenForm={setOpenForm}
+                    data={selectedRow}
+                    setSelectedRow={setSelectedRow}
+                    getMagazines={getMagazines}
+                  />
+                </div>
               ) : (
                 <div
                   style={{

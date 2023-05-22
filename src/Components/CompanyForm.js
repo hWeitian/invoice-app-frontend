@@ -8,7 +8,7 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 
-const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
+const CompanyForm = ({ setOpenForm, data, setSelectedRow, getCompanies }) => {
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
     useOutletContext();
   const [selectedId, setSelectedId] = useState(null);
@@ -23,10 +23,8 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
 
   const onSubmit = (formData) => {
     const dataToUpdate = {
-      year: formData.year.$y,
-      month: formData.month.month,
-      closingDate: formData.closingDate,
-      materialDeadline: formData.materialDeadline,
+      name: formData.companyName,
+      billingAddress: formData.billingAddress,
     };
     submitData(dataToUpdate);
   };
@@ -38,11 +36,8 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
   const prefillData = () => {
     if (data) {
       setSelectedId(data.id);
-      const year = dayjs(new Date(`${data.year}-01-01`));
-      setValue("year", year);
-      setValue("month", { month: data.month, id: 0 });
-      setValue("closingDate", dayjs(new Date(data.closingDate)));
-      setValue("materialDeadline", dayjs(new Date(data.materialDeadline)));
+      setValue("companyName", data.name);
+      setValue("billingAddress", data.billingAddress);
     } else {
       reset();
     }
@@ -55,11 +50,11 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
     setSelectedId(null);
   };
 
-  const updateIssueInDb = async (dataToUpdate) => {
+  const updateCompany = async (dataToUpdate) => {
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
-        `${process.env.REACT_APP_DB_SERVER}/magazines/${selectedId}`,
+        `${process.env.REACT_APP_DB_SERVER}/companies/${selectedId}`,
         dataToUpdate,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -71,11 +66,11 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
     }
   };
 
-  const addNewIssue = async (dataToUpdate) => {
+  const addCompany = async (dataToUpdate) => {
     try {
       const accessToken = await getAccessToken();
       const response = await axios.post(
-        `${process.env.REACT_APP_DB_SERVER}/magazines/`,
+        `${process.env.REACT_APP_DB_SERVER}/companies/`,
         dataToUpdate,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -89,15 +84,15 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
 
   const submitData = async (dataToUpdate) => {
     if (selectedId) {
-      await updateIssueInDb(dataToUpdate);
+      await updateCompany(dataToUpdate);
       setFeedbackSeverity("success");
-      setFeedbackMsg(`${data.month} ${data.year} Issue Updated`);
+      setFeedbackMsg(`${data.name} Updated`);
     } else {
-      await addNewIssue(dataToUpdate);
+      await addCompany(dataToUpdate);
       setFeedbackSeverity("success");
-      setFeedbackMsg(`New Issue Added`);
+      setFeedbackMsg(`New Company Added`);
     }
-    getMagazines();
+    getCompanies();
     setOpenFeedback(true);
     handleFormClose();
   };
@@ -125,88 +120,58 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
   return (
     <>
       <Typography sx={{ fontWeight: 700, fontSize: "1rem", mb: 2 }}>
-        {data ? `Editing ${data.month} ${data.year} Issue` : "Add Issue"}
+        {data ? `Editing ${data.name}` : "Add Company"}
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container>
           <Grid item xs={12}>
-            <label className="form-label">Year</label>
+            <label className="form-label">Company Name</label>
             <Controller
               control={control}
-              name="year"
+              name="companyName"
+              rules={{ required: "Please enter company name" }}
               defaultValue=""
-              rules={{ required: "Please select a year" }}
               render={({
-                field: { ref, onChange, onBlur, ...field },
-                fieldState,
+                field: { ref, onChange, ...field },
+                fieldState: { error },
               }) => (
-                <DatePickerInput
-                  error={errors.year?.message}
+                <TextField
+                  id={`companyName`}
+                  variant="outlined"
+                  size="small"
+                  error={error}
                   value={field.value}
                   onChange={onChange}
-                  specialView={true}
-                  viewOnly={["year"]}
+                  helperText={error?.message}
+                  placeholder="Company Name"
+                  sx={{ width: "100%" }}
                 />
               )}
             />
           </Grid>
           <Grid item xs={12} sx={{ mt: 2 }}>
-            <label className="form-label">Month</label>
+            <label className="form-label">Billing Address</label>
             <Controller
               control={control}
-              name="month"
+              name="billingAddress"
+              rules={{ required: "Please enter billing address" }}
               defaultValue=""
-              rules={{ required: "Please select a month" }}
-              render={({ field: { ref, onChange, ...field } }) => (
-                <AutocompleteInput
-                  id="month"
-                  placeholder="Select an issue"
-                  options={options}
-                  columnName="month"
-                  hasTwoColumns={false}
-                  columnNameTwo=""
-                  value={field.value}
-                  onChange={onChange}
-                  error={errors.month?.message}
-                  width="100%"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sx={{ mt: 2 }}>
-            <label className="form-label">Closing Date</label>
-            <Controller
-              control={control}
-              name="closingDate"
-              defaultValue=""
-              rules={{ required: "Please select a date" }}
               render={({
-                field: { ref, onChange, onBlur, ...field },
-                fieldState,
+                field: { ref, onChange, ...field },
+                fieldState: { error },
               }) => (
-                <DatePickerInput
-                  error={errors.closingDate?.message}
+                <TextField
+                  id={`billingAddress`}
+                  variant="outlined"
+                  size="small"
+                  error={error}
                   value={field.value}
                   onChange={onChange}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sx={{ mt: 2 }}>
-            <label className="form-label">Material Deadline</label>
-            <Controller
-              control={control}
-              name="materialDeadline"
-              defaultValue=""
-              rules={{ required: "Please select a date" }}
-              render={({
-                field: { ref, onChange, onBlur, ...field },
-                fieldState,
-              }) => (
-                <DatePickerInput
-                  error={errors.materialDeadline?.message}
-                  value={field.value}
-                  onChange={onChange}
+                  helperText={error?.message}
+                  placeholder="Billing Address"
+                  sx={{ width: "100%" }}
+                  multiline
+                  rows={3}
                 />
               )}
             />
@@ -239,4 +204,4 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
   );
 };
 
-export default MagazineForm;
+export default CompanyForm;
