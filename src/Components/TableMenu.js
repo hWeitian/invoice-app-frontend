@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PaymentModal from "./PaymentModal";
 import ViewPaymentModal from "./ViewPaymentModal";
-import useGetAccessToken from "../Hooks/useGetAccessToken";
-import { getData } from "../utils";
 import { useOutletContext } from "react-router-dom";
 
 const TableMenu = ({ rowData, getInvoices }) => {

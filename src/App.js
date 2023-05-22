@@ -10,13 +10,10 @@ import Magazines from "./Pages/Magazines";
 import InsertionOrder from "./Pages/InsertionOrders";
 import Companies from "./Pages/Companies";
 import Invoices from "./Pages/Invoices";
-import CreditNotes from "./Pages/CreditNotes";
-import Reports from "./Pages/Reports";
 import Contacts from "./Pages/Contacts";
 import AddInsertionOrder from "./Pages/AddInsertionOrder";
 import AddInvoice from "./Pages/AddInvoice";
 import Loading from "./Pages/Loading";
-import MagazineForm from "./Components/MagazineForm";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 
@@ -111,36 +108,7 @@ const theme = createTheme({
 });
 
 function App() {
-  const { isAuthenticated, isLoading, user, getAccessTokenSilently } =
-    useAuth0();
-  // const [userId, setUserId] = useState();
-
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     getAdminId();
-  //   }
-  // });
-
-  // const getAdminId = async () => {
-  //   try {
-  //     const accessToken = await getAccessTokenSilently({
-  //       authorizationParams: {
-  //         audience: process.env.REACT_APP_AUDIENCE,
-  //         scope: "read:current_user",
-  //       },
-  //     });
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_DB_SERVER}/contacts/email/${user.email}`,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     );
-  //     console.log(response.data.id);
-  //     setUserId(response.data.id);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+  const { isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) {
     return <Loading />;
@@ -155,8 +123,6 @@ function App() {
             <Route path="insertion-orders" element={<InsertionOrder />} />
             <Route path="companies" element={<Companies />} />
             <Route path="invoices" element={<Invoices />} />
-            <Route path="credit-notes" element={<CreditNotes />} />
-            <Route path="reports" element={<Reports />} />
             <Route path="contacts" element={<Contacts />} />
             <Route path="add-io" element={<AddInsertionOrder />} />
             <Route path="add-invoice" element={<AddInvoice />} />

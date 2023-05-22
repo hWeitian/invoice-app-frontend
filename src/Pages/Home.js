@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PageTitle from "../Components/PageTitle";
-import { Grid, Box, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import OverviewTable from "../Components/OverviewTable";
 import AutocompleteInput from "../Components/AutocompleteInput";
 import { getData, calculateOrdersAmount, calculateOutstanding } from "../utils";

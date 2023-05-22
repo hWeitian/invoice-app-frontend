@@ -15,8 +15,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import AsyncAutocomplete from "../Components/AsyncAutocomplete";
 import DatePickerInput from "../Components/DatePickerInput";
-import AutocompleteInput from "../Components/AutocompleteInput";
-import MultipleAutocompleteInput from "../Components/MultipleAutocompleteInput";
 import DollarInput from "../Components/DollarInput";
 import PreviewModal from "../Components/PreviewModal";
 import InvoicePreview from "../Components/InvoicePreview";

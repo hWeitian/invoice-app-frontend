@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Grid, Button, Box } from "@mui/material";
 import PageTitle from "../Components/PageTitle";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import InvoiceTable from "../Components/InvoiceTable";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 
 const Invoices = () => {
   const navigate = useNavigate();

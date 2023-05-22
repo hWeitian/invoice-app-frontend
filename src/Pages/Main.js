@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
   Drawer,
@@ -19,12 +19,8 @@ import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import InsertChartIcon from "@mui/icons-material/InsertChart";
 import LogoutIcon from "@mui/icons-material/Logout";
 import FeedbackMesssage from "../Components/FeedbackMessage";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 
 import { getFirstLetter } from "../utils";
 import Home from "./Home";
@@ -36,12 +32,12 @@ const drawerWidth = 260;
 const navMenu = [
   ["Home", "", <HomeIcon sx={{ color: "#FFFFFF" }} />],
   ["Magazine", "magazine", <MenuBookIcon sx={{ color: "#FFFFFF" }} />],
+  ["Companies", "companies", <ApartmentIcon sx={{ color: "#FFFFFF" }} />],
   [
     "Contacts",
     "contacts",
     <PermContactCalendarIcon sx={{ color: "#FFFFFF" }} />,
   ],
-  ["Companies", "companies", <ApartmentIcon sx={{ color: "#FFFFFF" }} />],
   [
     "Insertion Orders",
     "insertion-orders",
@@ -58,25 +54,16 @@ const navMenu = [
       <StickyNote2Icon sx={{ color: "#FFFFFF" }} />,
     ],
   ],
-  ["Credit Notes", "credit-notes", <MoneyOffIcon sx={{ color: "#FFFFFF" }} />],
-  ["Reports", "reports", <InsertChartIcon sx={{ color: "#FFFFFF" }} />],
 ];
 
 const Main = () => {
-  const { logout, isAuthenticated, user } = useAuth0();
+  const { logout, user } = useAuth0();
   const [feedbackSeverity, setFeedbackSeverity] = useState("success");
   const [openFeedback, setOpenFeedback] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState("");
-  // const [open, setOpen] = useState(false);
 
   const avatarName = getFirstLetter(user.name);
   const currentPath = useLocation().pathname;
-
-  // useEffect(() => {
-  //   if (currentPath !== "add-io") {
-  //     setOpen(false);
-  //   }
-  // }, [currentPath]);
 
   return (
     <>
@@ -115,35 +102,6 @@ const Main = () => {
           <List>
             {navMenu.map(
               (item, index) => (
-                // item.length > 3 ? (
-                //   <ListItem
-                //     key={`${item}-${index}`}
-                //     sx={{ display: "flex", flexWrap: "wrap" }}
-                //   >
-                //     <Link to={`/${item[1]}`} className="nav-link">
-                //       <ListItemButton
-                //         selected={currentPath === `/${item[1]}`}
-                //         onClick={() => setOpen(!open)}
-                //       >
-                //         <ListItemIcon>{item[2]}</ListItemIcon>
-                //         <ListItemText primary={item[0]} />
-                //         {open ? <ExpandLess /> : <ExpandMore />}
-                //       </ListItemButton>
-                //     </Link>
-                //     <Link to={`/${item[3][1]}`} className="nav-link">
-                //       <Collapse in={open} timeout="auto" unmountOnExit>
-                //         <List component="div" disablePadding>
-                //           <ListItemButton
-                //             selected={currentPath === `/${item[3][1]}`}
-                //           >
-                //             <ListItemIcon>{item[3][2]}</ListItemIcon>
-                //             <ListItemText primary={item[3][1]} />
-                //           </ListItemButton>
-                //         </List>
-                //       </Collapse>
-                //     </Link>
-                //   </ListItem>
-                // ) : (
                 <ListItem key={`${item}-${index}`}>
                   <Link to={`/${item[1]}`} className="nav-link">
                     <ListItemButton

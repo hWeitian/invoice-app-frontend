@@ -1,7 +1,6 @@
 import React from "react";
-import { Modal, Box, Typography, Button } from "@mui/material";
+import { Modal, Box, Button } from "@mui/material";
 import "../App.css";
-import { convertDate, createStringDate } from "../utils";
 
 const style = {
   position: "absolute",
