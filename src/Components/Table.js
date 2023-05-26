@@ -29,7 +29,6 @@ const Table = () => {
     try {
       setIsLoading(true);
       const accessToken = await getAccessToken();
-      console.log(paginationModel);
       const response = await axios.get(
         `${process.env.REACT_APP_DB_SERVER}/insertion-orders/table-data/${paginationModel.page}/${paginationModel.pageSize}`,
         {

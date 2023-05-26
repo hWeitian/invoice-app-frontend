@@ -152,6 +152,7 @@ const Contacts = () => {
       company: contact.company.name,
       id: contact.id,
       fullCompany: contact.company,
+      isAdmin: contact.isAdmin,
     }));
   }
 

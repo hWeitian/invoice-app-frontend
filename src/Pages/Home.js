@@ -118,7 +118,7 @@ const Home = () => {
       </Grid>
       <Grid container>
         <Grid item xs={12} sx={{ mt: 5 }}>
-          <OverviewTable magazineIssue={selectedMag && selectedMag.id} />
+          {selectedMag && <OverviewTable magazineIssue={selectedMag.id} />}
         </Grid>
       </Grid>
     </>

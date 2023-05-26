@@ -157,8 +157,6 @@ export const generateDescription = (order) => {
  */
 export const convertGstToSgd = (gstAmount, exchangeRate) => {
   const rate = Number(exchangeRate.rate);
-  console.log(rate);
-  console.log(gstAmount);
   const gstSgd = Math.round(Math.abs(rate * gstAmount * 100)) / 100;
   return gstSgd;
 };

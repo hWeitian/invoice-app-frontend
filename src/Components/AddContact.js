@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Box, Grid, TextField, Button } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Grid,
+  TextField,
+  Button,
+  Switch,
+  Tooltip,
+  styled,
+} from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import PageTitle from "./PageTitle";
 import { useForm, Controller } from "react-hook-form";
 import AutocompleteInput from "./AutocompleteInput";
@@ -8,6 +18,7 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { getData } from "../utils";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const style = {
   position: "relative",
@@ -15,7 +26,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 700,
-  height: 460,
+  height: 550,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -24,6 +35,39 @@ const style = {
   overflowY: "auto",
 };
 
+const TextSwitch = styled(Switch)(({ theme }) => ({
+  padding: 8,
+  "& .MuiSwitch-track": {
+    borderRadius: 22 / 2,
+    "&:before, &:after": {
+      content: '""',
+      position: "absolute",
+      top: "50%",
+      transform: "translateY(-50%)",
+      width: 16,
+      height: 16,
+    },
+    "&:before": {
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+        theme.palette.getContrastText(theme.palette.primary.main)
+      )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+      left: 12,
+    },
+    "&:after": {
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+        theme.palette.getContrastText(theme.palette.primary.main)
+      )}" d="M19,13H5V11H19V13Z" /></svg>')`,
+      right: 12,
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    boxShadow: "none",
+    width: 16,
+    height: 16,
+    margin: 2,
+  },
+}));
+
 const AddContact = ({
   open,
   setOpenForm,
@@ -31,12 +75,16 @@ const AddContact = ({
   getContacts,
   setSelectedRow,
 }) => {
+  const { logout, user } = useAuth0();
   const getAccessToken = useGetAccessToken();
   const [companies, setCompanies] = useState([]);
   const [selectedId, setSelectedId] = useState();
+  const [loading, setLoading] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
     useOutletContext();
+
+  // console.log(user.email);
 
   useEffect(() => {
     prefillData();
@@ -51,6 +99,15 @@ const AddContact = ({
   } = useForm();
 
   const onSubmit = (formData) => {
+    // Check if there is a change in admin status
+    // If there is no change in admin status, do not need to search for user in Auth0
+    let adminChanged = false;
+    if (data) {
+      if (data.isAdmin !== formData.admin) {
+        adminChanged = true;
+      }
+    }
+
     const dataToUpdate = {
       firstName: formData.firstName,
       lastName: formData.lastName,
@@ -58,16 +115,17 @@ const AddContact = ({
       email: formData.email,
       designation: formData.designation,
       companyId: formData.companies.id,
-      isAdmin: false,
+      isAdmin: formData.admin,
     };
-    submitData(dataToUpdate);
+
+    submitData(dataToUpdate, adminChanged);
   };
 
-  const updateContact = async (dataToUpdate) => {
+  const updateContact = async (dataToUpdate, adminChanged) => {
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
-        `${process.env.REACT_APP_DB_SERVER}/contacts/${selectedId}`,
+        `${process.env.REACT_APP_DB_SERVER}/contacts/${adminChanged}/${selectedId}`,
         dataToUpdate,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -75,7 +133,16 @@ const AddContact = ({
       );
       return response.data;
     } catch (e) {
-      console.log(e);
+      setFeedbackSeverity("error");
+      if (e.response.data.msg.name === "SequelizeUniqueConstraintError") {
+        setFeedbackMsg(`Email Already Exist`);
+      } else {
+        setFeedbackMsg(`Opps..update contact failed`);
+      }
+      setOpenFeedback(true);
+      handleClose();
+      setLoading(false);
+      throw new Error(e);
     }
   };
 
@@ -91,23 +158,42 @@ const AddContact = ({
       );
       return response.data;
     } catch (e) {
-      console.log(e);
+      setFeedbackSeverity("error");
+      setFeedbackMsg(`Opps..add contact failed`);
+      setOpenFeedback(true);
+      handleClose();
+      setLoading(false);
+      throw new Error(e);
     }
   };
 
-  const submitData = async (dataToUpdate) => {
-    if (selectedId) {
-      await updateContact(dataToUpdate);
-      setFeedbackSeverity("success");
-      setFeedbackMsg(`Contact Updated`);
-    } else {
-      await addContact(dataToUpdate);
-      setFeedbackSeverity("success");
-      setFeedbackMsg(`Contact Added`);
+  const submitData = async (dataToUpdate, adminChanged) => {
+    try {
+      setLoading(true);
+      if (selectedId) {
+        await updateContact(dataToUpdate, adminChanged);
+        setFeedbackSeverity("success");
+        setFeedbackMsg(`Contact Updated`);
+      } else {
+        await addContact(dataToUpdate);
+        setFeedbackSeverity("success");
+        setFeedbackMsg(`Contact Added`);
+      }
+      getContacts();
+      setOpenFeedback(true);
+      handleClose();
+      setLoading(false);
+
+      if (
+        user.email === dataToUpdate.email &&
+        !dataToUpdate.isAdmin &&
+        adminChanged
+      ) {
+        logout({ logoutParams: { returnTo: window.location.origin } });
+      }
+    } catch (e) {
+      console.log(e);
     }
-    getContacts();
-    setOpenFeedback(true);
-    handleClose();
   };
 
   const getCompanies = async () => {
@@ -136,6 +222,7 @@ const AddContact = ({
       setValue("designation", data.designation);
       setValue("companies", company);
       setValue("title", { name: data.title, id: 0 });
+      setValue("admin", data.isAdmin);
       setSelectedCompany(company);
     }
   };
@@ -224,7 +311,11 @@ const AddContact = ({
             </Grid>
             <Grid
               container
-              sx={{ width: "100%", justifyContent: "space-between", mt: 3.5 }}
+              sx={{
+                width: "100%",
+                justifyContent: "space-between",
+                mt: 2.8,
+              }}
             >
               <Grid item xs={7.8}>
                 <label className="form-label">Email</label>
@@ -237,17 +328,28 @@ const AddContact = ({
                     field: { ref, onChange, ...field },
                     fieldState: { error },
                   }) => (
-                    <TextField
-                      id={`email`}
-                      variant="outlined"
-                      size="small"
-                      error={error}
-                      value={field.value}
-                      onChange={onChange}
-                      helperText={error?.message}
-                      placeholder="Email"
-                      sx={{ width: "100%" }}
-                    />
+                    <Tooltip
+                      title={
+                        data
+                          ? data.isAdmin
+                            ? "Unable to edit email of an admin"
+                            : ""
+                          : ""
+                      }
+                    >
+                      <TextField
+                        id={`email`}
+                        variant="outlined"
+                        size="small"
+                        disabled={data ? (data.isAdmin ? true : false) : false}
+                        error={error}
+                        value={field.value}
+                        onChange={onChange}
+                        helperText={error?.message}
+                        placeholder="Email"
+                        sx={{ width: "100%" }}
+                      />
+                    </Tooltip>
                   )}
                 />
               </Grid>
@@ -277,7 +379,11 @@ const AddContact = ({
             </Grid>
             <Grid
               container
-              sx={{ width: "100%", justifyContent: "space-between", mt: 3.5 }}
+              sx={{
+                width: "100%",
+                justifyContent: "space-between",
+                mt: 2.8,
+              }}
             >
               <Grid item xs={5.8}>
                 <label className="form-label">Company</label>
@@ -335,6 +441,34 @@ const AddContact = ({
             <Grid
               container
               sx={{
+                width: "100%",
+                justifyContent: "space-between",
+                mt: 2.8,
+              }}
+            >
+              <Grid item>
+                <label className="form-label">Admin Access</label>
+                <Controller
+                  control={control}
+                  name="admin"
+                  defaultValue={false}
+                  render={({
+                    field: { ref, onChange, ...field },
+                    fieldState: { error },
+                  }) => (
+                    <TextSwitch
+                      id="admin"
+                      color="secondary"
+                      onChange={onChange}
+                      checked={field.value}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              sx={{
                 width: "90%",
                 justifyContent: "space-between",
                 gap: 4,
@@ -354,14 +488,15 @@ const AddContact = ({
                 </Button>
               </Grid>
               <Grid item xs={5.5}>
-                <Button
+                <LoadingButton
                   type="submit"
                   color="primary"
                   variant="contained"
+                  loading={loading}
                   sx={{ mt: 4, mb: 2, width: "100%" }}
                 >
                   Save
-                </Button>
+                </LoadingButton>
               </Grid>
             </Grid>
           </form>
