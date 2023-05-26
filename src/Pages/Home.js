@@ -74,53 +74,71 @@ const Home = () => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid container>
-        {selectedMag && (
-          <Typography
-            sx={{ mb: 3, mt: 3, p: 0, fontWeight: 700, fontSize: "1.1rem" }}
-          >
-            Advertisements for {`${selectedMag.month} ${selectedMag.year}`}{" "}
-            Issue
-          </Typography>
-        )}
-      </Grid>
-      <Grid container justifyContent="space-between">
-        <Grid item>
-          <OverviewCard title="Advertisements" content={orders.length} />
+      {selectedMag ? (
+        <>
+          <Grid container>
+            <Typography
+              sx={{ mb: 3, mt: 3, p: 0, fontWeight: 700, fontSize: "1.1rem" }}
+            >
+              Advertisements for {`${selectedMag.month} ${selectedMag.year}`}{" "}
+              Issue
+            </Typography>
+          </Grid>
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <OverviewCard title="Advertisements" content={orders.length} />
+            </Grid>
+            <Grid item>
+              <OverviewCard
+                title="Total Invoiced"
+                content={`${calculateOrdersAmount(
+                  orders,
+                  "totalAmount"
+                ).toLocaleString("en-US")} USD`}
+              />
+            </Grid>
+            <Grid item>
+              <OverviewCard
+                title="Outstanding"
+                content={`${calculateOutstanding(
+                  orders,
+                  "totalAmount"
+                ).toLocaleString("en-US")} USD`}
+              />
+            </Grid>
+            <Grid item>
+              <OverviewCard
+                title="Paid"
+                content={`${calculateOrdersAmount(
+                  orders,
+                  "amountPaid"
+                ).toLocaleString("en-US")} USD`}
+              />
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs={12} sx={{ mt: 5 }}>
+              <OverviewTable magazineIssue={selectedMag.id} />
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          sx={{ height: "80vh" }}
+        >
+          <Grid item>
+            <Typography
+              sx={{ fontWeight: 700, fontSize: "1.5rem" }}
+              color="secondary"
+            >
+              Please Select an Issue
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item>
-          <OverviewCard
-            title="Total Invoiced"
-            content={`${calculateOrdersAmount(
-              orders,
-              "totalAmount"
-            ).toLocaleString("en-US")} USD`}
-          />
-        </Grid>
-        <Grid item>
-          <OverviewCard
-            title="Outstanding"
-            content={`${calculateOutstanding(
-              orders,
-              "totalAmount"
-            ).toLocaleString("en-US")} USD`}
-          />
-        </Grid>
-        <Grid item>
-          <OverviewCard
-            title="Paid"
-            content={`${calculateOrdersAmount(
-              orders,
-              "amountPaid"
-            ).toLocaleString("en-US")} USD`}
-          />
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={12} sx={{ mt: 5 }}>
-          {selectedMag && <OverviewTable magazineIssue={selectedMag.id} />}
-        </Grid>
-      </Grid>
+      )}
     </>
   );
 };
