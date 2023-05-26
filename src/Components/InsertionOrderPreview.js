@@ -2,7 +2,7 @@ import React from "react";
 import "../App.css";
 import { convertDate, createStringDate } from "../utils";
 
-const InsertionOrderPreview = ({ formData }) => {
+const InsertionOrderPreview = ({ formData, userName }) => {
   return (
     <>
       {Object.keys(formData).length > 0 && (
@@ -43,7 +43,7 @@ const InsertionOrderPreview = ({ formData }) => {
                 </div>
                 <div style={{ width: "40%", marginTop: "10px" }}>
                   <p className="io-text-bold">
-                    Sales: <span className="io-text">Huang Weitian</span>
+                    Sales: <span className="io-text">{userName}</span>
                   </p>
                   <p className="io-text-bold">
                     Insertion Order #:{" "}

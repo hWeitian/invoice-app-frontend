@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Autocomplete } from "@mui/material";
+import { TextField, Autocomplete, Chip } from "@mui/material";
 
 const MultipleAutocompleteInput = ({
   id,
@@ -13,6 +13,12 @@ const MultipleAutocompleteInput = ({
   width,
   placeholder,
 }) => {
+  const getOptionDisabled = (option) => {
+    if (value) {
+      return value.some((value) => value.id === option.id);
+    }
+  };
+
   return (
     <Autocomplete
       multiple
@@ -22,6 +28,7 @@ const MultipleAutocompleteInput = ({
       defaultValue={[]}
       onChange={(event, option) => onChange(option)}
       value={value || []}
+      getOptionDisabled={getOptionDisabled}
       sx={{
         width: width,
       }}
@@ -36,6 +43,24 @@ const MultipleAutocompleteInput = ({
           InputProps={{ ...params.InputProps, style: { fontSize: "15px" } }}
         />
       )}
+      renderTags={(tagValue, getTagProps) =>
+        tagValue.map((option, index) => (
+          <Chip
+            key={index}
+            label={option.name}
+            {...getTagProps({ index })}
+            color={
+              option.name === "Asia-Pacific"
+                ? "chipGreen"
+                : option.name === "China"
+                ? "chipLightBlue"
+                : option.name === "Korea"
+                ? "chipDarkBlue"
+                : "chipPurple"
+            }
+          />
+        ))
+      }
     />
   );
 };

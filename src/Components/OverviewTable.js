@@ -4,7 +4,7 @@ import { Chip } from "@mui/material";
 import axios from "axios";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 
-const OverviewTable = ({ magazineIssue }) => {
+const OverviewTable = ({ magazineIssue, selectedRegions }) => {
   const getAccessToken = useGetAccessToken();
   const [orders, setOrders] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -19,14 +19,15 @@ const OverviewTable = ({ magazineIssue }) => {
 
   useEffect(() => {
     getOrders();
-  }, [paginationModel, magazineIssue]);
+  }, [paginationModel, magazineIssue, selectedRegions]);
 
   const getOrders = async () => {
     try {
       setIsLoading(true);
+      const regions = convertRegions(selectedRegions);
       const accessToken = await getAccessToken();
       const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/orders/magazine/${magazineIssue}/${paginationModel.page}/${paginationModel.pageSize}`,
+        `${process.env.REACT_APP_DB_SERVER}/orders/magazine/${magazineIssue}/${regions}/${paginationModel.page}/${paginationModel.pageSize}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -37,6 +38,18 @@ const OverviewTable = ({ magazineIssue }) => {
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const convertRegions = (regions) => {
+    let regionString = "";
+    regions.forEach((region, index) => {
+      if (index === regions.length - 1) {
+        regionString += `${region.name}`;
+      } else {
+        regionString += `${region.name}&`;
+      }
+    });
+    return regionString;
   };
 
   if (orders) {

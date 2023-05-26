@@ -16,7 +16,6 @@ const DragDropInput = ({ onChange, error, errorMsg }) => {
   const handleDrop = function (e) {
     e.preventDefault();
     e.stopPropagation();
-    console.log(e.dataTransfer.files[0].name);
     onChange(e.dataTransfer.files[0]);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {

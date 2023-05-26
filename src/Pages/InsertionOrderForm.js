@@ -33,6 +33,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 const InsertionOrderForm = (props) => {
   const { getAccessTokenSilently, user } = useAuth0();
   const [userId, setUserId] = useState();
+  const [userName, setUserName] = useState();
   const [insertionOrderNum, setInsertionOrderNum] = useState();
   const [companies, setCompanies] = useState();
   const [selectedCompany, setSelectedCompany] = useState({});
@@ -109,6 +110,7 @@ const InsertionOrderForm = (props) => {
         }
       );
       setUserId(response.data.id);
+      setUserName(response.data.firstName);
       return response.data.id;
     } catch (e) {
       console.log(e);
@@ -689,7 +691,7 @@ const InsertionOrderForm = (props) => {
         open={openPreview}
         save={saveInsertionOrder}
       >
-        <InsertionOrderPreview formData={formData} />
+        <InsertionOrderPreview formData={formData} userName={userName} />
       </PreviewModal>
       <LoadingScreen open={isLoading} handleClose={handleLoadingClose} />
     </>

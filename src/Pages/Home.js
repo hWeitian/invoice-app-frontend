@@ -3,12 +3,32 @@ import PageTitle from "../Components/PageTitle";
 import { Grid, Typography } from "@mui/material";
 import OverviewTable from "../Components/OverviewTable";
 import AutocompleteInput from "../Components/AutocompleteInput";
+import MultipleAutocompleteInput from "../Components/MultipleAutocompleteInput";
 import { getData, calculateOrdersAmount, calculateOutstanding } from "../utils";
 import OverviewCard from "../Components/OverviewCard";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 
 const Home = () => {
   const getAccessToken = useGetAccessToken();
+  const regions = [
+    {
+      name: "Asia-Pacific",
+      id: 1,
+    },
+    {
+      name: "China",
+      id: 2,
+    },
+    {
+      name: "Korea",
+      id: 3,
+    },
+    {
+      name: "India",
+      id: 4,
+    },
+  ];
+  const [selectedRegions, setSelectedRegions] = useState(regions);
   const [orders, setOrders] = useState([]);
   const [magazines, setMagazines] = useState();
   const [selectedMag, setSelectedMag] = useState(null);
@@ -116,9 +136,27 @@ const Home = () => {
               />
             </Grid>
           </Grid>
+          <Grid container sx={{ mt: 5 }}>
+            <Grid item>
+              <MultipleAutocompleteInput
+                id="regions"
+                placeholder="Select Regions"
+                options={regions}
+                columnName="name"
+                hasTwoColumns={false}
+                columnNameTwo=""
+                value={selectedRegions}
+                onChange={(e) => setSelectedRegions(e)}
+                width="500px"
+              />
+            </Grid>
+          </Grid>
           <Grid container>
-            <Grid item xs={12} sx={{ mt: 5 }}>
-              <OverviewTable magazineIssue={selectedMag.id} />
+            <Grid item xs={12} sx={{ mt: 3 }}>
+              <OverviewTable
+                magazineIssue={selectedMag.id}
+                selectedRegions={selectedRegions}
+              />
             </Grid>
           </Grid>
         </>
