@@ -9,6 +9,7 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageTitle from "../Components/PageTitle";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -45,6 +46,7 @@ const AddInvoice = () => {
   const [exchangeRate, setExchangeRate] = useState();
   const [formData, setFormData] = useState({});
   const [openPreview, setOpenPreview] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -357,6 +359,7 @@ const AddInvoice = () => {
 
   const saveInvoice = async () => {
     try {
+      setLoading(true);
       const pdfUrl = await uploadPdf();
       await updateDatabase(formData, pdfUrl);
       navigate("/invoices");
@@ -364,6 +367,7 @@ const AddInvoice = () => {
       setFeedbackMsg("Invoice Created");
       setOpenFeedback(true);
       handlePreviewClose();
+      setLoading(false);
     } catch (e) {
       console.log(e);
     }
@@ -684,6 +688,8 @@ const AddInvoice = () => {
         handlePreviewClose={handlePreviewClose}
         open={openPreview}
         save={saveInvoice}
+        loading={loading}
+        setButtonLoading={setLoading}
       >
         <InvoicePreview formData={formData} />
       </PreviewModal>

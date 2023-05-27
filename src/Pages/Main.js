@@ -21,6 +21,7 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
 import LogoutIcon from "@mui/icons-material/Logout";
 import FeedbackMesssage from "../Components/FeedbackMessage";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 import { getFirstLetter } from "../utils";
 import Home from "./Home";
@@ -30,7 +31,7 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 const drawerWidth = 260;
 
 const navMenu = [
-  ["Home", "", <HomeIcon sx={{ color: "#FFFFFF" }} />],
+  ["Dashboard", "", <DashboardIcon sx={{ color: "#FFFFFF" }} />],
   ["Magazine", "magazine", <MenuBookIcon sx={{ color: "#FFFFFF" }} />],
   ["Companies", "companies", <ApartmentIcon sx={{ color: "#FFFFFF" }} />],
   [

@@ -60,7 +60,7 @@ const Table = () => {
             color = "chipGreen";
           } else {
             output = "Pending";
-            color = "chipOrange";
+            color = "chipRed";
           }
           return <Chip label={output} color={color} size="small"></Chip>;
         },

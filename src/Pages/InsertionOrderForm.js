@@ -47,6 +47,7 @@ const InsertionOrderForm = (props) => {
   const [openPreview, setOpenPreview] = useState(false);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const navigate = useNavigate();
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -314,6 +315,7 @@ const InsertionOrderForm = (props) => {
 
   const saveInsertionOrder = async () => {
     try {
+      setButtonLoading(true);
       const pdfUrl = await uploadPdf();
       await updateDatabase(formData, pdfUrl);
       reset();
@@ -322,6 +324,7 @@ const InsertionOrderForm = (props) => {
       setFeedbackMsg("Insertion Order Created");
       setOpenFeedback(true);
       handlePreviewClose();
+      setButtonLoading(false);
     } catch (e) {
       console.log(e);
     }
@@ -682,6 +685,8 @@ const InsertionOrderForm = (props) => {
         handlePreviewClose={handlePreviewClose}
         open={openPreview}
         save={saveInsertionOrder}
+        loading={buttonLoading}
+        setButtonLoading={setButtonLoading}
       >
         <InsertionOrderPreview formData={formData} userName={userName} />
       </PreviewModal>

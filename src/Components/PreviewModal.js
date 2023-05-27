@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Box, Button } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import "../App.css";
 
 const style = {
@@ -16,12 +17,24 @@ const style = {
   overflowY: "auto",
 };
 
-const PreviewModal = ({ children, open, handlePreviewClose, save }) => {
+const PreviewModal = ({
+  children,
+  open,
+  handlePreviewClose,
+  save,
+  loading,
+  setButtonLoading,
+}) => {
+  const handleClose = () => {
+    handlePreviewClose();
+    setButtonLoading();
+  };
+
   return (
     <>
       <Modal
         open={open}
-        onClose={handlePreviewClose}
+        onClose={handleClose}
         aria-labelledby="insertion-order-preview"
         aria-describedby="insertion-order-preview"
       >
@@ -47,13 +60,14 @@ const PreviewModal = ({ children, open, handlePreviewClose, save }) => {
             </div>
             <div style={{ width: "50%" }}>
               {" "}
-              <Button
+              <LoadingButton
                 onClick={save}
                 variant="contained"
                 style={{ width: "100%" }}
+                loading={loading}
               >
                 Save
-              </Button>
+              </LoadingButton>
             </div>
           </div>
         </Box>
