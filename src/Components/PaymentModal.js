@@ -253,7 +253,7 @@ const PaymentModal = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={4.5}>
+                  <Grid item xs={5.5}>
                     <Controller
                       control={control}
                       name={`paymentItems.${index}.amount`}
@@ -276,7 +276,7 @@ const PaymentModal = ({
                           onChange={onChange}
                           error={error}
                           currency="USD"
-                          width="200px"
+                          width="100%"
                         />
                       )}
                     />

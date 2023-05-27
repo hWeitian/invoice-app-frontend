@@ -38,7 +38,7 @@ const MultipleAutocompleteInput = ({
           {...params}
           variant={variant || "outlined"}
           size="small"
-          placeholder={value.length === 0 && placeholder}
+          placeholder={value.length === 0 ? placeholder : ""}
           error={Boolean(error)}
           helperText={error}
           InputProps={{

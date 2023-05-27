@@ -106,7 +106,7 @@ const InsertionOrders = () => {
           let output = "";
           let color = "";
           if (cellValue) {
-            output = "signed";
+            output = "Signed";
             color = "chipGreen";
           } else {
             output = "Pending";

@@ -141,7 +141,7 @@ const Main = () => {
         <div
           style={{
             width: "100%",
-            padding: "20px 25px",
+            padding: "20px 20px",
           }}
         >
           {currentPath === "/" ? (
