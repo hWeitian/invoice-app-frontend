@@ -150,21 +150,19 @@ const InvoiceTable = () => {
   return (
     <>
       <div style={{ width: "100%" }}>
-        {invoices && (
-          <DataGrid
-            autoHeight
-            rows={rows}
-            columns={columns}
-            pageSizeOptions={[5, 10]}
-            disableColumnFilter
-            disableColumnMenu
-            paginationMode="server"
-            rowCount={totalPages}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            loading={isLoading}
-          />
-        )}
+        <DataGrid
+          autoHeight
+          rows={rows}
+          columns={columns}
+          pageSizeOptions={[5, 10]}
+          disableColumnFilter
+          disableColumnMenu
+          paginationMode="server"
+          rowCount={totalPages}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          loading={isLoading}
+        />
       </div>
     </>
   );

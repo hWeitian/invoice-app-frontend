@@ -7,6 +7,7 @@ import MultipleAutocompleteInput from "../Components/MultipleAutocompleteInput";
 import { getData, calculateOrdersAmount, calculateOutstanding } from "../utils";
 import OverviewCard from "../Components/OverviewCard";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
+import LoadingScreen from "../Components/LoadingScreen";
 
 const Home = () => {
   const getAccessToken = useGetAccessToken();
@@ -29,6 +30,7 @@ const Home = () => {
     },
   ];
   const [selectedRegions, setSelectedRegions] = useState(regions);
+  const [loadingOpen, setLoadingOpen] = useState(true);
   const [orders, setOrders] = useState([]);
   const [magazines, setMagazines] = useState();
   const [selectedMag, setSelectedMag] = useState(null);
@@ -49,6 +51,7 @@ const Home = () => {
     const accessToken = await getAccessToken();
     const currentIssue = await getData(accessToken, "magazines/current-issue");
     setSelectedMag(currentIssue[0]);
+    setLoadingOpen(false);
     const promises = [
       getData(accessToken, `orders/magazine/${currentIssue[0].id}`),
       getData(accessToken, "magazines"),
@@ -137,6 +140,13 @@ const Home = () => {
             </Grid>
           </Grid>
           <Grid container sx={{ mt: 5 }}>
+            <Grid item xs={12}>
+              <Typography
+                sx={{ fontWeight: 600, fontSize: "0.876rem", mb: 0.5 }}
+              >
+                Selected Regions
+              </Typography>
+            </Grid>
             <Grid item>
               <MultipleAutocompleteInput
                 id="regions"
@@ -169,14 +179,18 @@ const Home = () => {
         >
           <Grid item>
             <Typography
-              sx={{ fontWeight: 700, fontSize: "1.5rem" }}
-              color="secondary"
+              sx={{ fontWeight: 700, fontSize: "1.2rem" }}
+              color="primary"
             >
               Please Select an Issue
             </Typography>
           </Grid>
         </Grid>
       )}
+      <LoadingScreen
+        open={loadingOpen}
+        handleClose={() => setLoadingOpen(false)}
+      />
     </>
   );
 };

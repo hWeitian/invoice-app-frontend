@@ -29,9 +29,11 @@ import {
   generatePDF,
 } from "../utils";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import useGetAccessToken from "../Hooks/useGetAccessToken";
 
 const AddInvoice = () => {
-  const { getAccessTokenSilently, user } = useAuth0();
+  const { user } = useAuth0();
+  const getAccessToken = useGetAccessToken();
   const [userId, setUserId] = useState();
   const [invoiceNum, setInvoiceNum] = useState();
   const [companies, setCompanies] = useState([]);
@@ -91,16 +93,6 @@ const AddInvoice = () => {
 
   const handlePreviewOpen = () => setOpenPreview(true);
   const handlePreviewClose = () => setOpenPreview(false);
-
-  const getAccessToken = async () => {
-    const accessToken = await getAccessTokenSilently({
-      authorizationParams: {
-        audience: process.env.REACT_APP_AUDIENCE,
-        scope: "read:current_user",
-      },
-    });
-    return accessToken;
-  };
 
   const getStartingData = async () => {
     try {

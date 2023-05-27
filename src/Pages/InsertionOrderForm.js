@@ -29,9 +29,11 @@ import {
 import LoadingScreen from "../Components/LoadingScreen";
 import PreviewModal from "../Components/PreviewModal";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import useGetAccessToken from "../Hooks/useGetAccessToken";
 
 const InsertionOrderForm = (props) => {
-  const { getAccessTokenSilently, user } = useAuth0();
+  const { user } = useAuth0();
+  const getAccessToken = useGetAccessToken();
   const [userId, setUserId] = useState();
   const [userName, setUserName] = useState();
   const [insertionOrderNum, setInsertionOrderNum] = useState();
@@ -122,16 +124,6 @@ const InsertionOrderForm = (props) => {
 
   const handleLoadingOpen = () => setIsLoading(true);
   const handleLoadingClose = () => setIsLoading(false);
-
-  const getAccessToken = async () => {
-    const accessToken = await getAccessTokenSilently({
-      authorizationParams: {
-        audience: process.env.REACT_APP_AUDIENCE,
-        scope: "read:current_user",
-      },
-    });
-    return accessToken;
-  };
 
   const getInsertionOrderNum = async (adminId) => {
     try {
