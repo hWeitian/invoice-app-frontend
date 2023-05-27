@@ -11,6 +11,8 @@ import axios from "axios";
 import ConfirmationModal from "../Components/ConfirmationModal";
 import AddIcon from "@mui/icons-material/Add";
 import AddContact from "../Components/AddContact";
+import SearchBar from "../Components/SearchBar";
+import AutocompleteInput from "../Components/AutocompleteInput";
 
 const Contacts = () => {
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -22,6 +24,11 @@ const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedSearchOption, setSelectedSearchOption] = useState({
+    name: "Search Company",
+    type: "text",
+    id: 1,
+  });
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -80,6 +87,46 @@ const Contacts = () => {
       console.log(e);
     }
   };
+
+  const searchContacts = async (searchText) => {
+    try {
+      const accessToken = await getAccessToken();
+      if (selectedSearchOption.name === "Search Company") {
+        const data = await getData(
+          accessToken,
+          `contacts/search/company/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+        );
+        setTotalPages(data.count);
+        setContacts(data.rows);
+      } else {
+        const data = await getData(
+          accessToken,
+          `contacts/search/name/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+        );
+        setTotalPages(data.count);
+        setContacts(data.rows);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const clearSearch = () => {
+    getContacts();
+  };
+
+  const searchOptions = [
+    {
+      name: "Search Company",
+      type: "text",
+      id: 1,
+    },
+    {
+      name: "Search Name",
+      type: "text",
+      id: 2,
+    },
+  ];
 
   if (contacts) {
     columns = [
@@ -168,6 +215,38 @@ const Contacts = () => {
             }}
           >
             <PageTitle>Contacts</PageTitle>
+          </Box>
+        </Grid>
+        <Grid container sx={{ mb: 2, width: "100%" }}>
+          <Grid item sx={{ mr: 1 }} xs={3}>
+            <SearchBar
+              search={searchContacts}
+              clearSearch={clearSearch}
+              selectedSearchOption={selectedSearchOption}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <AutocompleteInput
+              id="magazine-input"
+              placeholder="Select an issue"
+              options={searchOptions}
+              columnName="name"
+              hasTwoColumns={false}
+              columnNameTwo=""
+              value={selectedSearchOption}
+              onChange={(e) => setSelectedSearchOption(e)}
+              error={false}
+              disableClear={true}
+              width="260px"
+            />
+          </Grid>
+          <Grid
+            item
+            sx={{
+              textAlign: "right",
+            }}
+            xs={2.9}
+          >
             <Button
               variant="contained"
               color="primary"
@@ -177,11 +256,12 @@ const Contacts = () => {
               <AddIcon sx={{ mr: 1 }} />
               Add Contact
             </Button>
-          </Box>
+          </Grid>
         </Grid>
         <Grid container sx={{ justifyContent: "space-between" }}>
-          <Grid item xs={12} sx={{ mt: 5 }}>
+          <Grid item xs={12} sx={{ mt: 0 }}>
             <DataGrid
+              disableRowSelectionOnClick
               autoHeight
               rows={rows}
               columns={columns}

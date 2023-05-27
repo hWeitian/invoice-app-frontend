@@ -9,7 +9,6 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageTitle from "../Components/PageTitle";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -28,6 +27,7 @@ import {
   calculateNetAmount,
   convertGstToSgd,
   generatePDF,
+  getData,
 } from "../utils";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
@@ -109,14 +109,9 @@ const AddInvoice = () => {
   const getAdminId = async () => {
     try {
       const accessToken = await getAccessToken();
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/contacts/email/${user.email}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      setUserId(response.data.id);
-      return response.data.id;
+      const data = await getData(accessToken, `contacts/email/${user.email}`);
+      setUserId(data.id);
+      return data.id;
     } catch (e) {
       console.log(e);
     }
@@ -125,13 +120,8 @@ const AddInvoice = () => {
   const getCompanies = async () => {
     try {
       const accessToken = await getAccessToken();
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/companies/names`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      return response.data;
+      const data = await getData(accessToken, `companies/names`);
+      return data;
     } catch (e) {
       console.log(e);
     }
@@ -140,13 +130,7 @@ const AddInvoice = () => {
   const getContacts = async (companyId) => {
     try {
       const accessToken = await getAccessToken();
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/contacts/${companyId}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      const data = response.data;
+      const data = await getData(accessToken, `contacts/${companyId}`);
       const newData = [];
       data.forEach((contact) => {
         let name = contact.firstName + " " + contact.lastName;
@@ -197,15 +181,9 @@ const AddInvoice = () => {
   const getInsertionOrders = async () => {
     try {
       const accessToken = await getAccessToken();
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/invoice-data`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      setInsertionOrders(response.data);
-      return response.data;
+      const data = await getData(accessToken, `insertion-orders/invoice-data`);
+      setInsertionOrders(data);
+      return data;
     } catch (e) {
       console.log(e);
     }
@@ -214,13 +192,8 @@ const AddInvoice = () => {
   const getExchangeRate = async () => {
     try {
       const accessToken = await getAccessToken();
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/exchange-rates/latest`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      setExchangeRate(response.data);
+      const data = await getData(accessToken, `exchange-rates/latest`);
+      setExchangeRate(data);
     } catch (e) {
       console.log(e);
     }
@@ -302,7 +275,7 @@ const AddInvoice = () => {
     const storageRef = ref(storage, `invoices/${invoiceNum}.pdf`);
     try {
       // Generate the pdf from this component
-      const pdf = await generatePDF("#invoice", "invoice.pdf");
+      const pdf = await generatePDF("#invoice", `invoice-${invoiceNum}.pdf`);
       // Upload the pdf onto Firebase storage
       const snapshot = await uploadBytes(storageRef, pdf);
       // Get the download url for the uploaded pdf

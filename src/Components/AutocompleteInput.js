@@ -12,11 +12,13 @@ const AutocompleteInput = ({
   onChange,
   width,
   placeholder,
+  disableClear,
 }) => {
   return (
     <Autocomplete
       id={id}
       disablePortal
+      disableClearable={disableClear || false}
       isOptionEqualToValue={(option, value) =>
         hasTwoColumns
           ? `${option[columnName]} - ${option[columnNameTwo]}` ===

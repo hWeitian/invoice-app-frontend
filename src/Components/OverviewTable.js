@@ -139,6 +139,7 @@ const OverviewTable = ({ magazineIssue, selectedRegions }) => {
       <div style={{ height: "100%", width: "100%" }}>
         {orders && (
           <DataGrid
+            disableRowSelectionOnClick
             autoHeight
             rows={rows}
             columns={columns}

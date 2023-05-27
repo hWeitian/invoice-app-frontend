@@ -10,6 +10,8 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import MagazineForm from "../Components/MagazineForm";
 import axios from "axios";
 import ConfirmationModal from "../Components/ConfirmationModal";
+import SearchBar from "../Components/SearchBar";
+import AutocompleteInput from "../Components/AutocompleteInput";
 
 const Magazines = () => {
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -21,6 +23,11 @@ const Magazines = () => {
   const [magazines, setMagazines] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedSearchOption, setSelectedSearchOption] = useState({
+    name: "Search Year",
+    id: 1,
+    type: "number",
+  });
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -79,6 +86,46 @@ const Magazines = () => {
       console.log(e);
     }
   };
+
+  const searchMagazines = async (searchText) => {
+    try {
+      const accessToken = await getAccessToken();
+      if (selectedSearchOption.name === "Search Year") {
+        const data = await getData(
+          accessToken,
+          `magazines/search/year/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+        );
+        setTotalPages(data.count);
+        setMagazines(data.rows);
+      } else {
+        const data = await getData(
+          accessToken,
+          `magazines/search/month/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+        );
+        setTotalPages(data.count);
+        setMagazines(data.rows);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const clearSearch = () => {
+    getMagazines();
+  };
+
+  const searchOptions = [
+    {
+      name: "Search Year",
+      type: "number",
+      id: 1,
+    },
+    {
+      name: "Search Month",
+      type: "text",
+      id: 2,
+    },
+  ];
 
   if (magazines) {
     columns = [
@@ -154,23 +201,57 @@ const Magazines = () => {
             <PageTitle>Magazine Issues</PageTitle>
           </Box>
         </Grid>
-        <Grid container sx={{ justifyContent: "space-between" }}>
-          <Grid item xs={7} sx={{ mt: 5 }}>
-            <DataGrid
-              autoHeight
-              rows={rows}
-              columns={columns}
-              pageSizeOptions={[5, 10]}
-              disableColumnFilter
-              disableColumnMenu
-              paginationMode="server"
-              rowCount={totalPages}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-              loading={isLoading}
-            />
+        <Grid
+          container
+          sx={{ justifyContent: "space-between", minHeight: "583px" }}
+        >
+          <Grid item xs={7} sx={{ mt: 0 }}>
+            <Grid container sx={{ mb: 2, width: "100%" }}>
+              <Grid item sx={{ mr: 1 }} xs={7.4}>
+                <SearchBar
+                  search={searchMagazines}
+                  clearSearch={clearSearch}
+                  selectedSearchOption={selectedSearchOption}
+                />
+              </Grid>
+              <Grid item>
+                <AutocompleteInput
+                  id="magazine-input"
+                  placeholder="Select an issue"
+                  options={searchOptions}
+                  columnName="name"
+                  hasTwoColumns={false}
+                  columnNameTwo=""
+                  value={selectedSearchOption}
+                  onChange={(e) => setSelectedSearchOption(e)}
+                  error={false}
+                  disableClear={true}
+                  width="260px"
+                />
+              </Grid>
+            </Grid>
+            <Grid container>
+              <DataGrid
+                disableRowSelectionOnClick
+                autoHeight
+                rows={rows}
+                columns={columns}
+                pageSizeOptions={[5, 10]}
+                disableColumnFilter
+                disableColumnMenu
+                paginationMode="server"
+                rowCount={totalPages}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                loading={isLoading}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={4.7} sx={{ mt: 5, position: "relative" }}>
+          <Grid
+            item
+            xs={4.7}
+            sx={{ mt: 0, position: "relative", height: "100%" }}
+          >
             <Paper
               sx={{
                 width: "100%",

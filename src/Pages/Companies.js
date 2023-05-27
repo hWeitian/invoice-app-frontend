@@ -10,6 +10,7 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import CompanyForm from "../Components/CompanyForm";
 import axios from "axios";
 import ConfirmationModal from "../Components/ConfirmationModal";
+import SearchBar from "../Components/SearchBar";
 
 const Companies = () => {
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -80,6 +81,25 @@ const Companies = () => {
     }
   };
 
+  const searchCompanies = async (searchText) => {
+    try {
+      const accessToken = await getAccessToken();
+
+      const data = await getData(
+        accessToken,
+        `companies/search/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+      );
+      setTotalPages(data.count);
+      setCompanies(data.rows);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const clearSearch = () => {
+    getCompanies();
+  };
+
   if (companies) {
     columns = [
       { field: "id", headerName: "ID", width: 50 },
@@ -146,23 +166,42 @@ const Companies = () => {
             <PageTitle>Companies</PageTitle>
           </Box>
         </Grid>
-        <Grid container sx={{ justifyContent: "space-between" }}>
-          <Grid item xs={7} sx={{ mt: 5 }}>
-            <DataGrid
-              autoHeight
-              rows={rows}
-              columns={columns}
-              pageSizeOptions={[5, 10]}
-              disableColumnFilter
-              disableColumnMenu
-              paginationMode="server"
-              rowCount={totalPages}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-              loading={isLoading}
-            />
+        <Grid
+          container
+          sx={{ justifyContent: "space-between", minHeight: "683px" }}
+        >
+          <Grid item xs={7} sx={{ mt: 0 }}>
+            <Grid container sx={{ mb: 0, width: "100%" }}>
+              <Grid item sx={{ mb: 2 }} xs={12}>
+                <SearchBar
+                  search={searchCompanies}
+                  clearSearch={clearSearch}
+                  selectedSearchOption={{
+                    name: "company",
+                    type: "text",
+                    id: 1,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <DataGrid
+                  disableRowSelectionOnClick
+                  autoHeight
+                  rows={rows}
+                  columns={columns}
+                  pageSizeOptions={[5, 10]}
+                  disableColumnFilter
+                  disableColumnMenu
+                  paginationMode="server"
+                  rowCount={totalPages}
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                  loading={isLoading}
+                />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={4.7} sx={{ mt: 5, position: "relative" }}>
+          <Grid item xs={4.7} sx={{ mt: 0, position: "relative" }}>
             <Paper
               sx={{
                 width: "100%",
@@ -172,7 +211,7 @@ const Companies = () => {
               }}
             >
               {openForm ? (
-                <div style={{ height: "590px" }}>
+                <div>
                   <CompanyForm
                     setOpenForm={setOpenForm}
                     data={selectedRow}

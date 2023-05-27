@@ -94,26 +94,6 @@ const CompanyForm = ({ setOpenForm, data, setSelectedRow, getCompanies }) => {
     handleFormClose();
   };
 
-  // Month Options
-  const options = [
-    {
-      month: "March",
-      id: 1,
-    },
-    {
-      month: "June",
-      id: 2,
-    },
-    {
-      month: "September",
-      id: 3,
-    },
-    {
-      month: "December",
-      id: 4,
-    },
-  ];
-
   return (
     <>
       <Typography sx={{ fontWeight: 700, fontSize: "1rem", mb: 2 }}>

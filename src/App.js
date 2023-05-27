@@ -1,6 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import Login from "./Pages/Login";
 import Main from "./Pages/Main";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -100,6 +99,19 @@ const theme = createTheme({
         root: {
           "& .MuiTextField-root": {
             width: "300px",
+          },
+        },
+      },
+    },
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#F6F8FF",
+            color: "#000000",
+          },
+          "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
+            outline: "none !important",
           },
         },
       },

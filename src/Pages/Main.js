@@ -10,10 +10,8 @@ import {
   List,
   Avatar,
   IconButton,
-  Collapse,
 } from "@mui/material";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import HomeIcon from "@mui/icons-material/Home";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
