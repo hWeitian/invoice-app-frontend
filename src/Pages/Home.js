@@ -155,6 +155,7 @@ const Home = () => {
                 columnName="name"
                 hasTwoColumns={false}
                 columnNameTwo=""
+                variant="standard"
                 value={selectedRegions}
                 onChange={(e) => setSelectedRegions(e)}
                 width="500px"

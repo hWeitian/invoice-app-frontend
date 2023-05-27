@@ -12,6 +12,7 @@ const MultipleAutocompleteInput = ({
   onChange,
   width,
   placeholder,
+  variant,
 }) => {
   const getOptionDisabled = (option) => {
     if (value) {
@@ -35,12 +36,18 @@ const MultipleAutocompleteInput = ({
       renderInput={(params) => (
         <TextField
           {...params}
-          variant="outlined"
+          variant={variant || "outlined"}
           size="small"
-          placeholder={placeholder}
+          placeholder={value.length === 0 && placeholder}
           error={Boolean(error)}
           helperText={error}
-          InputProps={{ ...params.InputProps, style: { fontSize: "15px" } }}
+          InputProps={{
+            ...params.InputProps,
+            style: {
+              fontSize: "15px",
+              padding: value.length > 0 ? "1.5px" : "6.5px",
+            },
+          }}
         />
       )}
       renderTags={(tagValue, getTagProps) =>

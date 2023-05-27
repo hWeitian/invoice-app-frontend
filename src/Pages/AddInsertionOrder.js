@@ -429,16 +429,16 @@ const AddInsertionOrder = () => {
           </Grid>
           <Divider sx={{ mt: 5, mb: 5 }} />
           <Grid container>
-            <Grid item xs={3}>
+            <Grid item xs={2.3}>
               <label className="form-label">Product Type</label>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={1.3}>
               <label className="form-label">Position</label>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={1.3}>
               <label className="form-label">Colour</label>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={4.6}>
               <label className="form-label">Regions</label>
             </Grid>
             <Grid item xs={2}>
@@ -447,8 +447,8 @@ const AddInsertionOrder = () => {
           </Grid>
 
           {items.map((field, index) => (
-            <Grid container key={field.id} sx={{ mt: 2 }}>
-              <Grid item xs={3}>
+            <Grid container key={field.id} sx={{ mt: index === 0 ? 1 : 2 }}>
+              <Grid item xs={2.3}>
                 <Controller
                   control={control}
                   name={`orderItems.${index}.products`}
@@ -468,12 +468,12 @@ const AddInsertionOrder = () => {
                       value={field.value}
                       onChange={onChange}
                       error={error?.message}
-                      width="250px"
+                      width="96%"
                     />
                   )}
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={1.3}>
                 <Controller
                   control={control}
                   name={`orderItems.${index}.position`}
@@ -491,12 +491,12 @@ const AddInsertionOrder = () => {
                       onChange={onChange}
                       helperText={error?.message}
                       placeholder="Position"
-                      sx={{ width: "150px" }}
+                      sx={{ width: "93%" }}
                     />
                   )}
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={1.3}>
                 <Controller
                   control={control}
                   name={`orderItems.${index}.colour`}
@@ -514,12 +514,12 @@ const AddInsertionOrder = () => {
                       onChange={onChange}
                       helperText={error?.message}
                       placeholder="Colour"
-                      sx={{ width: "150px" }}
+                      sx={{ width: "93%" }}
                     />
                   )}
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={4.6}>
                 <Controller
                   control={control}
                   name={`orderItems.${index}.regions`}
@@ -539,7 +539,7 @@ const AddInsertionOrder = () => {
                       value={field.value}
                       onChange={onChange}
                       error={error?.message}
-                      width="180px"
+                      width="98%"
                     />
                   )}
                 />
@@ -567,13 +567,13 @@ const AddInsertionOrder = () => {
                       onChange={onChange}
                       error={error}
                       currency="USD"
-                      width="180px"
+                      width="95%"
                     />
                   )}
                 />
               </Grid>
               {index > 0 && (
-                <Grid item xs={1}>
+                <Grid item xs={0.5} sx={{ textAlign: "right" }}>
                   <IconButton
                     onClick={() => {
                       remove(index);
