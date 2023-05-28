@@ -13,6 +13,8 @@ import { getData } from "../utils";
 import TableMenu from "../Components/TableMenu";
 
 const Invoices = () => {
+  const defaultPage = 0;
+  const defaultPageSize = 10;
   const navigate = useNavigate();
   const getAccessToken = useGetAccessToken();
   const [invoices, setInvoices] = useState();
@@ -25,14 +27,20 @@ const Invoices = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+    page: defaultPage,
+    pageSize: defaultPageSize,
   });
+  const [searchValue, setSearchValue] = useState("");
+
   let columns = [];
   let rows = [];
 
   useEffect(() => {
-    getInvoices();
+    if (searchValue.length <= 0) {
+      getInvoices();
+    } else {
+      searchInvoicesAfterPageChange();
+    }
   }, [paginationModel]);
 
   const getInvoices = async () => {
@@ -53,22 +61,53 @@ const Invoices = () => {
     }
   };
 
-  const searchInvoices = async (searchText) => {
+  const searchInvoices = async () => {
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
         const data = await getData(
           accessToken,
-          `invoices/search/company/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `invoices/search/company/${searchValue}/${defaultPage}/${defaultPageSize}`
+        );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
+        setTotalPages(data.count);
+        setInvoices(data.rows);
+      } else {
+        const data = await getData(
+          accessToken,
+          `invoices/search/id/${searchValue}/${defaultPage}/${defaultPageSize}`
+        );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
+        setTotalPages(data.count);
+        setInvoices(data.rows);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const searchInvoicesAfterPageChange = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      if (selectedSearchOption.name === "Search Company") {
+        const data = await getData(
+          accessToken,
+          `invoices/search/company/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
         setTotalPages(data.count);
         setInvoices(data.rows);
       } else {
         const data = await getData(
           accessToken,
-          `invoices/search/id/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `invoices/search/id/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        setTotalPages(data.count);
+
         setInvoices(data.rows);
       }
     } catch (e) {
@@ -88,6 +127,10 @@ const Invoices = () => {
   };
 
   const clearSearch = () => {
+    setPaginationModel({
+      page: defaultPage,
+      pageSize: defaultPageSize,
+    });
     getInvoices();
   };
 
@@ -223,6 +266,8 @@ const Invoices = () => {
             <Grid container sx={{ mb: 2, width: "100%" }}>
               <Grid item sx={{ mr: 1 }} xs={3}>
                 <SearchBar
+                  searchValue={searchValue}
+                  setSearchValue={setSearchValue}
                   search={searchInvoices}
                   clearSearch={clearSearch}
                   selectedSearchOption={selectedSearchOption}

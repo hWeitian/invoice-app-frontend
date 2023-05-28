@@ -8,8 +8,10 @@ const SearchBar = ({
   clearSearch,
   selectedSearchOption,
   resetSearch,
+  searchValue,
+  setSearchValue,
 }) => {
-  const [searchValue, setSearchValue] = useState("");
+  // const [searchValue, setSearchValue] = useState("");
   const [error, setError] = useState(false);
   const prevSearchValue = useRef("");
 
@@ -42,7 +44,7 @@ const SearchBar = ({
 
   const handleKeyPressed = (e) => {
     if (e.key === "Enter") {
-      search(searchValue);
+      search();
     }
   };
 
