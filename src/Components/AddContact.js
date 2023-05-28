@@ -81,7 +81,7 @@ const AddContact = ({
   const [selectedId, setSelectedId] = useState();
   const [loading, setLoading] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
+  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity, updateName] =
     useOutletContext();
 
   // console.log(user.email);
@@ -139,6 +139,7 @@ const AddContact = ({
       } else {
         setFeedbackMsg(`Opps..update contact failed`);
       }
+
       setOpenFeedback(true);
       handleClose();
       setLoading(false);
@@ -179,6 +180,7 @@ const AddContact = ({
         setFeedbackSeverity("success");
         setFeedbackMsg(`Contact Added`);
       }
+      updateName(dataToUpdate.firstName);
       getContacts();
       setOpenFeedback(true);
       handleClose();

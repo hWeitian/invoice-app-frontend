@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import {
   Drawer,
@@ -60,9 +60,20 @@ const Main = () => {
   const [feedbackSeverity, setFeedbackSeverity] = useState("success");
   const [openFeedback, setOpenFeedback] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState("");
+  const [userName, setUserName] = useState("");
+  const [avatarName, setAvatarName] = useState("");
 
-  const avatarName = getFirstLetter(user.name);
+  useEffect(() => {
+    setUserName(user.name);
+    setAvatarName(getFirstLetter(user.name));
+  }, [user]);
+
   const currentPath = useLocation().pathname;
+
+  const updateName = (name) => {
+    setUserName(name);
+    setAvatarName(getFirstLetter(name));
+  };
 
   return (
     <>
@@ -126,7 +137,7 @@ const Main = () => {
                 {avatarName}
               </Avatar>
               <ListItemText sx={{ color: "#FFFFFF", pl: 2 }}>
-                {user.name}
+                {userName}
               </ListItemText>
               <IconButton
                 onClick={() =>
@@ -148,7 +159,12 @@ const Main = () => {
             <Home />
           ) : (
             <Outlet
-              context={[setOpenFeedback, setFeedbackMsg, setFeedbackSeverity]}
+              context={[
+                setOpenFeedback,
+                setFeedbackMsg,
+                setFeedbackSeverity,
+                updateName,
+              ]}
             />
           )}
         </div>
