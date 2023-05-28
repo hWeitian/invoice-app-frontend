@@ -3,7 +3,12 @@ import { TextField, InputAdornment, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
-const SearchBar = ({ search, clearSearch, selectedSearchOption }) => {
+const SearchBar = ({
+  search,
+  clearSearch,
+  selectedSearchOption,
+  resetSearch,
+}) => {
   const [searchValue, setSearchValue] = useState("");
   const [error, setError] = useState(false);
   const prevSearchValue = useRef("");
@@ -14,6 +19,10 @@ const SearchBar = ({ search, clearSearch, selectedSearchOption }) => {
     }
     prevSearchValue.current = searchValue;
   }, [searchValue]);
+
+  useEffect(() => {
+    setSearchValue("");
+  }, [resetSearch]);
 
   const isNumbers = (num) => /^[0-9\b]+$/.test(num);
 

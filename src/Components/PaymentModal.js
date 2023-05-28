@@ -44,6 +44,8 @@ const PaymentModal = ({
   setOpenFeedback,
   setFeedbackSeverity,
   getInvoices,
+  resetSearch,
+  setResetSearch,
 }) => {
   const getAccessToken = useGetAccessToken();
   const [invoices, setInvoices] = useState([]);
@@ -120,6 +122,7 @@ const PaymentModal = ({
     await addPaymentToDb(formData);
     reset();
     await getInvoices();
+    setResetSearch(!resetSearch);
     handleModalClose();
     setFeedbackSeverity("success");
     setFeedbackMsg("Payment Added");
@@ -253,7 +256,7 @@ const PaymentModal = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={5.5}>
+                  <Grid item xs={4.5}>
                     <Controller
                       control={control}
                       name={`paymentItems.${index}.amount`}

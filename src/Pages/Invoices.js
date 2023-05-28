@@ -14,10 +14,9 @@ import TableMenu from "../Components/TableMenu";
 
 const Invoices = () => {
   const navigate = useNavigate();
-
   const getAccessToken = useGetAccessToken();
   const [invoices, setInvoices] = useState();
-
+  const [resetSearch, setResetSearch] = useState(false);
   const [selectedSearchOption, setSelectedSearchOption] = useState({
     name: "Search Company",
     type: "text",
@@ -182,7 +181,12 @@ const Invoices = () => {
         sortable: false,
         disableClickEventBubbling: true,
         renderCell: (params) => (
-          <TableMenu rowData={params.row} getInvoices={getInvoices} />
+          <TableMenu
+            rowData={params.row}
+            getInvoices={getInvoices}
+            resetSearch={resetSearch}
+            setResetSearch={setResetSearch}
+          />
         ),
       },
     ];
@@ -222,6 +226,7 @@ const Invoices = () => {
                   search={searchInvoices}
                   clearSearch={clearSearch}
                   selectedSearchOption={selectedSearchOption}
+                  resetSearch={resetSearch}
                 />
               </Grid>
               <Grid item xs={6}>

@@ -5,7 +5,7 @@ import PaymentModal from "./PaymentModal";
 import ViewPaymentModal from "./ViewPaymentModal";
 import { useOutletContext } from "react-router-dom";
 
-const TableMenu = ({ rowData, getInvoices }) => {
+const TableMenu = ({ rowData, getInvoices, resetSearch, setResetSearch }) => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [viewPaymentModalOpen, setViewPaymentModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -51,11 +51,16 @@ const TableMenu = ({ rowData, getInvoices }) => {
         setFeedbackMsg={setFeedbackMsg}
         setFeedbackSeverity={setFeedbackSeverity}
         getInvoices={getInvoices}
+        resetSearch={resetSearch}
+        setResetSearch={setResetSearch}
       />
       <ViewPaymentModal
         setViewPaymentModalOpen={setViewPaymentModalOpen}
         open={viewPaymentModalOpen}
         data={rowData}
+        getInvoices={getInvoices}
+        resetSearch={resetSearch}
+        setResetSearch={setResetSearch}
       />
     </div>
   );
