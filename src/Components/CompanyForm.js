@@ -5,7 +5,14 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 
-const CompanyForm = ({ setOpenForm, data, setSelectedRow, getCompanies }) => {
+const CompanyForm = ({
+  setOpenForm,
+  data,
+  setSelectedRow,
+  getCompanies,
+  resetSearch,
+  setResetSearch,
+}) => {
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
     useOutletContext();
   const [selectedId, setSelectedId] = useState(null);
@@ -83,13 +90,14 @@ const CompanyForm = ({ setOpenForm, data, setSelectedRow, getCompanies }) => {
     if (selectedId) {
       await updateCompany(dataToUpdate);
       setFeedbackSeverity("success");
-      setFeedbackMsg(`${data.name} Updated`);
+      setFeedbackMsg(`${dataToUpdate.name} Updated`);
     } else {
       await addCompany(dataToUpdate);
       setFeedbackSeverity("success");
-      setFeedbackMsg(`New Company Added`);
+      setFeedbackMsg(`${dataToUpdate.name} Added`);
     }
     getCompanies();
+    setResetSearch(!resetSearch);
     setOpenFeedback(true);
     handleFormClose();
   };

@@ -8,7 +8,14 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 
-const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
+const MagazineForm = ({
+  setOpenForm,
+  data,
+  setSelectedRow,
+  getMagazines,
+  resetSearch,
+  setResetSearch,
+}) => {
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
     useOutletContext();
   const [selectedId, setSelectedId] = useState(null);
@@ -98,6 +105,7 @@ const MagazineForm = ({ setOpenForm, data, setSelectedRow, getMagazines }) => {
       setFeedbackMsg(`New Issue Added`);
     }
     getMagazines();
+    setResetSearch(!resetSearch);
     setOpenFeedback(true);
     handleFormClose();
   };

@@ -22,6 +22,7 @@ const Companies = () => {
   const [companies, setCompanies] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [resetSearch, setResetSearch] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -79,6 +80,7 @@ const Companies = () => {
       setOpenFeedback(true);
       console.log(e);
     }
+    setResetSearch(!resetSearch);
   };
 
   const searchCompanies = async (searchText) => {
@@ -176,6 +178,7 @@ const Companies = () => {
                 <SearchBar
                   search={searchCompanies}
                   clearSearch={clearSearch}
+                  resetSearch={resetSearch}
                   selectedSearchOption={{
                     name: "company",
                     type: "text",
@@ -217,6 +220,8 @@ const Companies = () => {
                     data={selectedRow}
                     setSelectedRow={setSelectedRow}
                     getCompanies={getCompanies}
+                    resetSearch={resetSearch}
+                    setResetSearch={setResetSearch}
                   />
                 </div>
               ) : (

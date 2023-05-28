@@ -23,6 +23,7 @@ const Magazines = () => {
   const [magazines, setMagazines] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [resetSearch, setResetSearch] = useState(false);
   const [selectedSearchOption, setSelectedSearchOption] = useState({
     name: "Search Year",
     id: 1,
@@ -85,6 +86,7 @@ const Magazines = () => {
       setOpenFeedback(true);
       console.log(e);
     }
+    setResetSearch(!resetSearch);
   };
 
   const searchMagazines = async (searchText) => {
@@ -211,6 +213,7 @@ const Magazines = () => {
                 <SearchBar
                   search={searchMagazines}
                   clearSearch={clearSearch}
+                  resetSearch={resetSearch}
                   selectedSearchOption={selectedSearchOption}
                 />
               </Grid>
@@ -267,6 +270,8 @@ const Magazines = () => {
                     data={selectedRow}
                     setSelectedRow={setSelectedRow}
                     getMagazines={getMagazines}
+                    resetSearch={resetSearch}
+                    setResetSearch={setResetSearch}
                   />
                 </div>
               ) : (

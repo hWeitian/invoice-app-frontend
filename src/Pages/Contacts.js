@@ -24,6 +24,7 @@ const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [resetSearch, setResetSearch] = useState(false);
   const [selectedSearchOption, setSelectedSearchOption] = useState({
     name: "Search Name",
     type: "text",
@@ -223,6 +224,7 @@ const Contacts = () => {
               search={searchContacts}
               clearSearch={clearSearch}
               selectedSearchOption={selectedSearchOption}
+              resetSearch={resetSearch}
             />
           </Grid>
           <Grid item xs={6}>
@@ -292,6 +294,8 @@ const Contacts = () => {
         data={selectedRow}
         getContacts={getContacts}
         setSelectedRow={setSelectedRow}
+        resetSearch={resetSearch}
+        setResetSearch={setResetSearch}
       />
     </>
   );

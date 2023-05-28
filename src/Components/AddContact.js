@@ -74,6 +74,8 @@ const AddContact = ({
   data,
   getContacts,
   setSelectedRow,
+  resetSearch,
+  setResetSearch,
 }) => {
   const { logout, user } = useAuth0();
   const getAccessToken = useGetAccessToken();
@@ -180,7 +182,13 @@ const AddContact = ({
         setFeedbackSeverity("success");
         setFeedbackMsg(`Contact Added`);
       }
-      updateName(dataToUpdate.firstName);
+
+      // If user is currently logged in, update user's name to reflect on the nav bar
+      if (user.email === dataToUpdate.email) {
+        updateName(dataToUpdate.firstName);
+      }
+
+      setResetSearch(!resetSearch);
       getContacts();
       setOpenFeedback(true);
       handleClose();
