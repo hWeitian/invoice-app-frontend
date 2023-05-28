@@ -25,9 +25,9 @@ const Contacts = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSearchOption, setSelectedSearchOption] = useState({
-    name: "Search Company",
+    name: "Search Name",
     type: "text",
-    id: 1,
+    id: 2,
   });
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
