@@ -61,54 +61,48 @@ const InsertionOrders = () => {
   };
 
   const searchInsertionOrders = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `insertion-orders/search/company/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setInsertionOrders(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `insertion-orders/search/id/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setInsertionOrders(data.rows);
       }
+      setPaginationModel({
+        page: defaultPage,
+        pageSize: defaultPageSize,
+      });
+      setTotalPages(data.count);
+      setInsertionOrders(data.rows);
     } catch (e) {
       console.log(e);
     }
   };
 
   const searchInsertionOrdersAfterPageChange = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `insertion-orders/search/company/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        setTotalPages(data.count);
-        setInsertionOrders(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `insertion-orders/search/id/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        // setTotalPages(data.count);
-        setInsertionOrders(data.rows);
       }
+      setTotalPages(data.count);
+      setInsertionOrders(data.rows);
     } catch (e) {
       console.log(e);
     }

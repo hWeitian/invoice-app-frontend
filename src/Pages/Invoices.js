@@ -62,54 +62,48 @@ const Invoices = () => {
   };
 
   const searchInvoices = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `invoices/search/company/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setInvoices(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `invoices/search/id/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setInvoices(data.rows);
       }
+      setPaginationModel({
+        page: defaultPage,
+        pageSize: defaultPageSize,
+      });
+      setTotalPages(data.count);
+      setInvoices(data.rows);
     } catch (e) {
       console.log(e);
     }
   };
 
   const searchInvoicesAfterPageChange = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `invoices/search/company/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        setTotalPages(data.count);
-        setInvoices(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `invoices/search/id/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-
-        setInvoices(data.rows);
       }
+      setTotalPages(data.count);
+      setInvoices(data.rows);
     } catch (e) {
       console.log(e);
     }

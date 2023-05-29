@@ -97,54 +97,48 @@ const Magazines = () => {
   };
 
   const searchMagazines = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Year") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `magazines/search/year/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setMagazines(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `magazines/search/month/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setMagazines(data.rows);
       }
+      setPaginationModel({
+        page: defaultPage,
+        pageSize: defaultPageSize,
+      });
+      setTotalPages(data.count);
+      setMagazines(data.rows);
     } catch (e) {
       console.log(e);
     }
   };
 
   const searchMagazinesAfterPageChange = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Year") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `magazines/search/year/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        setTotalPages(data.count);
-        setMagazines(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `magazines/search/month/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        setTotalPages(data.count);
-        setMagazines(data.rows);
       }
+      setTotalPages(data.count);
+      setMagazines(data.rows);
     } catch (e) {
       console.log(e);
     }

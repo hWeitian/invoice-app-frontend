@@ -11,7 +11,6 @@ const SearchBar = ({
   searchValue,
   setSearchValue,
 }) => {
-  // const [searchValue, setSearchValue] = useState("");
   const [error, setError] = useState(false);
   const prevSearchValue = useRef("");
 

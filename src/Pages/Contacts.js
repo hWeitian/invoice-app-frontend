@@ -97,54 +97,49 @@ const Contacts = () => {
   };
 
   const searchContacts = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `contacts/search/company/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setContacts(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `contacts/search/name/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
-        setPaginationModel({
-          page: defaultPage,
-          pageSize: defaultPageSize,
-        });
-        setTotalPages(data.count);
-        setContacts(data.rows);
       }
+      setPaginationModel({
+        page: defaultPage,
+        pageSize: defaultPageSize,
+      });
+      setTotalPages(data.count);
+      setContacts(data.rows);
     } catch (e) {
       console.log(e);
     }
   };
 
   const searchContactsAfterPageChange = async () => {
+    let data;
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `contacts/search/company/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        setTotalPages(data.count);
-        setContacts(data.rows);
       } else {
-        const data = await getData(
+        data = await getData(
           accessToken,
           `contacts/search/name/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
-        setTotalPages(data.count);
-        setContacts(data.rows);
       }
+
+      setTotalPages(data.count);
+      setContacts(data.rows);
     } catch (e) {
       console.log(e);
     }
