@@ -13,6 +13,8 @@ import { getData } from "../utils";
 
 const InsertionOrders = () => {
   const navigate = useNavigate();
+  const defaultPage = 0;
+  const defaultPageSize = 10;
 
   const getAccessToken = useGetAccessToken();
   const [openUploadIo, setOpenUploadIo] = useState(false);
@@ -26,15 +28,20 @@ const InsertionOrders = () => {
     id: 1,
   });
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+    page: defaultPage,
+    pageSize: defaultPageSize,
   });
+  const [searchValue, setSearchValue] = useState("");
 
   let columns;
   let rows;
 
   useEffect(() => {
-    getInsertionOrders();
+    if (searchValue.length <= 0) {
+      getInsertionOrders();
+    } else {
+      searchInsertionOrdersAfterPageChange();
+    }
   }, [paginationModel]);
 
   const getInsertionOrders = async () => {
@@ -53,21 +60,29 @@ const InsertionOrders = () => {
     }
   };
 
-  const searchInsertionOrders = async (searchText) => {
+  const searchInsertionOrders = async () => {
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
         const data = await getData(
           accessToken,
-          `insertion-orders/search/company/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `insertion-orders/search/company/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
         setTotalPages(data.count);
         setInsertionOrders(data.rows);
       } else {
         const data = await getData(
           accessToken,
-          `insertion-orders/search/id/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `insertion-orders/search/id/${searchValue}/${defaultPage}/${defaultPageSize}`
         );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
         setTotalPages(data.count);
         setInsertionOrders(data.rows);
       }
@@ -76,7 +91,34 @@ const InsertionOrders = () => {
     }
   };
 
+  const searchInsertionOrdersAfterPageChange = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      if (selectedSearchOption.name === "Search Company") {
+        const data = await getData(
+          accessToken,
+          `insertion-orders/search/company/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
+        );
+        setTotalPages(data.count);
+        setInsertionOrders(data.rows);
+      } else {
+        const data = await getData(
+          accessToken,
+          `insertion-orders/search/id/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
+        );
+        // setTotalPages(data.count);
+        setInsertionOrders(data.rows);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const clearSearch = () => {
+    setPaginationModel({
+      page: defaultPage,
+      pageSize: defaultPageSize,
+    });
     getInsertionOrders();
   };
 
@@ -204,6 +246,8 @@ const InsertionOrders = () => {
           <Grid container sx={{ mb: 2, width: "100%" }}>
             <Grid item sx={{ mr: 1 }} xs={3}>
               <SearchBar
+                searchValue={searchValue}
+                setSearchValue={setSearchValue}
                 search={searchInsertionOrders}
                 clearSearch={clearSearch}
                 selectedSearchOption={selectedSearchOption}

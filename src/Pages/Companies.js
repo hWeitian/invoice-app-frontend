@@ -13,6 +13,8 @@ import ConfirmationModal from "../Components/ConfirmationModal";
 import SearchBar from "../Components/SearchBar";
 
 const Companies = () => {
+  const defaultPage = 0;
+  const defaultPageSize = 10;
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
     useOutletContext();
   const getAccessToken = useGetAccessToken();
@@ -24,15 +26,20 @@ const Companies = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resetSearch, setResetSearch] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+    page: defaultPage,
+    pageSize: defaultPageSize,
   });
+  const [searchValue, setSearchValue] = useState("");
 
   let columns = [];
   let rows = [];
 
   useEffect(() => {
-    getCompanies();
+    if (searchValue.length <= 0) {
+      getCompanies();
+    } else {
+      searchCompaniesAfterPageChange();
+    }
   }, [paginationModel]);
 
   const getCompanies = async () => {
@@ -83,13 +90,32 @@ const Companies = () => {
     setResetSearch(!resetSearch);
   };
 
-  const searchCompanies = async (searchText) => {
+  const searchCompanies = async () => {
     try {
       const accessToken = await getAccessToken();
 
       const data = await getData(
         accessToken,
-        `companies/search/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+        `companies/search/${searchValue}/${defaultPage}/${defaultPageSize}`
+      );
+      setPaginationModel({
+        page: defaultPage,
+        pageSize: defaultPageSize,
+      });
+      setTotalPages(data.count);
+      setCompanies(data.rows);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const searchCompaniesAfterPageChange = async () => {
+    try {
+      const accessToken = await getAccessToken();
+
+      const data = await getData(
+        accessToken,
+        `companies/search/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
       );
       setTotalPages(data.count);
       setCompanies(data.rows);
@@ -99,6 +125,10 @@ const Companies = () => {
   };
 
   const clearSearch = () => {
+    setPaginationModel({
+      page: defaultPage,
+      pageSize: defaultPageSize,
+    });
     getCompanies();
   };
 
@@ -176,6 +206,8 @@ const Companies = () => {
             <Grid container sx={{ mb: 0, width: "100%" }}>
               <Grid item sx={{ mb: 2 }} xs={12}>
                 <SearchBar
+                  searchValue={searchValue}
+                  setSearchValue={setSearchValue}
                   search={searchCompanies}
                   clearSearch={clearSearch}
                   resetSearch={resetSearch}

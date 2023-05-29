@@ -15,6 +15,8 @@ import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
 
 const Contacts = () => {
+  const defaultPage = 0;
+  const defaultPageSize = 10;
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
     useOutletContext();
   const getAccessToken = useGetAccessToken();
@@ -31,15 +33,20 @@ const Contacts = () => {
     id: 2,
   });
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+    page: defaultPage,
+    pageSize: defaultPageSize,
   });
+  const [searchValue, setSearchValue] = useState("");
 
   let columns = [];
   let rows = [];
 
   useEffect(() => {
-    getContacts();
+    if (searchValue.length <= 0) {
+      getContacts();
+    } else {
+      searchContactsAfterPageChange();
+    }
   }, [paginationModel]);
 
   const getContacts = async () => {
@@ -89,20 +96,51 @@ const Contacts = () => {
     }
   };
 
-  const searchContacts = async (searchText) => {
+  const searchContacts = async () => {
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Company") {
         const data = await getData(
           accessToken,
-          `contacts/search/company/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `contacts/search/company/${searchValue}/${defaultPage}/${defaultPageSize}`
+        );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
+        setTotalPages(data.count);
+        setContacts(data.rows);
+      } else {
+        const data = await getData(
+          accessToken,
+          `contacts/search/name/${searchValue}/${defaultPage}/${defaultPageSize}`
+        );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
+        setTotalPages(data.count);
+        setContacts(data.rows);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const searchContactsAfterPageChange = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      if (selectedSearchOption.name === "Search Company") {
+        const data = await getData(
+          accessToken,
+          `contacts/search/company/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
         setTotalPages(data.count);
         setContacts(data.rows);
       } else {
         const data = await getData(
           accessToken,
-          `contacts/search/name/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `contacts/search/name/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
         setTotalPages(data.count);
         setContacts(data.rows);
@@ -113,6 +151,10 @@ const Contacts = () => {
   };
 
   const clearSearch = () => {
+    setPaginationModel({
+      page: defaultPage,
+      pageSize: defaultPageSize,
+    });
     getContacts();
   };
 
@@ -221,6 +263,8 @@ const Contacts = () => {
         <Grid container sx={{ mb: 2, width: "100%" }}>
           <Grid item sx={{ mr: 1 }} xs={3}>
             <SearchBar
+              searchValue={searchValue}
+              setSearchValue={setSearchValue}
               search={searchContacts}
               clearSearch={clearSearch}
               selectedSearchOption={selectedSearchOption}

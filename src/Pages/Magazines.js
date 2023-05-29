@@ -14,6 +14,8 @@ import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
 
 const Magazines = () => {
+  const defaultPage = 0;
+  const defaultPageSize = 10;
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
     useOutletContext();
   const getAccessToken = useGetAccessToken();
@@ -30,15 +32,20 @@ const Magazines = () => {
     type: "number",
   });
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+    page: defaultPage,
+    pageSize: defaultPageSize,
   });
+  const [searchValue, setSearchValue] = useState("");
 
   let columns = [];
   let rows = [];
 
   useEffect(() => {
-    getMagazines();
+    if (searchValue.length <= 0) {
+      getMagazines();
+    } else {
+      searchMagazinesAfterPageChange();
+    }
   }, [paginationModel]);
 
   const getMagazines = async () => {
@@ -89,20 +96,51 @@ const Magazines = () => {
     setResetSearch(!resetSearch);
   };
 
-  const searchMagazines = async (searchText) => {
+  const searchMagazines = async () => {
     try {
       const accessToken = await getAccessToken();
       if (selectedSearchOption.name === "Search Year") {
         const data = await getData(
           accessToken,
-          `magazines/search/year/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `magazines/search/year/${searchValue}/${defaultPage}/${defaultPageSize}`
+        );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
+        setTotalPages(data.count);
+        setMagazines(data.rows);
+      } else {
+        const data = await getData(
+          accessToken,
+          `magazines/search/month/${searchValue}/${defaultPage}/${defaultPageSize}`
+        );
+        setPaginationModel({
+          page: defaultPage,
+          pageSize: defaultPageSize,
+        });
+        setTotalPages(data.count);
+        setMagazines(data.rows);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const searchMagazinesAfterPageChange = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      if (selectedSearchOption.name === "Search Year") {
+        const data = await getData(
+          accessToken,
+          `magazines/search/year/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
         setTotalPages(data.count);
         setMagazines(data.rows);
       } else {
         const data = await getData(
           accessToken,
-          `magazines/search/month/${searchText}/${paginationModel.page}/${paginationModel.pageSize}`
+          `magazines/search/month/${searchValue}/${paginationModel.page}/${paginationModel.pageSize}`
         );
         setTotalPages(data.count);
         setMagazines(data.rows);
@@ -113,6 +151,10 @@ const Magazines = () => {
   };
 
   const clearSearch = () => {
+    setPaginationModel({
+      page: defaultPage,
+      pageSize: defaultPageSize,
+    });
     getMagazines();
   };
 
@@ -211,6 +253,8 @@ const Magazines = () => {
             <Grid container sx={{ mb: 2, width: "100%" }}>
               <Grid item sx={{ mr: 1 }} xs={7.4}>
                 <SearchBar
+                  searchValue={searchValue}
+                  setSearchValue={setSearchValue}
                   search={searchMagazines}
                   clearSearch={clearSearch}
                   resetSearch={resetSearch}
