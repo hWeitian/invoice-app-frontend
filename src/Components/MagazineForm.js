@@ -7,6 +7,14 @@ import dayjs from "dayjs";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
+// import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+dayjs.tz.setDefault("Asia/Singapore");
 
 const MagazineForm = ({
   setOpenForm,
@@ -29,12 +37,16 @@ const MagazineForm = ({
   } = useForm();
 
   const onSubmit = (formData) => {
+    console.log("hello");
     const dataToUpdate = {
       year: formData.year.$y,
       month: formData.month.month,
-      closingDate: formData.closingDate,
-      materialDeadline: formData.materialDeadline,
+      closingDate: dayjs.tz(formData.closingDate),
+      materialDeadline: dayjs.tz(formData.materialDeadline),
+      // closingDate: dayjs.tz(formData.closingDate),
+      // materialDeadline: dayjs.tz(formData.materialDeadline),
     };
+    console.log(dataToUpdate);
     submitData(dataToUpdate);
   };
 
@@ -45,11 +57,13 @@ const MagazineForm = ({
   const prefillData = () => {
     if (data) {
       setSelectedId(data.id);
-      const year = dayjs(new Date(`${data.year}-01-01`));
+      const year = dayjs.tz(new Date(`${data.year}-01-01`));
       setValue("year", year);
       setValue("month", { month: data.month, id: 0 });
-      setValue("closingDate", dayjs(new Date(data.closingDate)));
-      setValue("materialDeadline", dayjs(new Date(data.materialDeadline)));
+      // setValue("closingDate", dayjs(new Date(data.closingDate)));
+      // setValue("materialDeadline", dayjs(new Date(data.materialDeadline)));
+      setValue("closingDate", dayjs.tz(new Date(data.closingDate)));
+      setValue("materialDeadline", dayjs.tz(new Date(data.materialDeadline)));
     } else {
       reset();
     }

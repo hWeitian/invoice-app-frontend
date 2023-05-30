@@ -49,6 +49,7 @@ export const calculateNetAmount = (amount, gst) => {
  * @returns {string} date in string
  */
 export const convertDate = (dateObj) => {
+  console.log(dateObj);
   const month = getMonth(dateObj.$M);
   const newDate = dateObj.$D + " " + month + " " + dateObj.$y;
   return newDate;

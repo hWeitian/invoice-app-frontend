@@ -257,7 +257,7 @@ const AddContact = ({
     <>
       <Modal
         open={open}
-        onClose={() => setOpenForm(false)}
+        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
