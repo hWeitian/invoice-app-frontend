@@ -1,70 +1,62 @@
-# Getting Started with Create React App
+# invoiceGenie
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An application that helps to track advertisements placement for a publication.
 
-## Available Scripts
+## Screenshots
 
-In the project directory, you can run:
+![](src/screenshots/Overview.png)
+![](src/screenshots/Insertion-Orders.png)
+![](src/screenshots/Create-Insertion-Orders.png)
+![](src/screenshots/Overview.png)
 
-### `npm start`
+## Main Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Create insertion orders for sales of advertising space
+- Create invoices based on details in insertion orders
+- Invoices uses daily exchange rate taken from [MAS API](https://www.mas.gov.sg/statistics/exchange-rates)
+- Add payments to invoices
+- Overview of all advertisements space sold for each issue
+- Add administrators to the application with [Auth0](https://auth0.com/) authentication
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Used
 
-### `npm test`
+- Frontend: [React](https://react.dev/)
+- Backend: [Express.js](https://expressjs.com/)
+- Database: [Sequelize (ORM)](https://sequelize.org/), [PostgreSQL](https://www.postgresql.org/)
+- Routing: [React Router](https://reactrouter.com/en/main)
+- UI: [Material-UI](https://mui.com/)
+- Storage: [Firebase](https://firebase.google.com/)
+- Forms: [React Hook Forms](https://react-hook-form.com/)
+- Authentication: [Auth0](https://auth0.com/)
+- Cron Job: [Cron](https://www.npmjs.com/package/cron)
+- PDF Export: [jspdf](https://www.npmjs.com/package/jspdf)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Setup
 
-### `npm run build`
+1. Clone repo to local
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Configure `.env` file, make sure to get your own API keys stated below and insert it into your `.env` file
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   - If unsure where to get API keys, refer to the Tech Used for the documents
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```
+   REACT_APP_DOMAIN= <Auth0 Domain>
+   REACT_APP_CLIENT_ID= <Auth0 client id>
+   REACT_APP_AUDIENCE= <Auth0 app audience>
+   REACT_APP_DB_SERVER= <Backend server URL>
+   REACT_APP_FIREBASE_API= <Firebase API key>
+   ```
 
-### `npm run eject`
+3. `npm i` to install all dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. Clone and setup backend at [invoice-app-backend](https://github.com/hWeitian/invoice-app-backend)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. `npm start` to run the application
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Furture Features
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Create credit notes to offset/cancel invoices
+- Send insertion orders and invoices directly to clients
+- Export all invoices and insertion orders into Excel file
+- Send email reminder to administrator on the outstanding invoices
+- Create annual sales report

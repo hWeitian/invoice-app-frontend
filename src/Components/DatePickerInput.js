@@ -3,8 +3,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
+// import utc from "dayjs/plugin/utc";
+// import timezone from "dayjs/plugin/timezone";
 
 // dayjs.extend(utc);
 // dayjs.extend(timezone);
@@ -13,7 +13,7 @@ import timezone from "dayjs/plugin/timezone";
 // dayjs.tz.setDefault("Asia/Singapore");
 
 const DatePickerInput = (props) => {
-  console.log("DatePicker");
+  // console.log("DatePicker");
   return (
     <LocalizationProvider
       dateAdapter={AdapterDayjs}

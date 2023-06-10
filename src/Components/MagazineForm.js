@@ -8,13 +8,13 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
 // import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
+// import utc from "dayjs/plugin/utc";
+// import timezone from "dayjs/plugin/timezone";
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
+// dayjs.extend(utc);
+// dayjs.extend(timezone);
 
-dayjs.tz.setDefault("Asia/Singapore");
+// dayjs.tz.setDefault("Asia/Singapore");
 
 const MagazineForm = ({
   setOpenForm,
@@ -37,16 +37,16 @@ const MagazineForm = ({
   } = useForm();
 
   const onSubmit = (formData) => {
-    console.log("hello");
     const dataToUpdate = {
       year: formData.year.$y,
       month: formData.month.month,
-      closingDate: dayjs.tz(formData.closingDate),
-      materialDeadline: dayjs.tz(formData.materialDeadline),
+      closingDate: formData.closingDate,
+      materialDeadline: formData.materialDeadline,
       // closingDate: dayjs.tz(formData.closingDate),
       // materialDeadline: dayjs.tz(formData.materialDeadline),
     };
-    console.log(dataToUpdate);
+    // console.log(dataToUpdate);
+    debugger;
     submitData(dataToUpdate);
   };
 
@@ -57,13 +57,14 @@ const MagazineForm = ({
   const prefillData = () => {
     if (data) {
       setSelectedId(data.id);
-      const year = dayjs.tz(new Date(`${data.year}-01-01`));
+      const year = dayjs(new Date(`${data.year}-01-01`));
+      // const year = dayjs.utc(new Date(`${data.year}-01-01`));
       setValue("year", year);
       setValue("month", { month: data.month, id: 0 });
-      // setValue("closingDate", dayjs(new Date(data.closingDate)));
-      // setValue("materialDeadline", dayjs(new Date(data.materialDeadline)));
-      setValue("closingDate", dayjs.tz(new Date(data.closingDate)));
-      setValue("materialDeadline", dayjs.tz(new Date(data.materialDeadline)));
+      setValue("closingDate", dayjs(new Date(data.closingDate)));
+      setValue("materialDeadline", dayjs(new Date(data.materialDeadline)));
+      // setValue("closingDate", dayjs.utc(new Date(data.closingDate)));
+      // setValue("materialDeadline", dayjs.utc(new Date(data.materialDeadline)));
     } else {
       reset();
     }
@@ -77,6 +78,7 @@ const MagazineForm = ({
   };
 
   const updateIssueInDb = async (dataToUpdate) => {
+    debugger;
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
@@ -110,6 +112,7 @@ const MagazineForm = ({
 
   const submitData = async (dataToUpdate) => {
     if (selectedId) {
+      debugger;
       await updateIssueInDb(dataToUpdate);
       setFeedbackSeverity("success");
       setFeedbackMsg(`${data.month} ${data.year} Issue Updated`);
@@ -210,6 +213,11 @@ const MagazineForm = ({
                   error={errors.closingDate?.message}
                   value={field.value}
                   onChange={onChange}
+                  // onChange={(e) => {
+                  //   debugger;
+                  //   // console.log(e);
+                  //   onChange(e);
+                  // }}
                 />
               )}
             />
