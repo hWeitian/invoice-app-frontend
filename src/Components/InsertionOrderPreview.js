@@ -220,7 +220,7 @@ const InsertionOrderPreview = ({ formData, userName }) => {
                       marginTop: "10px",
                     }}
                   >
-                    <p className="io-text">Accpeted By:</p>
+                    <p className="io-text">Accepted By:</p>
                   </div>
                   <div
                     style={{
