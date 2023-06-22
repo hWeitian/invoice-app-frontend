@@ -28,6 +28,7 @@ import {
   convertGstToSgd,
   generatePDF,
   getData,
+  formatDate,
 } from "../utils";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
@@ -206,6 +207,8 @@ const AddInvoice = () => {
     data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
     data.adminId = userId;
     data.sgdGst = convertGstToSgd(data.usdGst, exchangeRate);
+    data.invoiceDate = formatDate(data.invoiceDate);
+    data.dueDate = formatDate(data.dueDate);
     return data;
   };
 

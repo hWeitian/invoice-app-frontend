@@ -27,6 +27,7 @@ import {
   calculateNetAmount,
   generatePDF,
   getData,
+  formatDate,
 } from "../utils";
 import LoadingScreen from "../Components/LoadingScreen";
 import PreviewModal from "../Components/PreviewModal";
@@ -290,6 +291,7 @@ const AddInsertionOrder = () => {
     data.usdGst = calculateGST(data.netAmount);
     data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
     data.adminId = userId;
+    data.ioDate = formatDate(data.ioDate);
     return data;
   };
 

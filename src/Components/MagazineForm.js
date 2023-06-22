@@ -7,15 +7,7 @@ import dayjs from "dayjs";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-import { getDate } from "../utils";
-// import dayjs from "dayjs";
-// import utc from "dayjs/plugin/utc";
-// import timezone from "dayjs/plugin/timezone";
-
-// dayjs.extend(utc);
-// dayjs.extend(timezone);
-
-// dayjs.tz.setDefault("Asia/Singapore");
+import { formatDate } from "../utils";
 
 const MagazineForm = ({
   setOpenForm,
@@ -41,12 +33,9 @@ const MagazineForm = ({
     const dataToUpdate = {
       year: formData.year.$y,
       month: formData.month.month,
-      closingDate: getDate(formData.closingDate),
-      materialDeadline: getDate(formData.materialDeadline),
-      // closingDate: dayjs.tz(formData.closingDate),
-      // materialDeadline: dayjs.tz(formData.materialDeadline),
+      closingDate: formatDate(formData.closingDate),
+      materialDeadline: formatDate(formData.materialDeadline),
     };
-    console.log(dataToUpdate);
     submitData(dataToUpdate);
   };
 
@@ -58,13 +47,10 @@ const MagazineForm = ({
     if (data) {
       setSelectedId(data.id);
       const year = dayjs(new Date(`${data.year}-01-01`));
-      // const year = dayjs.utc(new Date(`${data.year}-01-01`));
       setValue("year", year);
       setValue("month", { month: data.month, id: 0 });
       setValue("closingDate", dayjs(new Date(data.closingDate)));
       setValue("materialDeadline", dayjs(new Date(data.materialDeadline)));
-      // setValue("closingDate", dayjs.utc(new Date(data.closingDate)));
-      // setValue("materialDeadline", dayjs.utc(new Date(data.materialDeadline)));
     } else {
       reset();
     }
@@ -210,13 +196,7 @@ const MagazineForm = ({
                 <DatePickerInput
                   error={errors.closingDate?.message}
                   value={field.value}
-                  // onChange={onChange}
-                  onChange={(e) => {
-                    const date = getDate(e);
-                    console.log(e);
-                    console.log(date);
-                    onChange(e);
-                  }}
+                  onChange={onChange}
                 />
               )}
             />

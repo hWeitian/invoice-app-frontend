@@ -49,8 +49,11 @@ export const calculateNetAmount = (amount, gst) => {
  * @returns {string} date in string
  */
 export const convertDate = (dateObj) => {
-  const month = getMonth(dateObj.$M);
-  const newDate = dateObj.$D + " " + month + " " + dateObj.$y;
+  const dateArr = dateObj.toString().split(" ");
+  const month = getMonthString(dateObj.getMonth());
+  const day = dateArr[2];
+  const year = dateArr[3];
+  const newDate = day + " " + month + " " + year;
   return newDate;
 };
 
@@ -59,7 +62,7 @@ export const convertDate = (dateObj) => {
  * @param {string} stringNum
  * @returns {string}
  */
-const getMonth = (stringNum) => {
+const getMonthString = (stringNum) => {
   const num = Number(stringNum);
   let month;
   switch (num) {
@@ -112,7 +115,7 @@ export const createStringDate = (dateString) => {
   const dateArr = dateTimeArr[0].split("-");
   const year = dateArr[0];
   const month = Number(dateArr[1]) - 1;
-  const fullMonth = getMonth(month);
+  const fullMonth = getMonthString(month);
   const day = Number(dateArr[2]);
   const stringDate = day + "-" + fullMonth + "-" + year;
   return stringDate;
@@ -243,7 +246,7 @@ export const formatToUsdCurrency = (value) => {
   }).format(Number(value));
 };
 
-export const getDate = (dateObj) => {
+export const formatDate = (dateObj) => {
   const day = dateObj["$D"];
   const month = dateObj["$M"] + 1;
   const year = dateObj["$y"];
