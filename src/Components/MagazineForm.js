@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
+import { getDate } from "../utils";
 // import dayjs from "dayjs";
 // import utc from "dayjs/plugin/utc";
 // import timezone from "dayjs/plugin/timezone";
@@ -40,13 +41,12 @@ const MagazineForm = ({
     const dataToUpdate = {
       year: formData.year.$y,
       month: formData.month.month,
-      closingDate: formData.closingDate,
-      materialDeadline: formData.materialDeadline,
+      closingDate: getDate(formData.closingDate),
+      materialDeadline: getDate(formData.materialDeadline),
       // closingDate: dayjs.tz(formData.closingDate),
       // materialDeadline: dayjs.tz(formData.materialDeadline),
     };
-    // console.log(dataToUpdate);
-    debugger;
+    console.log(dataToUpdate);
     submitData(dataToUpdate);
   };
 
@@ -78,7 +78,6 @@ const MagazineForm = ({
   };
 
   const updateIssueInDb = async (dataToUpdate) => {
-    debugger;
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
@@ -112,7 +111,6 @@ const MagazineForm = ({
 
   const submitData = async (dataToUpdate) => {
     if (selectedId) {
-      debugger;
       await updateIssueInDb(dataToUpdate);
       setFeedbackSeverity("success");
       setFeedbackMsg(`${data.month} ${data.year} Issue Updated`);
@@ -212,12 +210,13 @@ const MagazineForm = ({
                 <DatePickerInput
                   error={errors.closingDate?.message}
                   value={field.value}
-                  onChange={onChange}
-                  // onChange={(e) => {
-                  //   debugger;
-                  //   // console.log(e);
-                  //   onChange(e);
-                  // }}
+                  // onChange={onChange}
+                  onChange={(e) => {
+                    const date = getDate(e);
+                    console.log(e);
+                    console.log(date);
+                    onChange(e);
+                  }}
                 />
               )}
             />
