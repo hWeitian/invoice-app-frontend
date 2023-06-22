@@ -251,5 +251,6 @@ export const formatDate = (dateObj) => {
   const month = dateObj["$M"] + 1;
   const year = dateObj["$y"];
   const newDate = new Date(`${year}-${month}-${day}`);
+  // const newDate = `${year} ${month} ${day}`;
   return newDate;
 };

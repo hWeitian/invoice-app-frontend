@@ -87,6 +87,7 @@ const AddInsertionOrder = () => {
   const onSubmit = (data) => {
     data["insertionId"] = insertionOrderNum;
     const newData = calculateData(data);
+    //console.log(newData);
     setFormData(newData);
     handlePreviewOpen();
   };
@@ -243,6 +244,7 @@ const AddInsertionOrder = () => {
 
   const updateDatabase = async (data, pdfUrl) => {
     data.url = pdfUrl;
+    console.log(data);
     try {
       const accessToken = await getAccessToken();
       const promises = [
