@@ -28,6 +28,7 @@ import {
   generatePDF,
   getData,
   formatDate,
+  convertDateForDb,
 } from "../utils";
 import LoadingScreen from "../Components/LoadingScreen";
 import PreviewModal from "../Components/PreviewModal";
@@ -244,7 +245,6 @@ const AddInsertionOrder = () => {
 
   const updateDatabase = async (data, pdfUrl) => {
     data.url = pdfUrl;
-    console.log(data);
     try {
       const accessToken = await getAccessToken();
       const promises = [
@@ -259,6 +259,8 @@ const AddInsertionOrder = () => {
 
   const addInsertionOrdersToDb = async (accessToken, data) => {
     try {
+      data.ioDate = convertDateForDb(data.ioDate);
+      console.log(data);
       const response = await axios.put(
         `${process.env.REACT_APP_DB_SERVER}/insertion-orders/${insertionOrderNum}`,
         data,

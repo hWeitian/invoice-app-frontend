@@ -57,6 +57,28 @@ export const convertDate = (dateObj) => {
   return newDate;
 };
 
+export const convertDateForDb = (dateObj) => {
+  const dateArr = dateObj.toString().split(" ");
+  const months = {
+    Jan: 1,
+    Feb: 2,
+    Mar: 3,
+    Apr: 4,
+    May: 5,
+    Jun: 6,
+    Jul: 7,
+    Aug: 8,
+    Sept: 9,
+    Oct: 10,
+    Nov: 11,
+    Dec: 12,
+  };
+  const day = dateArr[2];
+  const year = dateArr[3];
+  const month = months[dateArr[1]];
+  return `${year}-${month}-${day}`;
+};
+
 /**
  * Helper function to get the month based on the string number
  * @param {string} stringNum
@@ -250,7 +272,10 @@ export const formatDate = (dateObj) => {
   const day = dateObj["$D"];
   const month = dateObj["$M"] + 1;
   const year = dateObj["$y"];
+  // const newDate = new Date(`${year}-${month}-${day}`).toLocaleString("en-US", {
+  //   timeZone: "Asia/Singapore",
+  // });
   const newDate = new Date(`${year}-${month}-${day}`);
-  // const newDate = `${year} ${month} ${day}`;
+  console.log(newDate);
   return newDate;
 };
