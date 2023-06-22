@@ -88,7 +88,6 @@ const AddInsertionOrder = () => {
   const onSubmit = (data) => {
     data["insertionId"] = insertionOrderNum;
     const newData = calculateData(data);
-    //console.log(newData);
     setFormData(newData);
     handlePreviewOpen();
   };
@@ -260,7 +259,6 @@ const AddInsertionOrder = () => {
   const addInsertionOrdersToDb = async (accessToken, data) => {
     try {
       data.ioDate = convertDateForDb(data.ioDate);
-      console.log(data);
       const response = await axios.put(
         `${process.env.REACT_APP_DB_SERVER}/insertion-orders/${insertionOrderNum}`,
         data,

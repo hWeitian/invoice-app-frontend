@@ -57,6 +57,12 @@ export const convertDate = (dateObj) => {
   return newDate;
 };
 
+/**
+ * Function to convert date to string before sending data to database
+ * to prevent change in timezone
+ * @param {object} dateObj
+ * @returns {string} date string
+ */
 export const convertDateForDb = (dateObj) => {
   const dateArr = dateObj.toString().split(" ");
   const months = {
@@ -268,14 +274,15 @@ export const formatToUsdCurrency = (value) => {
   }).format(Number(value));
 };
 
+/**
+ * Function to create date object from MUI datepicker
+ * @param {object} dateObj
+ * @returns {object} date object
+ */
 export const formatDate = (dateObj) => {
   const day = dateObj["$D"];
   const month = dateObj["$M"] + 1;
   const year = dateObj["$y"];
-  // const newDate = new Date(`${year}-${month}-${day}`).toLocaleString("en-US", {
-  //   timeZone: "Asia/Singapore",
-  // });
   const newDate = new Date(`${year}-${month}-${day}`);
-  console.log(newDate);
   return newDate;
 };

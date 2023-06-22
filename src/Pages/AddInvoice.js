@@ -29,6 +29,7 @@ import {
   generatePDF,
   getData,
   formatDate,
+  convertDateForDb,
 } from "../utils";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
@@ -291,6 +292,7 @@ const AddInvoice = () => {
 
   const addInvoiceToDb = async (accessToken, data) => {
     try {
+      data.invoiceDate = convertDateForDb(data.invoiceDate);
       const response = await axios.put(
         `${process.env.REACT_APP_DB_SERVER}/invoices/${invoiceNum}`,
         data,
