@@ -5,8 +5,8 @@ An application that helps to track advertisements placement for a publication.
 ## Live Site
 
 [https://invoice-frontend-wiay.onrender.com](https://invoice-frontend-wiay.onrender.com)
-Login with the following:
-Email: contact.invoicegenie@gmail.com
+Login with the following:  
+Email: contact.invoicegenie@gmail.com  
 PW: geNie@89757
 
 ## Screenshots
