@@ -61,6 +61,10 @@ PW: geNie@89757
 
 5. `npm start` to run the application
 
+## Entity Relationship Diagram (ERD)
+
+![](src/screenshots/erd.png)
+
 ## Furture Features
 
 - Create credit notes to offset/cancel invoices
