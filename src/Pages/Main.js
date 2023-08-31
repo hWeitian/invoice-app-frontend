@@ -20,6 +20,7 @@ import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
 import LogoutIcon from "@mui/icons-material/Logout";
 import FeedbackMesssage from "../Components/FeedbackMessage";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 import { getFirstLetter } from "../utils";
 import Home from "./Home";
@@ -52,6 +53,11 @@ const navMenu = [
       "add-invoice",
       <StickyNote2Icon sx={{ color: "#FFFFFF" }} />,
     ],
+  ],
+  [
+    "Exchange Rates",
+    "exchange-rates",
+    <TrendingUpIcon sx={{ color: "#FFFFFF" }} />,
   ],
 ];
 

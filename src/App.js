@@ -13,6 +13,7 @@ import Contacts from "./Pages/Contacts";
 import AddInsertionOrder from "./Pages/AddInsertionOrder";
 import AddInvoice from "./Pages/AddInvoice";
 import Loading from "./Pages/Loading";
+import ExchangeRates from "./Pages/ExchangeRates";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 
@@ -138,6 +139,7 @@ function App() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="add-io" element={<AddInsertionOrder />} />
             <Route path="add-invoice" element={<AddInvoice />} />
+            <Route path="exchange-rates" element={<ExchangeRates />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
