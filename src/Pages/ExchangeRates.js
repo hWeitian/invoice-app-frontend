@@ -74,7 +74,7 @@ const ExchangeRates = () => {
     try {
       const accessToken = await getAccessToken();
       const response = await axios.delete(
-        `${process.env.REACT_APP_DB_SERVER}/magazines/${selectedRow.id}`,
+        `${process.env.REACT_APP_DB_SERVER}/exchange-rates/${selectedRow.id}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -83,13 +83,13 @@ const ExchangeRates = () => {
       await getExchangeRates();
       setSelectedRow(null);
       setFeedbackSeverity("success");
-      setFeedbackMsg("Issue deleted");
+      setFeedbackMsg("Rate deleted");
       setOpenFeedback(true);
     } catch (e) {
       setSelectedRow(null);
       setFeedbackSeverity("error");
       setFeedbackMsg(
-        "Unable to delete. An invoice or insertion order has been created for this issue."
+        "Unable to delete. An invoice or insertion order has been created for this rate."
       );
       setOpenFeedback(true);
       console.log(e);
@@ -232,7 +232,7 @@ const ExchangeRates = () => {
           sx={{ justifyContent: "space-between", minHeight: "583px" }}
         >
           <Grid item xs={7} sx={{ mt: 0 }}>
-            <Grid container sx={{ mb: 2, width: "100%" }}>
+            {/* <Grid container sx={{ mb: 2, width: "100%" }}>
               <Grid item sx={{ mr: 1 }} xs={7.4}>
                 <SearchBar
                   searchValue={searchValue}
@@ -258,7 +258,7 @@ const ExchangeRates = () => {
                   width="260px"
                 />
               </Grid>
-            </Grid>
+            </Grid> */}
             <Grid container>
               <DataGrid
                 disableRowSelectionOnClick
