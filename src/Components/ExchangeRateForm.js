@@ -59,11 +59,11 @@ const ExchangeRateForm = ({
     setSelectedId(null);
   };
 
-  const updateIssueInDb = async (dataToUpdate) => {
+  const updateRateInDb = async (dataToUpdate) => {
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
-        `${process.env.REACT_APP_DB_SERVER}/magazines/${selectedId}`,
+        `${process.env.REACT_APP_DB_SERVER}/exchange-rates/${selectedId}`,
         dataToUpdate,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -93,9 +93,9 @@ const ExchangeRateForm = ({
 
   const submitData = async (dataToUpdate) => {
     if (selectedId) {
-      await updateIssueInDb(dataToUpdate);
+      await updateRateInDb(dataToUpdate);
       setFeedbackSeverity("success");
-      setFeedbackMsg(`${data.month} ${data.year} Issue Updated`);
+      setFeedbackMsg(`${data.date}'s Rate Updated`);
     } else {
       await addNewRate(dataToUpdate);
       setFeedbackSeverity("success");
