@@ -4,12 +4,12 @@ import PageTitle from "../Components/PageTitle";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
-import { createStringDate } from "../utils";
+import { createStringDate } from "../Utils/utils";
 import axios from "axios";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
-import { getData } from "../utils";
+import { getData } from "../Utils/utils";
 import TableMenu from "../Components/TableMenu";
 
 const Invoices = () => {

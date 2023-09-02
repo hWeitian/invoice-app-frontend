@@ -29,7 +29,7 @@ import {
   getData,
   formatDate,
   convertDateForDb,
-} from "../utils";
+} from "../Utils/utils";
 import LoadingScreen from "../Components/LoadingScreen";
 import PreviewModal from "../Components/PreviewModal";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -88,6 +88,7 @@ const AddInsertionOrder = () => {
   const onSubmit = (data) => {
     data["insertionId"] = insertionOrderNum;
     const newData = calculateData(data);
+    console.log(newData);
     setFormData(newData);
     handlePreviewOpen();
   };
@@ -100,8 +101,8 @@ const AddInsertionOrder = () => {
       getRegions(accessToken),
     ];
     try {
-      const adminId = await getAdminId(accessToken);
-      await getInsertionOrderNum(accessToken, adminId);
+      // const adminId = await getAdminId(accessToken);
+      await getInsertionOrderNum(accessToken);
       await Promise.all(promises);
       const timer = setTimeout(() => {
         handleLoadingClose();
@@ -129,7 +130,34 @@ const AddInsertionOrder = () => {
   const handleLoadingOpen = () => setIsLoading(true);
   const handleLoadingClose = () => setIsLoading(false);
 
-  const getInsertionOrderNum = async (accessToken, adminId) => {
+  const getInsertionOrderNum = async (accessToken) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/latest`,
+        // {
+        //   date: new Date(),
+        //   companyId: null,
+        //   contactId: null,
+        //   adminId: adminId,
+        //   discount: 0,
+        //   usdGst: 0,
+        //   netAmount: 0,
+        //   totalAmount: 0,
+        //   isSigned: false,
+        //   isDraft: true,
+        //   url: null,
+        // },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      setInsertionOrderNum(response.data[0].id);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getFinalInsertionOrderNum = async (accessToken, adminId) => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_DB_SERVER}/insertion-orders`,
@@ -150,7 +178,7 @@ const AddInsertionOrder = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      setInsertionOrderNum(response.data.id);
+      return response.data.id;
     } catch (e) {
       console.log(e);
     }
@@ -242,10 +270,12 @@ const AddInsertionOrder = () => {
     }
   };
 
-  const updateDatabase = async (data, pdfUrl) => {
-    data.url = pdfUrl;
+  const updateDatabase = async (data) => {
+    console.log(data);
     try {
       const accessToken = await getAccessToken();
+      const pdfUrl = await uploadPdf();
+      data.url = pdfUrl;
       const promises = [
         addInsertionOrdersToDb(accessToken, data),
         addOrdersToDb(accessToken, data),
@@ -300,15 +330,28 @@ const AddInsertionOrder = () => {
   const saveInsertionOrder = async () => {
     try {
       setButtonLoading(true);
-      const pdfUrl = await uploadPdf();
-      await updateDatabase(formData, pdfUrl);
-      reset();
-      navigate("/insertion-orders");
-      setFeedbackSeverity("success");
-      setFeedbackMsg("Insertion Order Created");
-      setOpenFeedback(true);
-      handlePreviewClose();
-      setButtonLoading(false);
+      const accessToken = await getAccessToken();
+      const adminId = await getAdminId(accessToken);
+      const finalIoNum = await getFinalInsertionOrderNum(accessToken, adminId);
+      console.log(finalIoNum);
+      setInsertionOrderNum(finalIoNum);
+      setFormData(
+        {
+          ...formData,
+          insertionId: finalIoNum,
+        }
+        // updateDatabase(formData)
+      );
+      // console.log(formData);
+      // const pdfUrl = await uploadPdf();
+      // await updateDatabase(formData, pdfUrl);
+      // reset();
+      // navigate("/insertion-orders");
+      // setFeedbackSeverity("success");
+      // setFeedbackMsg("Insertion Order Created");
+      // setOpenFeedback(true);
+      // handlePreviewClose();
+      // setButtonLoading(false);
     } catch (e) {
       console.log(e);
     }

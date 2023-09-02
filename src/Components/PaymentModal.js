@@ -18,7 +18,7 @@ import axios from "axios";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AutocompleteInput from "./AutocompleteInput";
-import { getData } from "../utils";
+import { getData } from "../Utils/utils";
 import DragDropInput from "./DragDropInput";
 
 const style = {

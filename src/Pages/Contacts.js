@@ -5,7 +5,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid } from "@mui/x-data-grid";
 import { useOutletContext } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
-import { getData } from "../utils";
+import { getData } from "../Utils/utils";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import axios from "axios";
 import ConfirmationModal from "../Components/ConfirmationModal";
