@@ -74,7 +74,7 @@ export const convertDateForDb = (dateObj) => {
     Jun: 6,
     Jul: 7,
     Aug: 8,
-    Sept: 9,
+    Sep: 9,
     Oct: 10,
     Nov: 11,
     Dec: 12,
@@ -204,6 +204,29 @@ export const generatePDF = async (selector, fileName) => {
 
   // Add html content into the pdf instance and download the pdf
   await report.html(document.querySelector(selector), {
+    callback: function (report) {
+      report.save(fileName);
+    },
+  });
+
+  // Convert the pdf into a blob that will be used to upload onto Firebase
+  const fileForStorage = report.output("blob");
+
+  return fileForStorage;
+};
+
+/**
+ * Function to generate PDF from a component
+ * @param {string} selector
+ * @param {string} fileName
+ * @returns {object} a blob file which will be used to uplaod onto Firebase
+ */
+export const generatePdfFromHtml = async (html, fileName) => {
+  // Create a new pdf instance
+  const report = new jsPDF("portrait", "pt", "a4");
+
+  // Add html content into the pdf instance and download the pdf
+  await report.html(html, {
     callback: function (report) {
       report.save(fileName);
     },

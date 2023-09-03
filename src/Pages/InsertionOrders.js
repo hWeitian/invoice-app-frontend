@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
 import AddIcon from "@mui/icons-material/Add";
 import { DataGrid } from "@mui/x-data-grid";
-import { createStringDate, combineProducts } from "../utils";
+import { createStringDate, combineProducts } from "../Utils/utils";
 import SignedIoModal from "../Components/SignedIoModal";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
-import { getData } from "../utils";
+import { getData } from "../Utils/utils";
 
 const InsertionOrders = () => {
   const navigate = useNavigate();

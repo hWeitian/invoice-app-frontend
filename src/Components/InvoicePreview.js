@@ -1,6 +1,6 @@
 import React from "react";
 import "../App.css";
-import { convertDate } from "../utils";
+import { convertDate } from "../Utils/utils";
 
 const InvoicePreview = ({ formData }) => {
   return (

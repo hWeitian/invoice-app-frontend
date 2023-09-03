@@ -22,7 +22,7 @@ import FeedbackMesssage from "../Components/FeedbackMessage";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
-import { getFirstLetter } from "../utils";
+import { getFirstLetter } from "../Utils/utils";
 import Home from "./Home";
 
 import { Outlet, Link, useLocation } from "react-router-dom";

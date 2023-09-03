@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import PageTitle from "./PageTitle";
-import { getData, createStringDate, formatToUsdCurrency } from "../utils";
+import { getData, createStringDate, formatToUsdCurrency } from "../Utils/utils";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import DeleteIcon from "@mui/icons-material/Delete";

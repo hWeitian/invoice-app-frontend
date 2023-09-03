@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-import { formatDate } from "../utils";
+import { formatDate } from "../Utils/utils";
 
 const MagazineForm = ({
   setOpenForm,

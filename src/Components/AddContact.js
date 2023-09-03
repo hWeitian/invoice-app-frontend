@@ -15,7 +15,7 @@ import { useForm, Controller } from "react-hook-form";
 import AutocompleteInput from "./AutocompleteInput";
 import AsyncAutocomplete from "./AsyncAutocomplete";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
-import { getData } from "../utils";
+import { getData } from "../Utils/utils";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";

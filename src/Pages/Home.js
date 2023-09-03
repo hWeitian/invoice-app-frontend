@@ -4,7 +4,11 @@ import { Grid, Typography } from "@mui/material";
 import OverviewTable from "../Components/OverviewTable";
 import AutocompleteInput from "../Components/AutocompleteInput";
 import MultipleAutocompleteInput from "../Components/MultipleAutocompleteInput";
-import { getData, calculateOrdersAmount, calculateOutstanding } from "../utils";
+import {
+  getData,
+  calculateOrdersAmount,
+  calculateOutstanding,
+} from "../Utils/utils";
 import OverviewCard from "../Components/OverviewCard";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import LoadingScreen from "../Components/LoadingScreen";

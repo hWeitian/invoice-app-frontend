@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import PageTitle from "../Components/PageTitle";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import {
@@ -26,10 +27,12 @@ import {
   calculateGST,
   calculateNetAmount,
   generatePDF,
+  generatePdfFromHtml,
   getData,
   formatDate,
   convertDateForDb,
-} from "../utils";
+} from "../Utils/utils";
+import { generateIoHtml } from "../Utils/generateIoHtml";
 import LoadingScreen from "../Components/LoadingScreen";
 import PreviewModal from "../Components/PreviewModal";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -100,8 +103,8 @@ const AddInsertionOrder = () => {
       getRegions(accessToken),
     ];
     try {
-      const adminId = await getAdminId(accessToken);
-      await getInsertionOrderNum(accessToken, adminId);
+      // const adminId = await getAdminId(accessToken);
+      await getInsertionOrderNum(accessToken);
       await Promise.all(promises);
       const timer = setTimeout(() => {
         handleLoadingClose();
@@ -129,7 +132,28 @@ const AddInsertionOrder = () => {
   const handleLoadingOpen = () => setIsLoading(true);
   const handleLoadingClose = () => setIsLoading(false);
 
-  const getInsertionOrderNum = async (accessToken, adminId) => {
+  const getInsertionOrderNum = async (accessToken) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/latest`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      let id;
+      if (response.data.length === 0) {
+        id = 1;
+      } else {
+        id = response.data[0].id;
+        id++;
+      }
+      setInsertionOrderNum(id);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getFinalInsertionOrderNum = async (accessToken, adminId) => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_DB_SERVER}/insertion-orders`,
@@ -150,7 +174,7 @@ const AddInsertionOrder = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      setInsertionOrderNum(response.data.id);
+      return response.data.id;
     } catch (e) {
       console.log(e);
     }
@@ -224,14 +248,16 @@ const AddInsertionOrder = () => {
     }
   };
 
-  const uploadPdf = async () => {
+  const uploadPdf = async (data) => {
     const storageRef = ref(
       storage,
       `insertion-orders/${insertionOrderNum}.pdf`
     );
     try {
-      // Generate the pdf from this component
-      const pdf = await generatePDF("#io", "insertion-order.pdf");
+      // Generate the html for Insertion Order
+      const html = renderToStaticMarkup(generateIoHtml(data));
+      // Generate the pdf from the html
+      const pdf = await generatePdfFromHtml(html, "insertion-order.pdf");
       // Upload the pdf onto Firebase storage
       const snapshot = await uploadBytes(storageRef, pdf);
       // Get the download url for the uploaded pdf
@@ -242,12 +268,13 @@ const AddInsertionOrder = () => {
     }
   };
 
-  const updateDatabase = async (data, pdfUrl) => {
-    data.url = pdfUrl;
+  const updateDatabase = async (data, finalIoNum) => {
     try {
       const accessToken = await getAccessToken();
+      const pdfUrl = await uploadPdf(data);
+      data.url = pdfUrl;
       const promises = [
-        addInsertionOrdersToDb(accessToken, data),
+        addInsertionOrdersToDb(accessToken, data, finalIoNum),
         addOrdersToDb(accessToken, data),
       ];
       await Promise.all(promises);
@@ -256,11 +283,11 @@ const AddInsertionOrder = () => {
     }
   };
 
-  const addInsertionOrdersToDb = async (accessToken, data) => {
+  const addInsertionOrdersToDb = async (accessToken, data, finalIoNum) => {
     try {
       data.ioDate = convertDateForDb(data.ioDate);
       const response = await axios.put(
-        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/${insertionOrderNum}`,
+        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/${finalIoNum}`,
         data,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -300,8 +327,15 @@ const AddInsertionOrder = () => {
   const saveInsertionOrder = async () => {
     try {
       setButtonLoading(true);
-      const pdfUrl = await uploadPdf();
-      await updateDatabase(formData, pdfUrl);
+      const accessToken = await getAccessToken();
+      const adminId = await getAdminId(accessToken);
+      const finalIoNum = await getFinalInsertionOrderNum(accessToken, adminId);
+      const finalData = {
+        ...formData,
+        insertionId: finalIoNum,
+        adminId: adminId,
+      };
+      await updateDatabase(finalData, finalIoNum);
       reset();
       navigate("/insertion-orders");
       setFeedbackSeverity("success");
