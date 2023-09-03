@@ -11,7 +11,7 @@ root.render(
     domain={process.env.REACT_APP_DOMAIN}
     clientId={process.env.REACT_APP_CLIENT_ID}
     authorizationParams={{
-      redirectUri: window.location.origin,
+      redirect_uri: window.location.origin,
       audience: process.env.REACT_APP_AUDIENCE,
       scope:
         "openid profile email read:current_user update:current_user_metadata",

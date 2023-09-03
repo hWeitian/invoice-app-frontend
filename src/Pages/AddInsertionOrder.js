@@ -248,11 +248,8 @@ const AddInsertionOrder = () => {
     }
   };
 
-  const uploadPdf = async (data) => {
-    const storageRef = ref(
-      storage,
-      `insertion-orders/${insertionOrderNum}.pdf`
-    );
+  const uploadPdf = async (data, finalIoNum) => {
+    const storageRef = ref(storage, `insertion-orders/${finalIoNum}.pdf`);
     try {
       // Generate the html for Insertion Order
       const html = renderToStaticMarkup(generateIoHtml(data));
@@ -271,7 +268,7 @@ const AddInsertionOrder = () => {
   const updateDatabase = async (data, finalIoNum) => {
     try {
       const accessToken = await getAccessToken();
-      const pdfUrl = await uploadPdf(data);
+      const pdfUrl = await uploadPdf(data, finalIoNum);
       data.url = pdfUrl;
       const promises = [
         addInsertionOrdersToDb(accessToken, data, finalIoNum),
