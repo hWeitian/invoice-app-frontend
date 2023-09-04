@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import {
   Paper,
@@ -8,8 +9,10 @@ import {
   TextField,
   IconButton,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import InfoIcon from "@mui/icons-material/Info";
 import PageTitle from "../Components/PageTitle";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
@@ -26,11 +29,12 @@ import {
   calculateGST,
   calculateNetAmount,
   convertGstToSgd,
-  generatePDF,
   getData,
   formatDate,
   convertDateForDb,
+  generatePdfFromHtml,
 } from "../Utils/utils";
+import { generateInvHtml } from "../Utils/generateInvToHtml";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 
@@ -100,8 +104,7 @@ const AddInvoice = () => {
 
   const getStartingData = async () => {
     try {
-      const adminId = await getAdminId();
-      await getInvoiceNum(adminId);
+      await getInvoiceNum();
       getExchangeRate();
     } catch (e) {
       console.log(e);
@@ -149,9 +152,30 @@ const AddInvoice = () => {
     }
   };
 
-  const getInvoiceNum = async (adminId) => {
+  const getInvoiceNum = async () => {
     try {
       const accessToken = await getAccessToken();
+      const response = await axios.get(
+        `${process.env.REACT_APP_DB_SERVER}/invoices/latest-number`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      let id;
+      if (response.data.length === 0) {
+        id = 1;
+      } else {
+        id = response.data[0].id;
+        id++;
+      }
+      setInvoiceNum(id);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getFinalInvoiceNum = async (accessToken, adminId) => {
+    try {
       const response = await axios.post(
         `${process.env.REACT_APP_DB_SERVER}/invoices/add-empty`,
         {
@@ -174,7 +198,7 @@ const AddInvoice = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      setInvoiceNum(response.data.id);
+      return response.data.id;
     } catch (e) {
       console.log(e);
     }
@@ -275,11 +299,13 @@ const AddInvoice = () => {
     }
   };
 
-  const uploadPdf = async () => {
-    const storageRef = ref(storage, `invoices/${invoiceNum}.pdf`);
+  const uploadPdf = async (data, finalInvNum) => {
+    const storageRef = ref(storage, `invoices/${finalInvNum}.pdf`);
     try {
-      // Generate the pdf from this component
-      const pdf = await generatePDF("#invoice", `invoice-${invoiceNum}.pdf`);
+      // Generate the html for invoice
+      const html = renderToStaticMarkup(generateInvHtml(data));
+      // Generate the pdf from the html
+      const pdf = await generatePdfFromHtml(html, `invoice-${finalInvNum}.pdf`);
       // Upload the pdf onto Firebase storage
       const snapshot = await uploadBytes(storageRef, pdf);
       // Get the download url for the uploaded pdf
@@ -290,11 +316,11 @@ const AddInvoice = () => {
     }
   };
 
-  const addInvoiceToDb = async (accessToken, data) => {
+  const addInvoiceToDb = async (accessToken, data, finalInvNum) => {
     try {
       data.invoiceDate = convertDateForDb(data.invoiceDate);
       const response = await axios.put(
-        `${process.env.REACT_APP_DB_SERVER}/invoices/${invoiceNum}`,
+        `${process.env.REACT_APP_DB_SERVER}/invoices/${finalInvNum}`,
         data,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -321,12 +347,13 @@ const AddInvoice = () => {
     }
   };
 
-  const updateDatabase = async (data, pdfUrl) => {
-    data.url = pdfUrl;
+  const updateDatabase = async (data, finalInvNum, accessToken) => {
     try {
-      const accessToken = await getAccessToken();
+      // const accessToken = await getAccessToken();
+      const pdfUrl = await uploadPdf(data, finalInvNum);
+      data.url = pdfUrl;
       const promises = [
-        addInvoiceToDb(accessToken, data),
+        addInvoiceToDb(accessToken, data, finalInvNum),
         addOrdersToDb(accessToken, data),
       ];
       await Promise.all(promises);
@@ -338,8 +365,15 @@ const AddInvoice = () => {
   const saveInvoice = async () => {
     try {
       setLoading(true);
-      const pdfUrl = await uploadPdf();
-      await updateDatabase(formData, pdfUrl);
+      const accessToken = await getAccessToken();
+      const adminId = await getAdminId(accessToken);
+      const finalInvNum = await getFinalInvoiceNum(accessToken, adminId);
+      const finalData = {
+        ...formData,
+        invoiceNum: finalInvNum,
+        adminId: adminId,
+      };
+      await updateDatabase(finalData, finalInvNum, accessToken);
       navigate("/invoices");
       setFeedbackSeverity("success");
       setFeedbackMsg("Invoice Created");
@@ -356,12 +390,20 @@ const AddInvoice = () => {
       <PageTitle>Create Invoice</PageTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Paper elevation={0} sx={{ backgroundColor: "#F9FAFB", p: 2 }}>
-          <Typography sx={{ fontWeight: 700, mb: 2 }}>
-            Invoice{" "}
-            <span style={{ color: "#00B5C5", marginLeft: "10px" }}>
-              #{invoiceNum && invoiceNum}
-            </span>
-          </Typography>
+          <Grid container>
+            <Typography sx={{ fontWeight: 700, mb: 2 }}>
+              Invoice{" "}
+              <span style={{ color: "#00B5C5", marginLeft: "10px" }}>
+                #{invoiceNum && invoiceNum}
+              </span>
+            </Typography>
+            <Tooltip
+              title="Temporary invoice number. Actual invoice number will be issued when generating invoice."
+              sx={{ ml: 1, mt: 0.36, color: "#CCCCCC", cursor: "pointer" }}
+            >
+              <InfoIcon style={{ fontSize: "18px" }} />
+            </Tooltip>
+          </Grid>
           <Grid container>
             <Grid item xs={4}>
               <label className="form-label">
