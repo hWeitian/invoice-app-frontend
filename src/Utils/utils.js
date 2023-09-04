@@ -193,31 +193,8 @@ export const convertGstToSgd = (gstAmount, exchangeRate) => {
 };
 
 /**
- * Function to generate PDF from a component
- * @param {string} selector
- * @param {string} fileName
- * @returns {object} a blob file which will be used to uplaod onto Firebase
- */
-export const generatePDF = async (selector, fileName) => {
-  // Create a new pdf instance
-  const report = new jsPDF("portrait", "pt", "a4");
-
-  // Add html content into the pdf instance and download the pdf
-  await report.html(document.querySelector(selector), {
-    callback: function (report) {
-      report.save(fileName);
-    },
-  });
-
-  // Convert the pdf into a blob that will be used to upload onto Firebase
-  const fileForStorage = report.output("blob");
-
-  return fileForStorage;
-};
-
-/**
- * Function to generate PDF from a component
- * @param {string} selector
+ * Function to generate PDF from a html string
+ * @param {string} html
  * @param {string} fileName
  * @returns {object} a blob file which will be used to uplaod onto Firebase
  */

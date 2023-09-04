@@ -28,7 +28,6 @@ import {
   calculateTotalAmount,
   calculateGST,
   calculateNetAmount,
-  generatePDF,
   generatePdfFromHtml,
   getData,
   formatDate,
