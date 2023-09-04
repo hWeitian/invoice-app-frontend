@@ -9,8 +9,10 @@ import {
   TextField,
   IconButton,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import InfoIcon from "@mui/icons-material/Info";
 import PageTitle from "../Components/PageTitle";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
@@ -27,7 +29,6 @@ import {
   calculateGST,
   calculateNetAmount,
   convertGstToSgd,
-  generatePDF,
   getData,
   formatDate,
   convertDateForDb,
@@ -103,7 +104,6 @@ const AddInvoice = () => {
 
   const getStartingData = async () => {
     try {
-      // const adminId = await getAdminId();
       await getInvoiceNum();
       getExchangeRate();
     } catch (e) {
@@ -390,12 +390,20 @@ const AddInvoice = () => {
       <PageTitle>Create Invoice</PageTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Paper elevation={0} sx={{ backgroundColor: "#F9FAFB", p: 2 }}>
-          <Typography sx={{ fontWeight: 700, mb: 2 }}>
-            Invoice{" "}
-            <span style={{ color: "#00B5C5", marginLeft: "10px" }}>
-              #{invoiceNum && invoiceNum}
-            </span>
-          </Typography>
+          <Grid container>
+            <Typography sx={{ fontWeight: 700, mb: 2 }}>
+              Invoice{" "}
+              <span style={{ color: "#00B5C5", marginLeft: "10px" }}>
+                #{invoiceNum && invoiceNum}
+              </span>
+            </Typography>
+            <Tooltip
+              title="Temporary invoice number. Actual invoice number will be issued when generating invoice."
+              sx={{ ml: 1, mt: 0.36, color: "#CCCCCC", cursor: "pointer" }}
+            >
+              <InfoIcon style={{ fontSize: "18px" }} />
+            </Tooltip>
+          </Grid>
           <Grid container>
             <Grid item xs={4}>
               <label className="form-label">

@@ -10,8 +10,10 @@ import {
   TextField,
   IconButton,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import InfoIcon from "@mui/icons-material/Info";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import AsyncAutocomplete from "../Components/AsyncAutocomplete";
@@ -354,12 +356,20 @@ const AddInsertionOrder = () => {
       <PageTitle>Create Insertion Order</PageTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Paper elevation={0} sx={{ backgroundColor: "#F9FAFB", p: 2 }}>
-          <Typography sx={{ fontWeight: 700, mb: 2 }}>
-            Insertion Order{" "}
-            <span style={{ color: "#00B5C5", marginLeft: "10px" }}>
-              #{insertionOrderNum && insertionOrderNum}
-            </span>
-          </Typography>
+          <Grid container>
+            <Typography sx={{ fontWeight: 700, mb: 2 }}>
+              Insertion Order{" "}
+              <span style={{ color: "#00B5C5", marginLeft: "10px" }}>
+                #{insertionOrderNum && insertionOrderNum}
+              </span>
+            </Typography>
+            <Tooltip
+              title="Temporary IO number. Actual IO number will be issued when generating IO."
+              sx={{ ml: 1, mt: 0.36, color: "#CCCCCC", cursor: "pointer" }}
+            >
+              <InfoIcon style={{ fontSize: "18px" }} />
+            </Tooltip>
+          </Grid>
           <Grid container>
             <Grid item xs={6}>
               <label className="form-label">Bill To</label>
