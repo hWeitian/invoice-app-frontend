@@ -65,6 +65,17 @@ const Magazines = () => {
     }
   };
 
+  const getAllMagazines = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await getData(accessToken, `magazines`);
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const handleClick = () => {
     setOpenForm(true);
   };
@@ -153,8 +164,10 @@ const Magazines = () => {
     getMagazines();
   };
 
-  const handleOnExport = () => {
-    exportDataToXlsx(magazines, "sheet1", "Magazines.xlsx");
+  const handleOnExport = async () => {
+    const data = await getAllMagazines();
+    setIsLoading(false);
+    exportDataToXlsx(data, "sheet1", "Magazines.xlsx");
   };
 
   const searchOptions = [
