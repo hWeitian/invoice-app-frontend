@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, Paper, IconButton } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid } from "@mui/x-data-grid";
 import { useOutletContext } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
-import { getData } from "../Utils/utils";
+import { getData, exportDataToXlsx } from "../Utils/utils";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import CompanyForm from "../Components/CompanyForm";
 import axios from "axios";
@@ -53,6 +54,17 @@ const Companies = () => {
       setTotalPages(response.count);
       setCompanies(response.rows);
       setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getAllCompanies = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await getData(accessToken, `companies`);
+      return response;
     } catch (e) {
       console.log(e);
     }
@@ -132,6 +144,12 @@ const Companies = () => {
     getCompanies();
   };
 
+  const handleOnExport = async () => {
+    const data = await getAllCompanies();
+    setIsLoading(false);
+    exportDataToXlsx(data, "sheet1", "Companies.xlsx");
+  };
+
   if (companies) {
     columns = [
       { field: "id", headerName: "ID", width: 50 },
@@ -205,18 +223,27 @@ const Companies = () => {
           <Grid item xs={7} sx={{ mt: 0 }}>
             <Grid container sx={{ mb: 0, width: "100%" }}>
               <Grid item sx={{ mb: 2 }} xs={12}>
-                <SearchBar
-                  searchValue={searchValue}
-                  setSearchValue={setSearchValue}
-                  search={searchCompanies}
-                  clearSearch={clearSearch}
-                  resetSearch={resetSearch}
-                  selectedSearchOption={{
-                    name: "company",
-                    type: "text",
-                    id: 1,
-                  }}
-                />
+                <Grid container>
+                  <Grid item xs={11.3}>
+                    <SearchBar
+                      searchValue={searchValue}
+                      setSearchValue={setSearchValue}
+                      search={searchCompanies}
+                      clearSearch={clearSearch}
+                      resetSearch={resetSearch}
+                      selectedSearchOption={{
+                        name: "company",
+                        type: "text",
+                        id: 1,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={0.7} sx={{ textAlign: "right" }}>
+                    <IconButton onClick={handleOnExport}>
+                      <DownloadIcon />
+                    </IconButton>
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item xs={12}>
                 <DataGrid
