@@ -103,7 +103,6 @@ const AddInsertionOrder = () => {
       getRegions(accessToken),
     ];
     try {
-      // const adminId = await getAdminId(accessToken);
       await getInsertionOrderNum(accessToken);
       await Promise.all(promises);
       const timer = setTimeout(() => {
