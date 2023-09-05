@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import axios from "axios";
+import XLSX from "xlsx";
 
 /**
  * Function to get the first letter of the name in caps
@@ -285,4 +286,20 @@ export const formatDate = (dateObj) => {
   const year = dateObj["$y"];
   const newDate = new Date(`${year}-${month}-${day}`);
   return newDate;
+};
+
+/**
+ * Function to export data into Excel file
+ * @param {object} data json object
+ * @param {string} sheetName
+ * @param {string} fileName
+ * @returns {function: void} a function to download the excel file
+ */
+export const exportDataToXlsx = (data, sheetName, fileName) => {
+  const wb = XLSX.utils.book_new();
+  const sheet = XLSX.utils.json_to_sheet(data);
+
+  XLSX.utils.book_append_sheet(wb, sheet, sheetName);
+
+  return XLSX.writeFile(wb, fileName);
 };

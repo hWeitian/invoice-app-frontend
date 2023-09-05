@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, Paper, IconButton } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid } from "@mui/x-data-grid";
 import { useOutletContext } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
-import { getData, createStringDate } from "../Utils/utils";
+import { getData, createStringDate, exportDataToXlsx } from "../Utils/utils";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import MagazineForm from "../Components/MagazineForm";
 import axios from "axios";
@@ -59,6 +60,17 @@ const Magazines = () => {
       setTotalPages(response.count);
       setMagazines(response.rows);
       setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getAllMagazines = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await getData(accessToken, `magazines`);
+      return response;
     } catch (e) {
       console.log(e);
     }
@@ -150,6 +162,12 @@ const Magazines = () => {
       pageSize: defaultPageSize,
     });
     getMagazines();
+  };
+
+  const handleOnExport = async () => {
+    const data = await getAllMagazines();
+    setIsLoading(false);
+    exportDataToXlsx(data, "sheet1", "Magazines.xlsx");
   };
 
   const searchOptions = [
@@ -245,7 +263,7 @@ const Magazines = () => {
         >
           <Grid item xs={7} sx={{ mt: 0 }}>
             <Grid container sx={{ mb: 2, width: "100%" }}>
-              <Grid item sx={{ mr: 1 }} xs={7.4}>
+              <Grid item sx={{ mr: 1 }} xs={6.6}>
                 <SearchBar
                   searchValue={searchValue}
                   setSearchValue={setSearchValue}
@@ -255,7 +273,7 @@ const Magazines = () => {
                   selectedSearchOption={selectedSearchOption}
                 />
               </Grid>
-              <Grid item>
+              <Grid item xs={4.5}>
                 <AutocompleteInput
                   id="magazine-input"
                   placeholder="Select an issue"
@@ -269,6 +287,11 @@ const Magazines = () => {
                   disableClear={true}
                   width="260px"
                 />
+              </Grid>
+              <Grid item xs={0.7} sx={{ textAlign: "right" }}>
+                <IconButton onClick={handleOnExport}>
+                  <DownloadIcon />
+                </IconButton>
               </Grid>
             </Grid>
             <Grid container>

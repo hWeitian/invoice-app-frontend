@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, IconButton } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid } from "@mui/x-data-grid";
 import { useOutletContext } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
-import { getData } from "../Utils/utils";
+import { getData, exportDataToXlsx } from "../Utils/utils";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import axios from "axios";
 import ConfirmationModal from "../Components/ConfirmationModal";
@@ -60,6 +61,17 @@ const Contacts = () => {
       setTotalPages(response.count);
       setContacts(response.rows);
       setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getAllContacts = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await getData(accessToken, `contacts`);
+      return response;
     } catch (e) {
       console.log(e);
     }
@@ -151,6 +163,12 @@ const Contacts = () => {
       pageSize: defaultPageSize,
     });
     getContacts();
+  };
+
+  const handleOnExport = async () => {
+    const data = await getAllContacts();
+    setIsLoading(false);
+    exportDataToXlsx(data, "sheet1", "Contacts.xlsx");
   };
 
   const searchOptions = [
@@ -266,7 +284,7 @@ const Contacts = () => {
               resetSearch={resetSearch}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={2.6}>
             <AutocompleteInput
               id="magazine-input"
               placeholder="Select an issue"
@@ -280,6 +298,11 @@ const Contacts = () => {
               disableClear={true}
               width="260px"
             />
+          </Grid>
+          <Grid item xs={3.4}>
+            <IconButton onClick={handleOnExport}>
+              <DownloadIcon />
+            </IconButton>
           </Grid>
           <Grid
             item

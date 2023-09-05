@@ -334,6 +334,7 @@ const AddInvoice = () => {
 
   const addOrdersToDb = async (accessToken, data) => {
     try {
+      console.log(data);
       const response = await axios.put(
         `${process.env.REACT_APP_DB_SERVER}/orders`,
         data,

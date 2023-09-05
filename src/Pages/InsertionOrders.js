@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Box, Button, Chip } from "@mui/material";
+import { Grid, Box, Button, Chip, IconButton } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import { useNavigate } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
 import AddIcon from "@mui/icons-material/Add";
@@ -9,7 +10,7 @@ import SignedIoModal from "../Components/SignedIoModal";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
-import { getData } from "../Utils/utils";
+import { getData, exportDataToXlsx } from "../Utils/utils";
 
 const InsertionOrders = () => {
   const navigate = useNavigate();
@@ -55,6 +56,17 @@ const InsertionOrders = () => {
       setTotalPages(data.count);
       setInsertionOrders(data.rows);
       setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getAllInsertionOrders = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await getData(accessToken, `insertion-orders`);
+      return response;
     } catch (e) {
       console.log(e);
     }
@@ -114,6 +126,12 @@ const InsertionOrders = () => {
       pageSize: defaultPageSize,
     });
     getInsertionOrders();
+  };
+
+  const handleOnExport = async () => {
+    const data = await getAllInsertionOrders();
+    setIsLoading(false);
+    exportDataToXlsx(data, "sheet1", "InsertionOrders.xlsx");
   };
 
   const searchOptions = [
@@ -247,7 +265,7 @@ const InsertionOrders = () => {
                 selectedSearchOption={selectedSearchOption}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={2.6}>
               <AutocompleteInput
                 id="magazine-input"
                 placeholder="Select an issue"
@@ -261,6 +279,11 @@ const InsertionOrders = () => {
                 disableClear={true}
                 width="260px"
               />
+            </Grid>
+            <Grid item xs={3.4}>
+              <IconButton onClick={handleOnExport}>
+                <DownloadIcon />
+              </IconButton>
             </Grid>
             <Grid
               item
