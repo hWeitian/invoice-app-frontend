@@ -61,6 +61,17 @@ const InsertionOrders = () => {
     }
   };
 
+  const getAllInsertionOrders = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await getData(accessToken, `insertion-orders`);
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const searchInsertionOrders = async () => {
     let data;
     try {
@@ -117,8 +128,10 @@ const InsertionOrders = () => {
     getInsertionOrders();
   };
 
-  const handleOnExport = () => {
-    exportDataToXlsx(insertionOrders, "sheet1", "InsertionOrders.xlsx");
+  const handleOnExport = async () => {
+    const data = await getAllInsertionOrders();
+    setIsLoading(false);
+    exportDataToXlsx(data, "sheet1", "InsertionOrders.xlsx");
   };
 
   const searchOptions = [

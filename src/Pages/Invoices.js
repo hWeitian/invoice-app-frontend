@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Button, Box, Chip } from "@mui/material";
+import { Grid, Button, Box, Chip, IconButton } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import PageTitle from "../Components/PageTitle";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +10,7 @@ import axios from "axios";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
-import { getData } from "../Utils/utils";
+import { getData, exportDataToXlsx } from "../Utils/utils";
 import TableMenu from "../Components/TableMenu";
 
 const Invoices = () => {
@@ -56,6 +57,17 @@ const Invoices = () => {
       setTotalPages(response.data.count);
       setInvoices(response.data.rows);
       setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getAllInvoices = async () => {
+    try {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const response = await getData(accessToken, `invoices`);
+      return response;
     } catch (e) {
       console.log(e);
     }
@@ -126,6 +138,12 @@ const Invoices = () => {
       pageSize: defaultPageSize,
     });
     getInvoices();
+  };
+
+  const handleOnExport = async () => {
+    const data = await getAllInvoices();
+    setIsLoading(false);
+    exportDataToXlsx(data, "sheet1", "Invoices.xlsx");
   };
 
   const searchOptions = [
@@ -268,7 +286,7 @@ const Invoices = () => {
                   resetSearch={resetSearch}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={2.6}>
                 <AutocompleteInput
                   id="magazine-input"
                   placeholder="Select an issue"
@@ -282,6 +300,11 @@ const Invoices = () => {
                   disableClear={true}
                   width="260px"
                 />
+              </Grid>
+              <Grid item xs={3.4}>
+                <IconButton onClick={handleOnExport}>
+                  <DownloadIcon />
+                </IconButton>
               </Grid>
               <Grid
                 item
