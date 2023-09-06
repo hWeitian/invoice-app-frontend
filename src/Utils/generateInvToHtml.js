@@ -1,26 +1,25 @@
-import { convertDate } from "./utils";
+import { convertDate, numberWithCommas, spellOutAmount } from "./utils";
 
 export const generateInvHtml = (formData) => {
   const html = Object.keys(formData).length > 0 && (
     <>
-      <div id="invoice">
+      <div id="invoice" style={{ fontSize: "12px" }}>
         <div style={{ width: "159mm", padding: "6mm" }}>
           <div style={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
             <div style={{ width: "70%" }}>
-              <h1 style={{ fontSize: "25px" }}>Tax Invoice</h1>
+              <h1 style={{ fontSize: "2em" }}>Tax Invoice</h1>
             </div>
             <div style={{ width: "30%" }}>
-              <p
-                style={{
-                  fontSize: "12px",
-                  fontWeight: 700,
-                }}
-              >
-                InvoiceGenie
-              </p>
-              <p style={{ fontSize: "10px" }}>ABC Street, Singapore 122345</p>
-              <p style={{ fontSize: "10px" }}>UEN: S123423545F</p>
-              <p style={{ fontSize: "10px" }}>GST Reg No: S123423545F</p>
+              <img
+                src={require("../Assets/Logo.png")}
+                alt="logo"
+                width="100%"
+              />
+              <div style={{ fontSize: "0.8em", textAlign: "right" }}>
+                <p>ABC Street, Singapore 122345</p>
+                <p>UEN: S123423545F</p>
+                <p>GST Reg No: S123423545F</p>
+              </div>
             </div>
             <div
               style={{
@@ -114,14 +113,20 @@ export const generateInvHtml = (formData) => {
             </div>
             <table
               style={{
-                fontSize: "12px",
                 width: "100%",
                 border: "solid 1px #000000",
                 borderCollapse: "collapse",
               }}
             >
               <tbody>
-                <tr style={{ backgroundColor: "#012B61", color: "#FFFFFF" }}>
+                <tr
+                  style={{
+                    backgroundColor: "#012B61",
+                    color: "#FFFFFF",
+                    fontSize: "1em",
+                    height: "10px",
+                  }}
+                >
                   <th style={{ width: "5%", textAlign: "center" }}>S/N</th>
                   <th
                     style={{
@@ -160,45 +165,132 @@ export const generateInvHtml = (formData) => {
                         textAlign: "center",
                       }}
                     >
-                      <p className="io-text">{item.amount} USD</p>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <p className="io-text">USD</p>
+                        </div>
+                        <div>
+                          <p className="io-text">
+                            {numberWithCommas(item.amount)}
+                          </p>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <table style={{ width: "100%" }} className="total-table">
+            <table
+              style={{ width: "100%", borderCollapse: "collapse" }}
+              className="total-table"
+            >
               <tbody>
-                <tr>
-                  <td colSpan={2} style={{ textAlign: "right", width: "80%" }}>
-                    <p className="io-text-bold">Discount:</p>
-                  </td>
-                  <td colSpan={2} style={{ textAlign: "center", width: "20%" }}>
-                    <p className="io-text">- {formData.discount} USD</p>
-                  </td>
-                </tr>
-                <tr>
+                {formData.discount > 0 && (
+                  <tr>
+                    <td
+                      colSpan={2}
+                      style={{ textAlign: "right", width: "80%" }}
+                    >
+                      <p className="io-text-bold">Discount:</p>
+                    </td>
+                    <td
+                      colSpan={2}
+                      style={{
+                        textAlign: "center",
+                        width: "20%",
+                        paddingLeft: "5px",
+                        paddingRight: "1px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <p className="io-text">(USD</p>
+                        </div>
+                        <div>
+                          <p className="io-text">
+                            {numberWithCommas(formData.discount)})
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                <tr style={{ height: "25px" }}>
                   <td colSpan={2} style={{ textAlign: "right", width: "80%" }}>
                     <p className="io-text-bold">Sub-Total:</p>
                   </td>
-                  <td colSpan={2} style={{ textAlign: "center", width: "20%" }}>
-                    <p className="io-text">{formData.netAmount} USD</p>
+                  <td
+                    colSpan={2}
+                    style={{
+                      textAlign: "center",
+                      width: "20%",
+                      paddingLeft: "5px",
+                      paddingRight: "1px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <p className="io-text">USD</p>
+                      </div>
+                      <div>
+                        <p className="io-text">
+                          {numberWithCommas(formData.netAmount)}
+                        </p>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 <tr>
                   <td colSpan={2} style={{ textAlign: "right", width: "80%" }}>
                     <p className="io-text-bold">GST @ 8%:</p>
                   </td>
-                  <td colSpan={2} style={{ textAlign: "center", width: "20%" }}>
-                    <p className="io-text">{formData.usdGst} USD</p>
+                  <td
+                    colSpan={2}
+                    style={{
+                      textAlign: "center",
+                      width: "20%",
+                      paddingLeft: "5px",
+                      paddingRight: "1px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <p className="io-text">USD</p>
+                      </div>
+                      <div>
+                        <p className="io-text">
+                          {numberWithCommas(formData.usdGst)}
+                        </p>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 <tr>
                   <td colSpan={3} style={{ textAlign: "right", width: "80%" }}>
-                    <p
-                      className="io-text"
-                      style={{ fontSize: "10px", marginRight: "40px" }}
-                    >
-                      <i>SGD equivalent {formData.sgdGst}</i>
+                    <p className="io-text" style={{ fontSize: "0.8em" }}>
+                      <i>
+                        (SGD equivalent {numberWithCommas(formData.sgdGst)})
+                      </i>
                     </p>
                   </td>
                 </tr>
@@ -218,20 +310,57 @@ export const generateInvHtml = (formData) => {
                     style={{
                       textAlign: "center",
                       width: "20%",
-                      padding: "5px",
+                      paddingLeft: "5px",
+                      paddingRight: "1px",
                     }}
                   >
-                    <p className="io-text-bold">{formData.totalAmount} USD</p>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <p className="io-text-bold">USD</p>
+                      </div>
+                      <div>
+                        <p className="io-text-bold">
+                          {numberWithCommas(formData.totalAmount)}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  style={{
+                    borderBottom: "solid 1px black",
+                    height: "28px",
+                    verticleAlign: "bottom",
+                  }}
+                >
+                  <td colSpan={2}>
+                    <p
+                      className="io-text-bold"
+                      style={{ fontSize: "0.9167em", margin: 0, padding: 0 }}
+                    >
+                      {spellOutAmount(formData.totalAmount)}
+                    </p>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div style={{ width: "100%" }}>
-              <p style={{ fontSize: "10px" }}>
+            <div
+              style={{ width: "100%", marginTop: "10px", fontSize: "0.9167em" }}
+            >
+              <p style={{ marginBottom: "2px" }}>
                 GST: Singapore Goods and Service Tax
               </p>
-              <p style={{ fontSize: "10px" }}>
+              <p style={{ marginBottom: "2px" }}>
                 Exchange rate: 1 USD = {formData.exchangeRate.rate} SGD
+              </p>
+              <p>
+                All rates are inclusive of 8% Singapore Government Goods &
+                Services Tax (GST).
               </p>
             </div>
             <div style={{ width: "100%", marginTop: "10px" }}>

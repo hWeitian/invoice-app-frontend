@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import axios from "axios";
 import XLSX from "xlsx";
+import { ToWords } from "to-words";
 
 /**
  * Function to get the first letter of the name in caps
@@ -230,9 +231,12 @@ export const getData = async (accessToken, endPoint) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
-    return response.data;
-  } catch (e) {
-    console.log(e);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error("Error in get");
+  } catch (error) {
+    throw new Error(error?.response?.data ?? "Error");
   }
 };
 
@@ -302,4 +306,55 @@ export const exportDataToXlsx = (data, sheetName, fileName) => {
   XLSX.utils.book_append_sheet(wb, sheet, sheetName);
 
   return XLSX.writeFile(wb, fileName);
+};
+
+/**
+ * Function to convert numbers to string and add in thousand separator
+ * @param {number} amount
+ * @returns {string}
+ */
+export const numberWithCommas = (amount) => {
+  let finalAmount = amount
+    .toString()
+    .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  if (amount % 1 === 0) {
+    finalAmount += ".00";
+  } else {
+    const centsArray = finalAmount.split(".");
+    if (centsArray[1]?.length === 1) {
+      finalAmount += "0";
+    }
+  }
+  return finalAmount;
+  // return amount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+};
+
+/**
+ * Function to convert amount with currency into words using the to-words package
+ * @param {number} amount
+ * @returns {string}
+ */
+export const spellOutAmount = (amount) => {
+  const toWords = new ToWords({
+    localeCode: "en-US",
+    converterOptions: {
+      currency: true,
+      ignoreDecimal: false,
+      ignoreZeroCurrency: false,
+      doNotAddOnly: false,
+      currencyOptions: {
+        // can be used to override defaults for the selected locale
+        name: "United State Dollar",
+        plural: "United State Dollar",
+        symbol: "$",
+        fractionalUnit: {
+          name: "Cent",
+          plural: "Cents",
+          symbol: "",
+        },
+      },
+    },
+  });
+  const word = toWords.convert(amount);
+  return word;
 };

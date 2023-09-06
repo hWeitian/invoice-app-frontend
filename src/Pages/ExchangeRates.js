@@ -168,8 +168,8 @@ const ExchangeRates = () => {
 
   if (exchangeRates) {
     columns = [
-      { field: "date", headerName: "Date", width: 180 },
-      { field: "rate", headerName: "Rate", width: 400 },
+      { field: "date", headerName: "Date", width: 180, sortable: false },
+      { field: "rate", headerName: "Rate", width: 400, sortable: false },
       {
         field: "delete",
         headerName: "",
