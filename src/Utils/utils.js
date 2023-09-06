@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import axios from "axios";
 import XLSX from "xlsx";
+import { ToWords } from "to-words";
 
 /**
  * Function to get the first letter of the name in caps
@@ -302,4 +303,38 @@ export const exportDataToXlsx = (data, sheetName, fileName) => {
   XLSX.utils.book_append_sheet(wb, sheet, sheetName);
 
   return XLSX.writeFile(wb, fileName);
+};
+
+/**
+ * Function to convert numbers to string and add in thousand separator
+ * @param {number} x
+ * @returns {string}
+ */
+export const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const spellOutAmount = (amount) => {
+  const toWords = new ToWords({
+    localeCode: "en-US",
+    converterOptions: {
+      currency: true,
+      ignoreDecimal: false,
+      ignoreZeroCurrency: false,
+      doNotAddOnly: false,
+      currencyOptions: {
+        // can be used to override defaults for the selected locale
+        name: "United State Dollar",
+        plural: "United State Dollar",
+        symbol: "$",
+        fractionalUnit: {
+          name: "Cent",
+          plural: "Cents",
+          symbol: "",
+        },
+      },
+    },
+  });
+  const word = toWords.convert(amount);
+  return word;
 };

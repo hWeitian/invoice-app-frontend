@@ -1,0 +1,21 @@
+diff --git a/node_modules/to-words/dist/ToWords.js b/node_modules/to-words/dist/ToWords.js
+index 5217fbf..9a0f6e0 100644
+--- a/node_modules/to-words/dist/ToWords.js
++++ b/node_modules/to-words/dist/ToWords.js
+@@ -160,10 +160,15 @@ class ToWords {
+         number = this.toFixed(number);
+         // Extra check for isFloat to overcome 1.999 rounding off to 2
+         const split = number.toString().split('.');
+-        let words = [...this.convertInternal(Number(split[0]))];
++        // let words = [...this.convertInternal(Number(split[0]))];
++        // Change words sequence to shift currency to the front
++        let words = [];
+         if (currencyOptions.plural) {
+             words.push(currencyOptions.plural);
++        } else {
++             words.push(currencyOptions.name);
+         }
++        words = [...words, ...this.convertInternal(Number(split[0]))];
+         const ignoreZero = this.isNumberZero(number) &&
+             (options.ignoreZeroCurrency || (((_b = locale.config) === null || _b === void 0 ? void 0 : _b.ignoreZeroInDecimals) && number !== 0));
+         if (ignoreZero) {
