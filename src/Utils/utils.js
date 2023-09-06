@@ -310,10 +310,27 @@ export const exportDataToXlsx = (data, sheetName, fileName) => {
  * @param {number} x
  * @returns {string}
  */
-export const numberWithCommas = (x) => {
-  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+export const numberWithCommas = (amount) => {
+  let finalAmount = amount
+    .toString()
+    .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  if (amount % 1 === 0) {
+    finalAmount += ".00";
+  } else {
+    const centsArray = finalAmount.split(".");
+    if (centsArray[1]?.length === 1) {
+      finalAmount += "0";
+    }
+  }
+  return finalAmount;
+  // return amount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 };
 
+/**
+ * Function to convert amount with currency into words using the to-words package
+ * @param {number} amount
+ * @returns {string}
+ */
 export const spellOutAmount = (amount) => {
   const toWords = new ToWords({
     localeCode: "en-US",

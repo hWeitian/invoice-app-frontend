@@ -3,24 +3,24 @@ import { convertDate, numberWithCommas, spellOutAmount } from "./utils";
 export const generateInvHtml = (formData) => {
   const html = Object.keys(formData).length > 0 && (
     <>
-      <div id="invoice">
+      <div id="invoice" style={{ fontSize: "12px" }}>
         <div style={{ width: "159mm", padding: "6mm" }}>
           <div style={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
             <div style={{ width: "70%" }}>
-              <h1 style={{ fontSize: "25px" }}>Tax Invoice</h1>
+              <h1 style={{ fontSize: "2em" }}>Tax Invoice</h1>
             </div>
             <div style={{ width: "30%" }}>
               <p
                 style={{
-                  fontSize: "12px",
+                  fontSize: "1em",
                   fontWeight: 700,
                 }}
               >
                 InvoiceGenie
               </p>
-              <p style={{ fontSize: "10px" }}>ABC Street, Singapore 122345</p>
-              <p style={{ fontSize: "10px" }}>UEN: S123423545F</p>
-              <p style={{ fontSize: "10px" }}>GST Reg No: S123423545F</p>
+              <p style={{ fontSize: "0.8em" }}>ABC Street, Singapore 122345</p>
+              <p style={{ fontSize: "0.8em" }}>UEN: S123423545F</p>
+              <p style={{ fontSize: "0.8em" }}>GST Reg No: S123423545F</p>
             </div>
             <div
               style={{
@@ -114,7 +114,6 @@ export const generateInvHtml = (formData) => {
             </div>
             <table
               style={{
-                fontSize: "12px",
                 width: "100%",
                 border: "solid 1px #000000",
                 borderCollapse: "collapse",
@@ -125,7 +124,7 @@ export const generateInvHtml = (formData) => {
                   style={{
                     backgroundColor: "#012B61",
                     color: "#FFFFFF",
-                    fontSize: "10px",
+                    fontSize: "1em",
                     height: "10px",
                   }}
                 >
@@ -270,7 +269,7 @@ export const generateInvHtml = (formData) => {
                 </tr>
                 <tr>
                   <td colSpan={3} style={{ textAlign: "right", width: "80%" }}>
-                    <p className="io-text" style={{ fontSize: "10px" }}>
+                    <p className="io-text" style={{ fontSize: "0.8em" }}>
                       <i>(SGD equivalent {formData.sgdGst})</i>
                     </p>
                   </td>
@@ -312,23 +311,34 @@ export const generateInvHtml = (formData) => {
                     </div>
                   </td>
                 </tr>
-                <tr style={{ borderBottom: "solid 1px black" }}>
+                <tr
+                  style={{
+                    borderBottom: "solid 1px black",
+                    height: "28px",
+                    verticleAlign: "bottom",
+                  }}
+                >
                   <td colSpan={2}>
-                    <p className="io-text-bold">
+                    <p
+                      className="io-text-bold"
+                      style={{ fontSize: "0.9167em", margin: 0, padding: 0 }}
+                    >
                       {spellOutAmount(formData.totalAmount)}
                     </p>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div style={{ width: "100%", marginTop: "10px" }}>
-              <p style={{ fontSize: "10px", marginBottom: "2px" }}>
+            <div
+              style={{ width: "100%", marginTop: "10px", fontSize: "0.9167em" }}
+            >
+              <p style={{ marginBottom: "2px" }}>
                 GST: Singapore Goods and Service Tax
               </p>
-              <p style={{ fontSize: "10px", marginBottom: "2px" }}>
+              <p style={{ marginBottom: "2px" }}>
                 Exchange rate: 1 USD = {formData.exchangeRate.rate} SGD
               </p>
-              <p style={{ fontSize: "10px" }}>
+              <p>
                 All rates are inclusive of 8% Singapore Government Goods &
                 Services Tax (GST).
               </p>

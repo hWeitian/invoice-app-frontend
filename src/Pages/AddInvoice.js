@@ -365,7 +365,7 @@ const AddInvoice = () => {
 
   const saveInvoice = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const accessToken = await getAccessToken();
       const adminId = await getAdminId(accessToken);
       const finalInvNum = await getFinalInvoiceNum(accessToken, adminId);
@@ -375,12 +375,12 @@ const AddInvoice = () => {
         adminId: adminId,
       };
       await updateDatabase(finalData, finalInvNum, accessToken);
-      navigate("/invoices");
-      setFeedbackSeverity("success");
-      setFeedbackMsg("Invoice Created");
-      setOpenFeedback(true);
-      handlePreviewClose();
-      setLoading(false);
+      // navigate("/invoices");
+      // setFeedbackSeverity("success");
+      // setFeedbackMsg("Invoice Created");
+      // setOpenFeedback(true);
+      // handlePreviewClose();
+      // setLoading(false);
     } catch (e) {
       console.log(e);
     }
