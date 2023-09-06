@@ -231,9 +231,12 @@ export const getData = async (accessToken, endPoint) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
-    return response.data;
-  } catch (e) {
-    console.log(e);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error("Error in get");
+  } catch (error) {
+    throw new Error(error?.response?.data ?? "Error");
   }
 };
 
@@ -307,7 +310,7 @@ export const exportDataToXlsx = (data, sheetName, fileName) => {
 
 /**
  * Function to convert numbers to string and add in thousand separator
- * @param {number} x
+ * @param {number} amount
  * @returns {string}
  */
 export const numberWithCommas = (amount) => {

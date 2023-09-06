@@ -53,6 +53,7 @@ const AddInvoice = () => {
   const [formData, setFormData] = useState({});
   const [openPreview, setOpenPreview] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [invoiceDate, setInvoiceDate] = useState(null);
 
   const navigate = useNavigate();
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -90,6 +91,10 @@ const AddInvoice = () => {
       resetField("contacts");
     }
   }, [selectedCompany]);
+
+  useEffect(() => {
+    getExchangeRate();
+  }, [invoiceDate]);
 
   const onSubmit = (data) => {
     data["invoiceNum"] = invoiceNum;
@@ -217,11 +222,26 @@ const AddInvoice = () => {
 
   const getExchangeRate = async () => {
     try {
+      let month;
+      let year;
+      if (invoiceDate) {
+        month = invoiceDate["$M"] + 1;
+        year = invoiceDate["$y"];
+      } else {
+        month = new Date().getMonth() + 1;
+        year = new Date().getFullYear();
+      }
       const accessToken = await getAccessToken();
-      const data = await getData(accessToken, `exchange-rates/latest`);
+      const data = await getData(
+        accessToken,
+        `exchange-rates/latest/${month}/${year}`
+      );
       setExchangeRate(data);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      setFeedbackSeverity("error");
+      setFeedbackMsg("Exchange rate not found for the previous month");
+      setOpenFeedback(true);
     }
   };
 
@@ -350,7 +370,6 @@ const AddInvoice = () => {
 
   const updateDatabase = async (data, finalInvNum, accessToken) => {
     try {
-      // const accessToken = await getAccessToken();
       const pdfUrl = await uploadPdf(data, finalInvNum);
       data.url = pdfUrl;
       const promises = [
@@ -530,7 +549,11 @@ const AddInvoice = () => {
                   <DatePickerInput
                     error={errors.invoiceDate?.message}
                     value={field.value}
-                    onChange={onChange}
+                    onChange={(e) => {
+                      setInvoiceDate(e);
+                      onChange(e);
+                    }}
+                    // onChange={onChange}
                     width="300px"
                   />
                 )}
