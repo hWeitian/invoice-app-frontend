@@ -10,17 +10,16 @@ export const generateInvHtml = (formData) => {
               <h1 style={{ fontSize: "2em" }}>Tax Invoice</h1>
             </div>
             <div style={{ width: "30%" }}>
-              <p
-                style={{
-                  fontSize: "1em",
-                  fontWeight: 700,
-                }}
-              >
-                InvoiceGenie
-              </p>
-              <p style={{ fontSize: "0.8em" }}>ABC Street, Singapore 122345</p>
-              <p style={{ fontSize: "0.8em" }}>UEN: S123423545F</p>
-              <p style={{ fontSize: "0.8em" }}>GST Reg No: S123423545F</p>
+              <img
+                src={require("../Assets/Logo.png")}
+                alt="logo"
+                width="100%"
+              />
+              <div style={{ fontSize: "0.8em", textAlign: "right" }}>
+                <p>ABC Street, Singapore 122345</p>
+                <p>UEN: S123423545F</p>
+                <p>GST Reg No: S123423545F</p>
+              </div>
             </div>
             <div
               style={{
@@ -201,9 +200,28 @@ export const generateInvHtml = (formData) => {
                     </td>
                     <td
                       colSpan={2}
-                      style={{ textAlign: "center", width: "20%" }}
+                      style={{
+                        textAlign: "center",
+                        width: "20%",
+                        paddingLeft: "5px",
+                        paddingRight: "1px",
+                      }}
                     >
-                      <p className="io-text">- {formData.discount} USD</p>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <p className="io-text">(USD</p>
+                        </div>
+                        <div>
+                          <p className="io-text">
+                            {numberWithCommas(formData.discount)})
+                          </p>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -270,7 +288,9 @@ export const generateInvHtml = (formData) => {
                 <tr>
                   <td colSpan={3} style={{ textAlign: "right", width: "80%" }}>
                     <p className="io-text" style={{ fontSize: "0.8em" }}>
-                      <i>(SGD equivalent {formData.sgdGst})</i>
+                      <i>
+                        (SGD equivalent {numberWithCommas(formData.sgdGst)})
+                      </i>
                     </p>
                   </td>
                 </tr>
