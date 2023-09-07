@@ -628,7 +628,8 @@ const AddInsertionOrder = () => {
               )}
             </Grid>
           ))}
-          <Button
+          {/* Disabled button as the current format of insertion order can only add a product type */}
+          {/* <Button
             type="button"
             color="secondary"
             onClick={() => {
@@ -642,7 +643,7 @@ const AddInsertionOrder = () => {
             }}
           >
             Add Item
-          </Button>
+          </Button> */}
           <Grid container sx={{ mt: 2 }}>
             <Grid item xs={12}>
               <label className="form-label">Discount</label>
