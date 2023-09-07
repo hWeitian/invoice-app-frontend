@@ -1,37 +1,49 @@
-import { convertDate, createStringDate } from "./utils";
+import { convertDate, createStringDate, numberWithCommas } from "./utils";
 
 export const generateIoHtml = (formData) => {
+  console.log(formData);
   const html = Object.keys(formData).length > 0 && (
     <>
-      <div id="io">
-        <div style={{ width: "159mm", padding: "6mm" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
+      <div id="io" style={{ fontSize: "12px", boxSizing: "border-box" }}>
+        <div style={{ width: "155mm", padding: "6mm" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              width: "100%",
+              justifyContent: "space-between",
+            }}
+          >
             <div style={{ width: "65%" }}>
               <h1 style={{ fontSize: "20px" }}>Insertion Order</h1>
             </div>
             <div style={{ width: "35%" }}>
-              <p
-                style={{
-                  fontSize: "12px",
-                  fontWeight: 700,
-                }}
-              >
-                InvoiceGenie
-              </p>
-              <p style={{ fontSize: "10px" }}>ABC Street, Singapore 122345</p>
-              <p style={{ fontSize: "10px" }}>UEN: S123423545F</p>
-              <p style={{ fontSize: "10px" }}>GST Reg No: S123423545F</p>
+              <img
+                src={require("../Assets/Logo.png")}
+                alt="logo"
+                width="100%"
+              />
+              <div style={{ fontSize: "0.8em", textAlign: "right" }}>
+                <p>ABC Street, Singapore 122345</p>
+                <p>UEN: S123423545F</p>
+                <p>GST Reg No: S123423545F</p>
+              </div>
             </div>
             <div style={{ width: "100%" }}>
               <hr />
             </div>
-            <div style={{ width: "60%" }}>
+            <div style={{ width: "50%" }}>
               <p className="io-title">Bill to:</p>
               <p className="io-text">{formData.companies.label}</p>
               <p className="io-text">Attn: {formData.contacts.name}</p>
-              <p className="io-text">{formData.contacts.designation}</p>{" "}
+              <p className="io-text">{formData.contacts.designation}</p>
+              <p className="io-text" style={{ marginTop: "10px" }}>
+                {formData.companies.label}
+              </p>
               <p className="io-text">{formData.companies.billingAddress}</p>
-              <p className="io-text">{formData.contacts.email}</p>
+              <p className="io-text" style={{ marginTop: "10px" }}>
+                {formData.contacts.email}
+              </p>
             </div>
             <div style={{ width: "40%", marginTop: "10px" }}>
               <p className="io-text-bold">
@@ -48,94 +60,239 @@ export const generateIoHtml = (formData) => {
               <p className="io-text-bold" style={{ marginTop: "10px" }}>
                 Questions about your order: <br />
                 <span className="io-text">
-                  {" "}
                   <a href="mailto:questions@invoicegenie.com">
                     questions@invoicegenie.com
                   </a>
                 </span>
               </p>
-            </div>
-            <div style={{ width: "60%", marginTop: "10px" }}>
-              <p className="io-text-bold">
-                Closing Date:{" "}
-                <span className="io-text">
-                  {createStringDate(formData.magazine.closingDate)}
-                </span>
-              </p>
-              <p className="io-text-bold">
-                Material Deadline:{" "}
-                <span className="io-text">
-                  {createStringDate(formData.magazine.materialDeadline)}
-                </span>
-              </p>
-            </div>
-            <div style={{ width: "40%", marginTop: "10px" }}>
-              <p className="io-text-bold">
-                Publication Date:{" "}
-                <span className="io-text">
-                  {formData.magazine.month} {formData.magazine.year} Issue
-                </span>
+              <p className="io-text-bold" style={{ marginTop: "15px" }}>
+                We, the advertiser, agree to purchase the following advertiser
+                space according to this contract and subject to terms specified.
               </p>
             </div>
             <div style={{ width: "100%", marginTop: "10px" }}>
               <hr />
             </div>
-            <table style={{ fontSize: "12px", width: "100%" }}>
-              <tbody>
-                <tr>
-                  <th style={{ width: "30%", textAlign: "left" }}>Ad Size</th>
-                  <th style={{ width: "10%", textAlign: "left" }}>Position</th>
-                  <th style={{ width: "10%", textAlign: "left" }}>Colour</th>
-                  <th style={{ width: "35%", textAlign: "left" }}>Regions</th>
-                  <th style={{ width: "15%", textAlign: "left" }}>Amount</th>
-                </tr>
-                {formData.orderItems.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.products.name}</td>
-                    <td>{item.position}</td>
-                    <td>{item.colour}</td>
-                    <td>
-                      {item.regions.map((region, index) => (
-                        <p key={index}>{region.name} </p>
-                      ))}
-                    </td>
-                    <td>$ {item.amount}</td>
-                  </tr>
-                ))}
-                <tr>
-                  <td colSpan="4" style={{ textAlign: "right" }}>
-                    <p className="io-text-bold" style={{ marginRight: "5px" }}>
-                      Discount:
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <div
+                style={{
+                  width: "50%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">Ad Description:</p>
+                </div>
+                <div style={{ width: "57%" }}>
+                  <p className="io-text">EWAP</p>
+                </div>
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">Publication Date:</p>
+                </div>
+                <div style={{ width: "57%" }}>
+                  <p className="io-text">
+                    {formData.magazine.month} {formData.magazine.year} Issue
+                  </p>
+                </div>
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">Closing Date:</p>
+                </div>
+                <div style={{ width: "57%" }}>
+                  <p className="io-text">
+                    {createStringDate(formData.magazine.closingDate)}
+                  </p>
+                </div>
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">Material Deadline:</p>
+                </div>
+                <div style={{ width: "57%" }}>
+                  <p className="io-text">
+                    {createStringDate(formData.magazine.materialDeadline)}
+                  </p>
+                </div>
+              </div>
+              <div
+                style={{
+                  width: "50%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">Gross:</p>
+                </div>
+                <div
+                  style={{
+                    width: "57%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ width: "30%" }}>
+                    <p className="io-text">USD</p>
+                  </div>
+                  <div style={{ width: "70%" }}>
+                    <p className="io-text">
+                      {numberWithCommas(formData.discount + formData.netAmount)}
                     </p>
-                  </td>
-                  <td>- $ {formData.discount}</td>
-                </tr>
-                <tr>
-                  <td colSpan="4" style={{ textAlign: "right" }}>
-                    <p className="io-text-bold" style={{ marginRight: "5px" }}>
-                      Net Amount:
+                  </div>
+                </div>
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">Discount:</p>
+                </div>
+                <div
+                  style={{
+                    width: "57%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ width: "30%" }}>
+                    <p className="io-text">USD</p>
+                  </div>
+                  <div style={{ width: "70%" }}>
+                    <p className="io-text">
+                      {numberWithCommas(formData.discount)}
                     </p>
-                  </td>
-                  <td>$ {formData.netAmount}</td>
-                </tr>
-                <tr>
-                  <td colSpan="4" style={{ textAlign: "right" }}>
-                    <p className="io-text-bold" style={{ marginRight: "5px" }}>
-                      GST @ 8%:
+                  </div>
+                </div>
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">Net Rate:</p>
+                </div>
+                <div
+                  style={{
+                    width: "57%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ width: "30%" }}>
+                    <p className="io-text">USD</p>
+                  </div>
+                  <div style={{ width: "70%" }}>
+                    <p className="io-text">
+                      {numberWithCommas(formData.netAmount)}
                     </p>
-                  </td>
-                  <td>$ {formData.usdGst}</td>
-                </tr>
-                <tr>
-                  <td colSpan="4" style={{ textAlign: "right" }}>
-                    <p className="io-text-bold" style={{ marginRight: "5px" }}>
-                      Total Amount:
+                  </div>
+                </div>
+                <div style={{ width: "43%" }}>
+                  <p className="io-text-bold">GST @ 8%:</p>
+                </div>
+                <div
+                  style={{
+                    width: "57%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ width: "30%" }}>
+                    <p className="io-text">USD</p>
+                  </div>
+                  <div style={{ width: "70%" }}>
+                    <p className="io-text">
+                      {numberWithCommas(formData.usdGst)}
                     </p>
-                  </td>
-                  <td>$ {formData.totalAmount}</td>
-                </tr>
-              </tbody>
-            </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: "flex", width: "100%" }}>
+              <div
+                style={{
+                  width: "71.5%",
+                  textAlign: "right",
+                }}
+              >
+                <p className="io-text-bold" style={{ marginRight: "47px" }}>
+                  Order Total:
+                </p>
+              </div>
+              <div
+                style={{
+                  width: "28.5%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ width: "30%" }}>
+                  <p className="io-text-bold">USD</p>
+                </div>
+                <div style={{ width: "70%" }}>
+                  <p className="io-text-bold">
+                    {numberWithCommas(formData.totalAmount)}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                marginTop: "5px",
+              }}
+            >
+              <div style={{ width: "21.5%" }}>
+                <p className="io-text-bold">Position:</p>
+              </div>
+              <div style={{ width: "78.5%" }}>
+                <p className="io-text">{formData.orderItems[0].position}</p>
+              </div>
+              <div style={{ width: "21.5%" }}>
+                <p className="io-text-bold">Ad size:</p>
+              </div>
+              <div style={{ width: "78.5%" }}>
+                <p className="io-text">
+                  {formData.orderItems[0].products.name}
+                </p>
+              </div>
+              <div style={{ width: "21.5%" }}>
+                <p className="io-text-bold">Color:</p>
+              </div>
+              <div style={{ width: "78.5%" }}>
+                <p className="io-text">{formData.orderItems[0].colour}</p>
+              </div>
+              <div style={{ width: "21.5%" }}>
+                <p className="io-text-bold">Region(s):</p>
+              </div>
+              <div style={{ width: "78.5%" }}>
+                <p className="io-text">
+                  {formData.orderItems[0].regions.map((region, index) =>
+                    index + 1 === formData.orderItems[0].regions.length
+                      ? region.name
+                      : `${region.name}, `
+                  )}
+                </p>
+              </div>
+            </div>
+            {formData?.notes.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div style={{ width: "21.5%" }}>
+                  <p className="io-text-bold">Sales Notes:</p>
+                </div>
+                <div style={{ width: "78.5%" }}>
+                  <p className="io-text">{formData.notes}</p>
+                </div>
+              </div>
+            )}
+
             <div style={{ width: "100%", marginTop: "10px" }}>
               <hr />
             </div>
@@ -147,12 +304,11 @@ export const generateIoHtml = (formData) => {
                 the advertiser agreement.
               </p>
             </div>
-            <div style={{ width: "100%", display: "flex" }}>
+            <div style={{ width: "100%", display: "flex", marginTop: "20px" }}>
               <div
                 style={{
                   width: "15%",
                   textAlign: "bottom",
-                  marginTop: "20px",
                 }}
               >
                 <p className="io-text">Signed:</p>
@@ -168,7 +324,6 @@ export const generateIoHtml = (formData) => {
                 style={{
                   width: "10%",
                   textAlign: "bottom",
-                  marginTop: "20px",
                 }}
               >
                 <p className="io-text">Date:</p>
@@ -180,12 +335,42 @@ export const generateIoHtml = (formData) => {
                 }}
               ></div>
             </div>
-            <div style={{ width: "100%", display: "flex" }}>
+            <div style={{ width: "100%", display: "flex", marginTop: "20px" }}>
               <div
                 style={{
                   width: "15%",
                   textAlign: "bottom",
-                  marginTop: "10px",
+                }}
+              >
+                <p className="io-text">Printed Name:</p>
+              </div>
+              <div
+                style={{
+                  width: "35%",
+                  borderBottom: "1px solid",
+                  marginRight: "25px",
+                }}
+              ></div>
+              <div
+                style={{
+                  width: "10%",
+                  textAlign: "bottom",
+                }}
+              >
+                <p className="io-text">Position:</p>
+              </div>
+              <div
+                style={{
+                  width: "35%",
+                  borderBottom: "1px solid",
+                }}
+              ></div>
+            </div>
+            <div style={{ width: "100%", display: "flex", marginTop: "20px" }}>
+              <div
+                style={{
+                  width: "15%",
+                  textAlign: "bottom",
                 }}
               >
                 <p className="io-text">Accepted By:</p>
@@ -201,7 +386,6 @@ export const generateIoHtml = (formData) => {
                 style={{
                   width: "10%",
                   textAlign: "bottom",
-                  marginTop: "10px",
                 }}
               >
                 <p className="io-text">Date:</p>
@@ -213,12 +397,21 @@ export const generateIoHtml = (formData) => {
                 }}
               ></div>
             </div>
-            {formData.notes.length > 0 && (
-              <div style={{ width: "100%", marginTop: "20px" }}>
-                <p className="io-text-bold">Notes:</p>
-                <p className="io-text">{formData.notes}</p>
-              </div>
-            )}
+            <div style={{ width: "100%", marginTop: "3px" }}>
+              <p className="io-text" style={{ fontSize: "9px" }}>
+                Publisher or Authorized Sales Representative
+              </p>
+            </div>
+            <div style={{ width: "100%", marginTop: "25px" }}>
+              <hr />
+              <p
+                className="io-text-bold"
+                style={{ fontSize: "9px", textAlign: "center" }}
+              >
+                Please verify and mail, email, or fax completed agreement before
+                issue closing date.
+              </p>
+            </div>
           </div>
         </div>
       </div>
