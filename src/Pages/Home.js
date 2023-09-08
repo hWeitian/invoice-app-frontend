@@ -13,7 +13,7 @@ import OverviewCard from "../Components/OverviewCard";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import LoadingScreen from "../Components/LoadingScreen";
 
-const Home = () => {
+const Home = ({ setOpenFeedback, setFeedbackMsg, setFeedbackSeverity }) => {
   const getAccessToken = useGetAccessToken();
   const regions = [
     {
@@ -169,8 +169,12 @@ const Home = () => {
           <Grid container>
             <Grid item xs={12} sx={{ mt: 3 }}>
               <OverviewTable
-                magazineIssue={selectedMag.id}
+                magazineIssue={selectedMag}
                 selectedRegions={selectedRegions}
+                setOpenFeedback={setOpenFeedback}
+                setFeedbackMsg={setFeedbackMsg}
+                setFeedbackSeverity={setFeedbackSeverity}
+                updateTableData={updateTableData}
               />
             </Grid>
           </Grid>

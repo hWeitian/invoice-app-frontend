@@ -40,7 +40,8 @@ th {
 #invoice .total-table td {
   padding: 0px;
 }
-/* 
-* {
-  outline: 1px solid #f00 !important;
-} */
+
+.edit-order {
+  font-size: 0.875rem !important;
+  color: #344054 !important;
+}

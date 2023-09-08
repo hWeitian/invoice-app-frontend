@@ -56,7 +56,6 @@ const ExchangeRates = () => {
         accessToken,
         `exchange-rates/${paginationModel.page}/${paginationModel.pageSize}`
       );
-      console.log(response);
       setTotalPages(response.count);
       setExchangeRates(response.rows);
       setIsLoading(false);

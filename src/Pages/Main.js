@@ -162,7 +162,11 @@ const Main = () => {
           }}
         >
           {currentPath === "/" ? (
-            <Home />
+            <Home
+              setOpenFeedback={setOpenFeedback}
+              setFeedbackMsg={setFeedbackMsg}
+              setFeedbackSeverity={setFeedbackSeverity}
+            />
           ) : (
             <Outlet
               context={[
