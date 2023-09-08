@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Chip } from "@mui/material";
+import { Chip, IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
+import EditOrderModal from "./EditOrderModal";
+import { useOutletContext } from "react-router-dom";
 
-const OverviewTable = ({ magazineIssue, selectedRegions }) => {
+const OverviewTable = ({
+  magazineIssue,
+  selectedRegions,
+  setOpenFeedback,
+  setFeedbackMsg,
+  setFeedbackSeverity,
+  updateTableData,
+}) => {
   const getAccessToken = useGetAccessToken();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState();
   const [orders, setOrders] = useState([]);
+  const [hoverRowId, setHoverRowId] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
@@ -22,12 +35,13 @@ const OverviewTable = ({ magazineIssue, selectedRegions }) => {
   }, [paginationModel, magazineIssue, selectedRegions]);
 
   const getOrders = async () => {
+    const magazineIssueId = magazineIssue.id;
     try {
       setIsLoading(true);
       const regions = convertRegions(selectedRegions);
       const accessToken = await getAccessToken();
       const response = await axios.get(
-        `${process.env.REACT_APP_DB_SERVER}/orders/magazine/${magazineIssue}/${regions}/${paginationModel.page}/${paginationModel.pageSize}`,
+        `${process.env.REACT_APP_DB_SERVER}/orders/magazine/${magazineIssueId}/${regions}/${paginationModel.page}/${paginationModel.pageSize}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -52,6 +66,14 @@ const OverviewTable = ({ magazineIssue, selectedRegions }) => {
     return regionString;
   };
 
+  const handleHiddenIconOpen = (event) => {
+    setHoverRowId(event.currentTarget.parentElement.dataset.id);
+  };
+
+  const handleHiddenIconClose = () => {
+    setHoverRowId(null);
+  };
+
   if (orders) {
     columns = [
       { field: "company", headerName: "Company", width: 220 },
@@ -59,7 +81,7 @@ const OverviewTable = ({ magazineIssue, selectedRegions }) => {
       {
         field: "size",
         headerName: "Size",
-        width: 220,
+        width: 200,
       },
       {
         field: "colour",
@@ -120,6 +142,26 @@ const OverviewTable = ({ magazineIssue, selectedRegions }) => {
           return <Chip label={output} color={color} size="small"></Chip>;
         },
       },
+      {
+        field: "edit",
+        headerName: "",
+        width: 20,
+        sortable: false,
+        renderCell: (params) => {
+          const deleteClicked = (event) => {
+            event.stopPropagation();
+            setEditModalOpen(true);
+            setSelectedRow(params.row);
+          };
+          return (
+            +hoverRowId === params.row.id && (
+              <IconButton onClick={(event) => deleteClicked(event)}>
+                <EditIcon sx={{ fontSize: 21 }} />
+              </IconButton>
+            )
+          );
+        },
+      },
     ];
 
     rows = orders.map((order, index) => ({
@@ -151,9 +193,26 @@ const OverviewTable = ({ magazineIssue, selectedRegions }) => {
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
             loading={isLoading}
+            slotProps={{
+              cell: {
+                onMouseEnter: handleHiddenIconOpen,
+                onMouseLeave: handleHiddenIconClose,
+              },
+            }}
           />
         )}
       </div>
+      <EditOrderModal
+        open={editModalOpen}
+        setEditOrderModalOpen={setEditModalOpen}
+        setOpenFeedback={setOpenFeedback}
+        setFeedbackMsg={setFeedbackMsg}
+        setFeedbackSeverity={setFeedbackSeverity}
+        data={selectedRow}
+        magazineIssue={magazineIssue}
+        getOrders={getOrders}
+        updateTableData={updateTableData}
+      />
     </>
   );
 };
