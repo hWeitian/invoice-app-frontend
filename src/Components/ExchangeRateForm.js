@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Grid, Button, Typography, TextField } from "@mui/material";
 import DatePickerInput from "./DatePickerInput";
-import AutocompleteInput from "./AutocompleteInput";
 import dayjs from "dayjs";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-import { formatDate, formatDateForRates } from "../Utils/utils";
+import { formatDateForRates } from "../Utils/utils";
 
 const ExchangeRateForm = ({
   setOpenForm,
@@ -30,16 +29,10 @@ const ExchangeRateForm = ({
   } = useForm();
 
   const onSubmit = (formData) => {
-    // console.log(formData);
-    // const dataToUpdate = {
-    //   rate: formData.rate,
-    //   date: "2023-09-13",
-    // };
     const dataToUpdate = {
       rate: formData.rate,
       date: formatDateForRates(formData.date),
     };
-    // console.log(dataToUpdate);
     submitData(dataToUpdate);
   };
 
@@ -65,8 +58,6 @@ const ExchangeRateForm = ({
   };
 
   const updateRateInDb = async (dataToUpdate) => {
-    console.log("At updateRateInDb");
-    console.log(dataToUpdate);
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
@@ -99,8 +90,6 @@ const ExchangeRateForm = ({
   };
 
   const submitData = async (dataToUpdate) => {
-    console.log("in submit data");
-    console.log(dataToUpdate);
     if (selectedId) {
       await updateRateInDb(dataToUpdate);
       setFeedbackSeverity("success");
