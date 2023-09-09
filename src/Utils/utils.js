@@ -293,6 +293,23 @@ export const formatDate = (dateObj) => {
 };
 
 /**
+ * Function to create date object from MUI datepicker
+ * @param {object} dateObj
+ * @returns {object} date object
+ */
+export const formatDateForRates = (dateObj) => {
+  const day = dateObj["$D"];
+  const month = dateObj["$M"] + 1;
+  const year = dateObj["$y"];
+  const newDate = new Date(`${year}-${month}-${day}`);
+  const newYear = newDate.getFullYear();
+  const newMonth = newDate.getMonth();
+  const newDay = newDate.getDay();
+  const finalDate = `${newYear}-${newMonth}-${newDay}`;
+  return finalDate;
+};
+
+/**
  * Function to export data into Excel file
  * @param {object} data json object
  * @param {string} sheetName

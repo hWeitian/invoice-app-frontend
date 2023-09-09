@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-import { formatDate } from "../Utils/utils";
+import { formatDate, formatDateForRates } from "../Utils/utils";
 
 const ExchangeRateForm = ({
   setOpenForm,
@@ -31,14 +31,14 @@ const ExchangeRateForm = ({
 
   const onSubmit = (formData) => {
     console.log(formData);
-    const dataToUpdate = {
-      rate: formData.rate,
-      date: "2023-09-13",
-    };
     // const dataToUpdate = {
     //   rate: formData.rate,
-    //   date: formatDate(formData.date),
+    //   date: "2023-09-13",
     // };
+    const dataToUpdate = {
+      rate: formData.rate,
+      date: formatDateForRates(formData.date),
+    };
     console.log(dataToUpdate);
     submitData(dataToUpdate);
   };
