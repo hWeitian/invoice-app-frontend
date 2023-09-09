@@ -61,6 +61,8 @@ const ExchangeRateForm = ({
   };
 
   const updateRateInDb = async (dataToUpdate) => {
+    console.log("At updateRateInDb");
+    console.log(dataToUpdate);
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
