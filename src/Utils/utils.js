@@ -303,8 +303,8 @@ export const formatDateForRates = (dateObj) => {
   const year = dateObj["$y"];
   const newDate = new Date(`${year}-${month}-${day}`);
   const newYear = newDate.getFullYear();
-  const newMonth = newDate.getMonth();
-  const newDay = newDate.getDay();
+  const newMonth = newDate.getMonth() + 1;
+  const newDay = newDate.getDate();
   const finalDate = `${newYear}-${newMonth}-${newDay}`;
   return finalDate;
 };

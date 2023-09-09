@@ -30,7 +30,7 @@ const ExchangeRateForm = ({
   } = useForm();
 
   const onSubmit = (formData) => {
-    console.log(formData);
+    // console.log(formData);
     // const dataToUpdate = {
     //   rate: formData.rate,
     //   date: "2023-09-13",
@@ -39,7 +39,7 @@ const ExchangeRateForm = ({
       rate: formData.rate,
       date: formatDateForRates(formData.date),
     };
-    console.log(dataToUpdate);
+    // console.log(dataToUpdate);
     submitData(dataToUpdate);
   };
 
