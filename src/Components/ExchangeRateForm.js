@@ -30,11 +30,12 @@ const ExchangeRateForm = ({
   } = useForm();
 
   const onSubmit = (formData) => {
+    console.log(formData);
     const dataToUpdate = {
       rate: formData.rate,
       date: formatDate(formData.date),
     };
-    // console.log(dataToUpdate);
+    console.log(dataToUpdate);
     submitData(dataToUpdate);
   };
 
@@ -92,6 +93,8 @@ const ExchangeRateForm = ({
   };
 
   const submitData = async (dataToUpdate) => {
+    console.log("in submit data");
+    console.log(dataToUpdate);
     if (selectedId) {
       await updateRateInDb(dataToUpdate);
       setFeedbackSeverity("success");

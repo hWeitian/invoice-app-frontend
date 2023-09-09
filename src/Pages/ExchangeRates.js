@@ -339,10 +339,9 @@ const ExchangeRates = () => {
         open={openConfirmation}
         setOpenConfirmation={setOpenConfirmation}
         handleDelete={handleDelete}
-        title="Delete Issue"
+        title="Delete Rate"
       >
-        Are you sure you want to delete this issue? This action cannot be
-        undone.
+        Are you sure you want to delete this rate? This action cannot be undone.
       </ConfirmationModal>
     </>
   );
