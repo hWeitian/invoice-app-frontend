@@ -142,7 +142,7 @@ const AddInsertionOrder = () => {
       );
       let id;
       if (response.data.length === 0) {
-        id = 1;
+        id = 188;
       } else {
         id = response.data[0].id;
         id++;

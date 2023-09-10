@@ -168,7 +168,7 @@ const AddInvoice = () => {
       );
       let id;
       if (response.data.length === 0) {
-        id = 1;
+        id = 127;
       } else {
         id = response.data[0].id;
         id++;
