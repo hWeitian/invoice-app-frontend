@@ -1,7 +1,6 @@
 import { convertDate, createStringDate, numberWithCommas } from "./utils";
 
 export const generateIoHtml = (formData) => {
-  console.log(formData);
   const html = Object.keys(formData).length > 0 && (
     <>
       <div id="io" style={{ fontSize: "12px", boxSizing: "border-box" }}>
