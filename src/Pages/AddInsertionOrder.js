@@ -281,7 +281,6 @@ const AddInsertionOrder = () => {
   };
 
   const addInsertionOrdersToDb = async (accessToken, data, finalIoNum) => {
-    console.log(data);
     try {
       data.ioDate = convertDateForDb(data.ioDate);
       const response = await axios.put(
@@ -319,7 +318,6 @@ const AddInsertionOrder = () => {
     data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
     data.adminId = userId;
     data.ioDate = formatDate(data.ioDate);
-    console.log(data);
     return data;
   };
 

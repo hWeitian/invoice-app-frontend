@@ -285,30 +285,11 @@ export const formatToUsdCurrency = (value) => {
  * @returns {object} date object
  */
 export const formatDate = (dateObj) => {
-  console.log(dateObj);
   const day = dateObj["$D"];
   const month = dateObj["$M"];
   const year = dateObj["$y"];
   const newDate = new Date(year, month, day);
-  console.log(newDate);
   return newDate;
-};
-
-/**
- * Function to create date object from MUI datepicker
- * @param {object} dateObj
- * @returns {object} date object
- */
-export const formatDateForRates = (dateObj) => {
-  const day = dateObj["$D"];
-  const month = dateObj["$M"] + 1;
-  const year = dateObj["$y"];
-  const newDate = new Date(`${year}-${month}-${day}`);
-  const newYear = newDate.getFullYear();
-  const newMonth = newDate.getMonth() + 1;
-  const newDay = newDate.getDate();
-  const finalDate = `${newYear}-${newMonth}-${newDay}`;
-  return finalDate;
 };
 
 /**
