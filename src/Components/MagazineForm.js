@@ -87,6 +87,10 @@ const MagazineForm = ({
 
   const addNewIssue = async (dataToUpdate) => {
     try {
+      dataToUpdate.closingDate = convertDateForDb(dataToUpdate.closingDate);
+      dataToUpdate.materialDeadline = convertDateForDb(
+        dataToUpdate.materialDeadline
+      );
       const accessToken = await getAccessToken();
       const response = await axios.post(
         `${process.env.REACT_APP_DB_SERVER}/magazines/`,
