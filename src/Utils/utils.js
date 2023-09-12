@@ -358,3 +358,20 @@ export const spellOutAmount = (amount) => {
   const word = toWords.convert(amount);
   return word;
 };
+
+/**
+ * Function to find if the required keyword exists in the object inside an array of objects
+ * @param {array} arrayObjects
+ * @param {string} keyword
+ * @param {string} objProperty
+ * @returns {boolean} Returns true if found, false is not found
+ */
+export const findKeyInArrayOfObjects = (arrayObjects, keyword, objProperty) => {
+  for (let i = 0; i < arrayObjects.length; i++) {
+    const obj = arrayObjects[i];
+    if (obj[objProperty] === keyword) {
+      return true;
+    }
+  }
+  return false;
+};

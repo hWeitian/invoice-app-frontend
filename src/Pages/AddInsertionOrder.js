@@ -32,6 +32,7 @@ import {
   getData,
   formatDate,
   convertDateForDb,
+  findKeyInArrayOfObjects,
 } from "../Utils/utils";
 import { generateIoHtml } from "../Utils/generateIoHtml";
 import LoadingScreen from "../Components/LoadingScreen";
@@ -52,6 +53,7 @@ const AddInsertionOrder = () => {
   const [magazines, setMagazines] = useState([]);
   const [products, setProducts] = useState([]);
   const [regions, setRegions] = useState([]);
+  const [regionsFromDb, setRegionsFromDb] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -183,7 +185,15 @@ const AddInsertionOrder = () => {
   const getRegions = async (accessToken) => {
     try {
       const regions = await getData(accessToken, `regions`);
-      setRegions(regions);
+      const newRegions = [
+        ...regions,
+        {
+          id: 5,
+          name: "All",
+        },
+      ];
+      setRegionsFromDb(regions);
+      setRegions(newRegions);
     } catch (e) {
       console.log(e);
     }
@@ -281,6 +291,7 @@ const AddInsertionOrder = () => {
   };
 
   const addInsertionOrdersToDb = async (accessToken, data, finalIoNum) => {
+    console.log(data);
     try {
       data.ioDate = convertDateForDb(data.ioDate);
       const response = await axios.put(
@@ -297,6 +308,7 @@ const AddInsertionOrder = () => {
   };
 
   const addOrdersToDb = async (accessToken, data) => {
+    console.log(data);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_DB_SERVER}/orders`,
@@ -318,6 +330,9 @@ const AddInsertionOrder = () => {
     data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
     data.adminId = userId;
     data.ioDate = formatDate(data.ioDate);
+    if (findKeyInArrayOfObjects(data.orderItems[0].regions, "All", "name")) {
+      data.orderItems[0].regions = regionsFromDb;
+    }
     return data;
   };
 
