@@ -285,17 +285,10 @@ export const formatToUsdCurrency = (value) => {
  * @returns {object} date object
  */
 export const formatDate = (dateObj) => {
-  console.log(dateObj);
   const day = dateObj["$D"];
   const month = dateObj["$M"];
-  // const month = dateObj["$M"] + 1;
   const year = dateObj["$y"];
-  console.log(day);
-  console.log(month);
-  console.log(year);
   const newDate = new Date(year, month, day);
-  // const newDate = new Date(`${year}-${month}-${day}`);
-  console.log(newDate);
   return newDate;
 };
 
