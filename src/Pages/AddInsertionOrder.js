@@ -183,7 +183,16 @@ const AddInsertionOrder = () => {
   const getRegions = async (accessToken) => {
     try {
       const regions = await getData(accessToken, `regions`);
-      setRegions(regions);
+      const newRegions = [
+        ...regions,
+        {
+          id: 5,
+          name: "All",
+        },
+      ];
+      console.log(newRegions);
+      setRegions(newRegions);
+      // setRegions(regions);
     } catch (e) {
       console.log(e);
     }
@@ -281,6 +290,7 @@ const AddInsertionOrder = () => {
   };
 
   const addInsertionOrdersToDb = async (accessToken, data, finalIoNum) => {
+    console.log(data);
     try {
       data.ioDate = convertDateForDb(data.ioDate);
       const response = await axios.put(
@@ -297,6 +307,7 @@ const AddInsertionOrder = () => {
   };
 
   const addOrdersToDb = async (accessToken, data) => {
+    console.log(data);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_DB_SERVER}/orders`,
@@ -323,7 +334,7 @@ const AddInsertionOrder = () => {
 
   const saveInsertionOrder = async () => {
     try {
-      setButtonLoading(true);
+      // setButtonLoading(true);
       const accessToken = await getAccessToken();
       const adminId = await getAdminId(accessToken);
       const finalIoNum = await getFinalInsertionOrderNum(accessToken, adminId);
@@ -333,13 +344,13 @@ const AddInsertionOrder = () => {
         adminId: adminId,
       };
       await updateDatabase(finalData, finalIoNum);
-      reset();
-      navigate("/insertion-orders");
-      setFeedbackSeverity("success");
-      setFeedbackMsg("Insertion Order Created");
-      setOpenFeedback(true);
-      handlePreviewClose();
-      setButtonLoading(false);
+      // reset();
+      // navigate("/insertion-orders");
+      // setFeedbackSeverity("success");
+      // setFeedbackMsg("Insertion Order Created");
+      // setOpenFeedback(true);
+      // handlePreviewClose();
+      // setButtonLoading(false);
     } catch (e) {
       console.log(e);
     }

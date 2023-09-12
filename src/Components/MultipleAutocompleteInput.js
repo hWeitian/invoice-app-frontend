@@ -1,5 +1,6 @@
 import React from "react";
 import { TextField, Autocomplete, Chip } from "@mui/material";
+import { findKeyInArrayOfObjects } from "../Utils/utils";
 
 const MultipleAutocompleteInput = ({
   id,
@@ -16,7 +17,11 @@ const MultipleAutocompleteInput = ({
 }) => {
   const getOptionDisabled = (option) => {
     if (value) {
-      return value.some((value) => value.id === option.id);
+      if (findKeyInArrayOfObjects(value, "All", "name")) {
+        return true;
+      } else {
+        return value.some((value) => value.id === option.id);
+      }
     }
   };
 
