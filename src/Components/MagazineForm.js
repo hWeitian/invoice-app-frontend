@@ -30,6 +30,7 @@ const MagazineForm = ({
   } = useForm();
 
   const onSubmit = (formData) => {
+    console.log(formData);
     const dataToUpdate = {
       year: formData.year.$y,
       month: formData.month.month,
@@ -64,6 +65,7 @@ const MagazineForm = ({
   };
 
   const updateIssueInDb = async (dataToUpdate) => {
+    console.log(dataToUpdate);
     try {
       const accessToken = await getAccessToken();
       const response = await axios.put(
