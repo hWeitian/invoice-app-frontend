@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import { useOutletContext } from "react-router-dom";
 import axios from "axios";
-import { formatDate } from "../Utils/utils";
+import { formatDate, convertDateForDb } from "../Utils/utils";
 
 const MagazineForm = ({
   setOpenForm,
@@ -67,6 +67,10 @@ const MagazineForm = ({
   const updateIssueInDb = async (dataToUpdate) => {
     console.log(dataToUpdate);
     try {
+      dataToUpdate.closingDate = convertDateForDb(dataToUpdate.closingDate);
+      dataToUpdate.materialDeadline = convertDateForDb(
+        dataToUpdate.materialDeadline
+      );
       const accessToken = await getAccessToken();
       const response = await axios.put(
         `${process.env.REACT_APP_DB_SERVER}/magazines/${selectedId}`,
