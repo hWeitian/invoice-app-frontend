@@ -57,16 +57,12 @@ export const generateIoHtml = (formData) => {
                 <span className="io-text">{convertDate(formData.ioDate)}</span>
               </p>
               <p className="io-text-bold" style={{ marginTop: "10px" }}>
-                Questions about your order: <br />
+                For enquries, please contact: <br />
                 <span className="io-text">
                   <a href="mailto:questions@invoicegenie.com">
                     questions@invoicegenie.com
                   </a>
                 </span>
-              </p>
-              <p className="io-text-bold" style={{ marginTop: "15px" }}>
-                We, the advertiser, agree to purchase the following advertiser
-                space according to this contract and subject to terms specified.
               </p>
             </div>
             <div style={{ width: "100%", marginTop: "10px" }}>
@@ -296,11 +292,13 @@ export const generateIoHtml = (formData) => {
               <hr />
             </div>
             <div style={{ width: "100%" }}>
-              <p style={{ fontSize: "10px" }}>
-                We agree to pay for any production cost incurred in addition to
-                the charges listed. <br />
-                We agree to be bound by the terms and conditions specified on
-                the advertiser agreement.
+              <p className="io-text-bold" style={{ marginTop: "5px" }}>
+                CONFIRMATION OF INSERTION ORDER
+              </p>
+              <p className="io-text">
+                We confirm the purchase of the advertising space at the rate(s)
+                listed above and agree with the terms and conditions stated in
+                the agreement.
               </p>
             </div>
             <div style={{ width: "100%", display: "flex", marginTop: "20px" }}>
@@ -310,7 +308,7 @@ export const generateIoHtml = (formData) => {
                   textAlign: "bottom",
                 }}
               >
-                <p className="io-text">Signed:</p>
+                <p className="io-text">Signature:</p>
               </div>
               <div
                 style={{
@@ -341,7 +339,7 @@ export const generateIoHtml = (formData) => {
                   textAlign: "bottom",
                 }}
               >
-                <p className="io-text">Printed Name:</p>
+                <p className="io-text">Print Name:</p>
               </div>
               <div
                 style={{
@@ -407,8 +405,8 @@ export const generateIoHtml = (formData) => {
                 className="io-text-bold"
                 style={{ fontSize: "9px", textAlign: "center" }}
               >
-                Please verify and mail, email, or fax completed agreement before
-                issue closing date.
+                Please verify and email the completed agreement before issue
+                closing date.
               </p>
             </div>
           </div>

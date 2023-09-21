@@ -21,7 +21,7 @@ PW: geNie@89757
 
 - Create insertion orders for sales of advertising space
 - Create invoices based on details in insertion orders
-- Invoices uses daily exchange rate taken from [MAS API](https://www.mas.gov.sg/statistics/exchange-rates)
+- Invoices uses monthly exchange rate taken from [MAS](https://eservices.mas.gov.sg/Statistics/msb/ExchangeRates.aspx)
 - Add payments to invoices
 - Overview of all advertisements space sold for each issue
 - Add administrators to the application with [Auth0](https://auth0.com/) authentication
@@ -38,6 +38,7 @@ PW: geNie@89757
 - Authentication: [Auth0](https://auth0.com/)
 - Cron Job: [Cron](https://www.npmjs.com/package/cron)
 - PDF Export: [jspdf](https://www.npmjs.com/package/jspdf)
+- Puppeteer for Web Scraping: [Puppeteer](https://www.npmjs.com/package/puppeteer)
 
 ## Setup
 
