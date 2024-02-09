@@ -257,7 +257,7 @@ export const generateInvHtml = (formData) => {
                 </tr>
                 <tr>
                   <td colSpan={2} style={{ textAlign: "right", width: "80%" }}>
-                    <p className="io-text-bold">GST @ 8%:</p>
+                    <p className="io-text-bold">GST @ 9%:</p>
                   </td>
                   <td
                     colSpan={2}

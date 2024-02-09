@@ -180,7 +180,7 @@ export const generateIoHtml = (formData) => {
                   </div>
                 </div>
                 <div style={{ width: "43%" }}>
-                  <p className="io-text-bold">GST @ 8%:</p>
+                  <p className="io-text-bold">GST @ 9%:</p>
                 </div>
                 <div
                   style={{

@@ -32,7 +32,7 @@ export const calculateTotalAmount = (orderItems, discount) => {
  * @returns {number} GST
  */
 export const calculateGST = (amount) => {
-  return Math.round(Math.abs(parseFloat(amount) * 0.08) * 100) / 100;
+  return Math.round(Math.abs(parseFloat(amount) * 0.09) * 100) / 100;
 };
 
 /**
