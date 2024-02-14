@@ -359,7 +359,7 @@ export const generateInvHtml = (formData) => {
                 Exchange rate: 1 USD = {formData.exchangeRate.rate} SGD
               </p>
               <p>
-                All rates are inclusive of 8% Singapore Government Goods &
+                All rates are inclusive of 9% Singapore Government Goods &
                 Services Tax (GST).
               </p>
             </div>
