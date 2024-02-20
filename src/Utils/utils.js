@@ -236,7 +236,8 @@ export const getData = async (accessToken, endPoint) => {
     }
     throw new Error("Error in get");
   } catch (error) {
-    throw new Error(error?.response?.data ?? "Error");
+    throw new Error("Error in get");
+    // throw new Error(error?.response?.data ?? "Error");
   }
 };
 
