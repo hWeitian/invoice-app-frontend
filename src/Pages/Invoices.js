@@ -166,7 +166,7 @@ const Invoices = () => {
     try {
       const accessToken = await getAccessToken();
       const response = await axios.delete(
-        `${process.env.REACT_APP_DB_SERVER}/invoices/${selectedRow.id}`,
+        `${process.env.REACT_APP_DB_SERVER}/invoices/${selectedRow}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
