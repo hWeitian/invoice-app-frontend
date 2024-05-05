@@ -12,6 +12,10 @@ import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
 import { getData, exportDataToXlsx } from "../Utils/utils";
 import TableMenu from "../Components/TableMenu";
+import ConfirmationModal from "../Components/ConfirmationModal";
+import { useOutletContext } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Invoices = () => {
   const defaultPage = 0;
@@ -32,6 +36,10 @@ const Invoices = () => {
     pageSize: defaultPageSize,
   });
   const [searchValue, setSearchValue] = useState("");
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
+    useOutletContext();
+  const [selectedRow, setSelectedRow] = useState(null);
 
   let columns = [];
   let rows = [];
@@ -146,6 +154,48 @@ const Invoices = () => {
     exportDataToXlsx(data, "sheet1", "Invoices.xlsx");
   };
 
+  const handleDelete = (invoiceId) => {
+    setOpenConfirmation(true);
+    setSelectedRow(invoiceId);
+
+    console.log(`Invoice delete clicked at ${invoiceId}`);
+  };
+
+  const handleDeleteConfirmationClick = async () => {
+    setOpenConfirmation(false);
+    try {
+      const accessToken = await getAccessToken();
+      const response = await axios.delete(
+        `${process.env.REACT_APP_DB_SERVER}/invoices/${selectedRow}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      console.log(`Invoice delete clicked at ${selectedRow}`);
+
+      await getInvoices();
+      setSelectedRow(null);
+      setFeedbackSeverity("success");
+      setFeedbackMsg("Issue deleted");
+      setOpenFeedback(true);
+    } catch (e) {
+      setSelectedRow(null);
+      setFeedbackSeverity("error");
+      setFeedbackMsg("Unable to delete.");
+      setOpenFeedback(true);
+      console.log(e);
+    }
+  };
+
+  const handleEditClick = async (invoiceId) => {
+    try {
+      console.log(`edit clicked ${invoiceId}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const searchOptions = [
     {
       name: "Search Company",
@@ -192,15 +242,15 @@ const Invoices = () => {
       {
         field: "totalAmount",
         headerName: "Amount",
-        width: 160,
+        width: 150,
         ...usdPrice,
         align: "left",
         headerAlign: "left",
       },
       {
         field: "outstanding",
-        headerName: "Outstanding Amount",
-        width: 190,
+        headerName: "Outstanding",
+        width: 150,
         ...usdPrice,
         align: "left",
         headerAlign: "left",
@@ -232,7 +282,7 @@ const Invoices = () => {
       {
         field: "more",
         headerName: "",
-        width: 90,
+        width: 50,
         sortable: false,
         disableClickEventBubbling: true,
         renderCell: (params) => (
@@ -241,8 +291,41 @@ const Invoices = () => {
             getInvoices={getInvoices}
             resetSearch={resetSearch}
             setResetSearch={setResetSearch}
+            deleteInvoice={handleDelete}
           />
         ),
+      },
+      {
+        field: "delete",
+        headerName: "",
+        width: 50,
+        sortable: false,
+        disableClickEventBubbling: true,
+        renderCell: (params) => {
+          if (params.row.status === "Pending") {
+            return (
+              <IconButton onClick={() => handleDelete(params.row.id)}>
+                <DeleteIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            );
+          }
+        },
+      },
+      {
+        field: "edit",
+        headerName: "",
+        width: 50,
+        sortable: false,
+        disableClickEventBubbling: true,
+        renderCell: (params) => {
+          if (params.row.status === "Pending") {
+            return (
+              <IconButton onClick={() => handleEditClick(params.row.id)}>
+                <EditIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            );
+          }
+        },
       },
     ];
 
@@ -341,6 +424,15 @@ const Invoices = () => {
           </div>
         </Grid>
       </Grid>
+      <ConfirmationModal
+        open={openConfirmation}
+        setOpenConfirmation={setOpenConfirmation}
+        handleDelete={handleDeleteConfirmationClick}
+        title="Delete Invoice"
+      >
+        Are you sure you want to delete this invoice? This action cannot be
+        undone.
+      </ConfirmationModal>
     </>
   );
 };
