@@ -15,6 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "../Components/ConfirmationModal";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
+import Tooltip from "@mui/material/Tooltip";
 
 const InsertionOrders = () => {
   const navigate = useNavigate();
@@ -335,9 +336,11 @@ const InsertionOrders = () => {
               />
             </Grid>
             <Grid item xs={3.4}>
-              <IconButton onClick={handleOnExport}>
-                <DownloadIcon />
-              </IconButton>
+              <Tooltip title="Download all Insertion Orders">
+                <IconButton onClick={handleOnExport}>
+                  <DownloadIcon />
+                </IconButton>
+              </Tooltip>
             </Grid>
             <Grid
               item

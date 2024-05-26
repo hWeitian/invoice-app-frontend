@@ -13,6 +13,7 @@ import axios from "axios";
 import ConfirmationModal from "../Components/ConfirmationModal";
 import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
+import Tooltip from "@mui/material/Tooltip";
 
 const Magazines = () => {
   const defaultPage = 0;
@@ -289,9 +290,11 @@ const Magazines = () => {
                 />
               </Grid>
               <Grid item xs={0.7} sx={{ textAlign: "right" }}>
-                <IconButton onClick={handleOnExport}>
-                  <DownloadIcon />
-                </IconButton>
+                <Tooltip title="Download all Magazines">
+                  <IconButton onClick={handleOnExport}>
+                    <DownloadIcon />
+                  </IconButton>
+                </Tooltip>
               </Grid>
             </Grid>
             <Grid container>

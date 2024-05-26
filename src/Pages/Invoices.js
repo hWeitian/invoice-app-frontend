@@ -16,6 +16,7 @@ import ConfirmationModal from "../Components/ConfirmationModal";
 import { useOutletContext } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import Tooltip from "@mui/material/Tooltip";
 
 const Invoices = () => {
   const defaultPage = 0;
@@ -172,7 +173,7 @@ const Invoices = () => {
       await getInvoices();
       setSelectedRow(null);
       setFeedbackSeverity("success");
-      setFeedbackMsg("Invoice deleted");
+      setFeedbackMsg("Issue deleted");
       setOpenFeedback(true);
     } catch (e) {
       setSelectedRow(null);
@@ -380,9 +381,11 @@ const Invoices = () => {
                 />
               </Grid>
               <Grid item xs={3.4}>
-                <IconButton onClick={handleOnExport}>
-                  <DownloadIcon />
-                </IconButton>
+                <Tooltip title="Download all Invoices">
+                  <IconButton onClick={handleOnExport}>
+                    <DownloadIcon />
+                  </IconButton>
+                </Tooltip>
               </Grid>
               <Grid
                 item
