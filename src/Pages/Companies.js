@@ -12,6 +12,7 @@ import CompanyForm from "../Components/CompanyForm";
 import axios from "axios";
 import ConfirmationModal from "../Components/ConfirmationModal";
 import SearchBar from "../Components/SearchBar";
+import Tooltip from "@mui/material/Tooltip";
 
 const Companies = () => {
   const defaultPage = 0;
@@ -239,9 +240,11 @@ const Companies = () => {
                     />
                   </Grid>
                   <Grid item xs={0.7} sx={{ textAlign: "right" }}>
-                    <IconButton onClick={handleOnExport}>
-                      <DownloadIcon />
-                    </IconButton>
+                    <Tooltip title="Download all Companies">
+                      <IconButton onClick={handleOnExport}>
+                        <DownloadIcon />
+                      </IconButton>
+                    </Tooltip>
                   </Grid>
                 </Grid>
               </Grid>

@@ -14,6 +14,7 @@ import AddIcon from "@mui/icons-material/Add";
 import AddContact from "../Components/AddContact";
 import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
+import Tooltip from "@mui/material/Tooltip";
 
 const Contacts = () => {
   const defaultPage = 0;
@@ -300,9 +301,11 @@ const Contacts = () => {
             />
           </Grid>
           <Grid item xs={3.4}>
-            <IconButton onClick={handleOnExport}>
-              <DownloadIcon />
-            </IconButton>
+            <Tooltip title="Download all Contacts">
+              <IconButton onClick={handleOnExport}>
+                <DownloadIcon />
+              </IconButton>
+            </Tooltip>
           </Grid>
           <Grid
             item
