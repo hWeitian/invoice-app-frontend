@@ -158,8 +158,6 @@ const InsertionOrders = () => {
         }
       );
 
-      console.log(`Insertion order delete clicked at ${selectedRow}`);
-
       await getInsertionOrders();
       setSelectedRow(null);
       setFeedbackSeverity("success");
