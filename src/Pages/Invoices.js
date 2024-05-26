@@ -157,8 +157,6 @@ const Invoices = () => {
   const handleDelete = (invoiceId) => {
     setOpenConfirmation(true);
     setSelectedRow(invoiceId);
-
-    console.log(`Invoice delete clicked at ${invoiceId}`);
   };
 
   const handleDeleteConfirmationClick = async () => {
@@ -171,13 +169,10 @@ const Invoices = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-
-      console.log(`Invoice delete clicked at ${selectedRow}`);
-
       await getInvoices();
       setSelectedRow(null);
       setFeedbackSeverity("success");
-      setFeedbackMsg("Issue deleted");
+      setFeedbackMsg("Invoice deleted");
       setOpenFeedback(true);
     } catch (e) {
       setSelectedRow(null);

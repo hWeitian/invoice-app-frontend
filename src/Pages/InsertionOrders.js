@@ -11,6 +11,10 @@ import useGetAccessToken from "../Hooks/useGetAccessToken";
 import SearchBar from "../Components/SearchBar";
 import AutocompleteInput from "../Components/AutocompleteInput";
 import { getData, exportDataToXlsx } from "../Utils/utils";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ConfirmationModal from "../Components/ConfirmationModal";
+import axios from "axios";
+import { useOutletContext } from "react-router-dom";
 
 const InsertionOrders = () => {
   const navigate = useNavigate();
@@ -33,6 +37,10 @@ const InsertionOrders = () => {
     pageSize: defaultPageSize,
   });
   const [searchValue, setSearchValue] = useState("");
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
+    useOutletContext();
 
   let columns;
   let rows;
@@ -134,6 +142,36 @@ const InsertionOrders = () => {
     exportDataToXlsx(data, "sheet1", "InsertionOrders.xlsx");
   };
 
+  const handleDelete = (insertionOrderId) => {
+    setOpenConfirmation(true);
+    setSelectedRow(insertionOrderId);
+  };
+
+  const handleDeleteConfirmationClick = async () => {
+    setOpenConfirmation(false);
+    try {
+      const accessToken = await getAccessToken();
+      const response = await axios.delete(
+        `${process.env.REACT_APP_DB_SERVER}/insertion-orders/${selectedRow}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      await getInsertionOrders();
+      setSelectedRow(null);
+      setFeedbackSeverity("success");
+      setFeedbackMsg("Insertion Order deleted");
+      setOpenFeedback(true);
+    } catch (e) {
+      setSelectedRow(null);
+      setFeedbackSeverity("error");
+      setFeedbackMsg("Unable to delete.");
+      setOpenFeedback(true);
+      console.log(e);
+    }
+  };
+
   const searchOptions = [
     {
       name: "Search Company",
@@ -174,7 +212,7 @@ const InsertionOrders = () => {
         headerName: "Company",
         width: 200,
       },
-      { field: "type", headerName: "Type", width: 320 },
+      { field: "type", headerName: "Type", width: 280 },
       { field: "invoice", headerName: "Invoice", width: 100 },
       {
         field: "url",
@@ -222,6 +260,22 @@ const InsertionOrders = () => {
               Upload Signed
             </Button>
           );
+        },
+      },
+      {
+        field: "delete",
+        headerName: "",
+        width: 50,
+        sortable: false,
+        disableClickEventBubbling: true,
+        renderCell: (params) => {
+          if (params.row.isSigned === false && params.row.invoice === null) {
+            return (
+              <IconButton onClick={() => handleDelete(params.row.id)}>
+                <DeleteIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            );
+          }
         },
       },
     ];
@@ -326,6 +380,15 @@ const InsertionOrders = () => {
           data={selectedData}
           getInsertionOrders={getInsertionOrders}
         />
+        <ConfirmationModal
+          open={openConfirmation}
+          setOpenConfirmation={setOpenConfirmation}
+          handleDelete={handleDeleteConfirmationClick}
+          title="Delete Insertion Order"
+        >
+          Are you sure you want to delete this insertion order? This action
+          cannot be undone.
+        </ConfirmationModal>
       </Grid>
     </Grid>
   );
