@@ -64,7 +64,7 @@ PW: geNie@89757
 
 ## Entity Relationship Diagram (ERD)
 
-![](src/screenshots/erd.png)
+![](src/screenshots/erd_v2.png)
 
 ## Furture Features
 
