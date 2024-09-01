@@ -336,7 +336,7 @@ const AddInvoice = () => {
     const storageRef = ref(storage, `invoices/${finalInvNum}.pdf`);
     try {
       // Generate the html for invoice
-      const html = renderToStaticMarkup(generateInvHtml(data));
+      const html = renderToStaticMarkup(generateInvHtml(data, gstRate));
       // Generate the pdf from the html
       const pdf = await generatePdfFromHtml(html, `invoice-${finalInvNum}.pdf`);
       // Upload the pdf onto Firebase storage
