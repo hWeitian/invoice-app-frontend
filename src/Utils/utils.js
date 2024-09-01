@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf";
 import axios from "axios";
 import XLSX from "xlsx";
 import { ToWords } from "to-words";
+import { useAuth0 } from "@auth0/auth0-react";
 
 /**
  * Function to get the first letter of the name in caps
@@ -31,8 +32,11 @@ export const calculateTotalAmount = (orderItems, discount) => {
  * @param {number} amount
  * @returns {number} GST
  */
-export const calculateGST = (amount) => {
-  return Math.round(Math.abs(parseFloat(amount) * 0.09) * 100) / 100;
+export const calculateGST = (amount, gstRate) => {
+  const gstRateInDecimal = parseInt(gstRate) / 100;
+  return (
+    Math.round(Math.abs(parseFloat(amount) * gstRateInDecimal) * 100) / 100
+  );
 };
 
 /**
@@ -374,4 +378,26 @@ export const findKeyInArrayOfObjects = (arrayObjects, keyword, objProperty) => {
     }
   }
   return false;
+};
+
+/**
+ * Function to get gst rate from database
+ * @param {string} accessToken
+ * @returns {array} gst rate from database
+ */
+export const getGstRateFromBackend = async (accessToken) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_DB_SERVER}/gst-rate/`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    if (response.data[0]) {
+      return response.data[0];
+    }
+    throw new Error("Error in getGstRateFromBackend");
+  } catch (error) {
+    throw new Error(error?.response?.data ?? "Error");
+  }
 };

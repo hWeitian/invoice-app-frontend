@@ -1,6 +1,6 @@
 import { convertDate, createStringDate, numberWithCommas } from "./utils";
 
-export const generateIoHtml = (formData) => {
+export const generateIoHtml = (formData, gstRate) => {
   const html = Object.keys(formData).length > 0 && (
     <>
       <div id="io" style={{ fontSize: "12px", boxSizing: "border-box" }}>
@@ -180,7 +180,7 @@ export const generateIoHtml = (formData) => {
                   </div>
                 </div>
                 <div style={{ width: "43%" }}>
-                  <p className="io-text-bold">GST @ 9%:</p>
+                  <p className="io-text-bold">GST @ {gstRate}%:</p>
                 </div>
                 <div
                   style={{

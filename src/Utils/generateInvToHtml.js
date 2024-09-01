@@ -1,6 +1,6 @@
 import { convertDate, numberWithCommas, spellOutAmount } from "./utils";
 
-export const generateInvHtml = (formData) => {
+export const generateInvHtml = (formData, gstRate) => {
   const html = Object.keys(formData).length > 0 && (
     <>
       <div id="invoice" style={{ fontSize: "12px" }}>
@@ -257,7 +257,7 @@ export const generateInvHtml = (formData) => {
                 </tr>
                 <tr>
                   <td colSpan={2} style={{ textAlign: "right", width: "80%" }}>
-                    <p className="io-text-bold">GST @ 9%:</p>
+                    <p className="io-text-bold">GST @ {gstRate}%:</p>
                   </td>
                   <td
                     colSpan={2}
@@ -359,8 +359,8 @@ export const generateInvHtml = (formData) => {
                 Exchange rate: 1 USD = {formData.exchangeRate.rate} SGD
               </p>
               <p>
-                All rates are inclusive of 9% Singapore Government Goods &
-                Services Tax (GST).
+                All rates are inclusive of {gstRate}% Singapore Government Goods
+                & Services Tax (GST).
               </p>
             </div>
             <div style={{ width: "100%", marginTop: "10px" }}>

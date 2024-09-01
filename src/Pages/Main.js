@@ -21,6 +21,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import FeedbackMesssage from "../Components/FeedbackMessage";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 
 import { getFirstLetter } from "../Utils/utils";
 import Home from "./Home";
@@ -59,6 +60,7 @@ const navMenu = [
     "exchange-rates",
     <TrendingUpIcon sx={{ color: "#FFFFFF" }} />,
   ],
+  ["GST Rate", "gst-rate", <AccountBalanceIcon sx={{ color: "#FFFFFF" }} />],
 ];
 
 const Main = () => {

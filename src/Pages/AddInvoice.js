@@ -33,6 +33,7 @@ import {
   formatDate,
   convertDateForDb,
   generatePdfFromHtml,
+  getGstRateFromBackend,
 } from "../Utils/utils";
 import { generateInvHtml } from "../Utils/generateInvToHtml";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -54,6 +55,7 @@ const AddInvoice = () => {
   const [openPreview, setOpenPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(null);
+  const [gstRate, setGstRate] = useState();
 
   const navigate = useNavigate();
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -111,6 +113,17 @@ const AddInvoice = () => {
     try {
       await getInvoiceNum();
       getExchangeRate();
+      await getGstRate();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getGstRate = async () => {
+    try {
+      const accessToken = await getAccessToken();
+      const data = await getGstRateFromBackend(accessToken);
+      setGstRate(data["rate"]);
     } catch (e) {
       console.log(e);
     }
@@ -248,7 +261,7 @@ const AddInvoice = () => {
   const calculateData = (data) => {
     data.discount = parseFloat(data.discount);
     data.netAmount = calculateTotalAmount(data.invoiceItems, data.discount);
-    data.usdGst = calculateGST(data.netAmount);
+    data.usdGst = calculateGST(data.netAmount, gstRate);
     data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
     data.adminId = userId;
     data.sgdGst = convertGstToSgd(data.usdGst, exchangeRate);
@@ -323,7 +336,7 @@ const AddInvoice = () => {
     const storageRef = ref(storage, `invoices/${finalInvNum}.pdf`);
     try {
       // Generate the html for invoice
-      const html = renderToStaticMarkup(generateInvHtml(data));
+      const html = renderToStaticMarkup(generateInvHtml(data, gstRate));
       // Generate the pdf from the html
       const pdf = await generatePdfFromHtml(html, `invoice-${finalInvNum}.pdf`);
       // Upload the pdf onto Firebase storage
@@ -734,7 +747,7 @@ const AddInvoice = () => {
         loading={loading}
         setButtonLoading={setLoading}
       >
-        <InvoicePreview formData={formData} />
+        <InvoicePreview formData={formData} gstRate={gstRate} />
       </PreviewModal>
     </>
   );
