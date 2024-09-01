@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, TextField } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
-import { getData } from "../Utils/utils";
+import { getGstRateFromBackend } from "../Utils/utils";
 import useGetAccessToken from "../Hooks/useGetAccessToken";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
@@ -31,9 +31,9 @@ const GstRate = () => {
     try {
       setIsLoading(true);
       const accessToken = await getAccessToken();
-      const response = await getData(accessToken, `gst-rate/`);
-      setGstRateId(response[0]["id"]);
-      setValue("gstRate", response[0]["rate"]);
+      const response = await getGstRateFromBackend(accessToken);
+      setGstRateId(response["id"]);
+      setValue("gstRate", response["rate"]);
       setIsLoading(false);
     } catch (e) {
       console.log(e);

@@ -1,8 +1,8 @@
 import "../App.css";
 import { generateInvHtml } from "../Utils/generateInvToHtml";
 
-const InvoicePreview = ({ formData }) => {
-  const html = generateInvHtml(formData);
+const InvoicePreview = ({ formData, gstRate }) => {
+  const html = generateInvHtml(formData, gstRate);
 
   return html;
 };
