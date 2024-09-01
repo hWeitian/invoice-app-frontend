@@ -33,6 +33,7 @@ import {
   formatDate,
   convertDateForDb,
   findKeyInArrayOfObjects,
+  getGstRateFromBackend,
 } from "../Utils/utils";
 import { generateIoHtml } from "../Utils/generateIoHtml";
 import LoadingScreen from "../Components/LoadingScreen";
@@ -58,6 +59,7 @@ const AddInsertionOrder = () => {
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [gstRate, setGstRate] = useState();
 
   const navigate = useNavigate();
   const [setOpenFeedback, setFeedbackMsg, setFeedbackSeverity] =
@@ -104,6 +106,7 @@ const AddInsertionOrder = () => {
       getMagazine(accessToken),
       getProducts(accessToken),
       getRegions(accessToken),
+      getGstRate(accessToken),
     ];
     try {
       await getInsertionOrderNum(accessToken);
@@ -112,6 +115,15 @@ const AddInsertionOrder = () => {
         handleLoadingClose();
       }, 500);
       return () => clearTimeout(timer);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getGstRate = async (accessToken) => {
+    try {
+      const data = await getGstRateFromBackend(accessToken);
+      setGstRate(data["rate"]);
     } catch (e) {
       console.log(e);
     }
@@ -262,7 +274,7 @@ const AddInsertionOrder = () => {
     const storageRef = ref(storage, `insertion-orders/${finalIoNum}.pdf`);
     try {
       // Generate the html for Insertion Order
-      const html = renderToStaticMarkup(generateIoHtml(data));
+      const html = renderToStaticMarkup(generateIoHtml(data, gstRate));
       // Generate the pdf from the html
       const pdf = await generatePdfFromHtml(html, "insertion-order.pdf");
       // Upload the pdf onto Firebase storage
@@ -326,7 +338,7 @@ const AddInsertionOrder = () => {
   const calculateData = (data) => {
     data.discount = parseFloat(data.discount);
     data.netAmount = calculateTotalAmount(data.orderItems, data.discount);
-    data.usdGst = calculateGST(data.netAmount);
+    data.usdGst = calculateGST(data.netAmount, gstRate);
     data.totalAmount = calculateNetAmount(data.netAmount, data.usdGst);
     data.adminId = userId;
     data.ioDate = formatDate(data.ioDate);
@@ -728,7 +740,11 @@ const AddInsertionOrder = () => {
         loading={buttonLoading}
         setButtonLoading={setButtonLoading}
       >
-        <InsertionOrderPreview formData={formData} userName={userName} />
+        <InsertionOrderPreview
+          formData={formData}
+          userName={userName}
+          gstRate={gstRate}
+        />
       </PreviewModal>
       <LoadingScreen open={isLoading} handleClose={handleLoadingClose} />
     </>
