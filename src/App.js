@@ -14,6 +14,7 @@ import AddInsertionOrder from "./Pages/AddInsertionOrder";
 import AddInvoice from "./Pages/AddInvoice";
 import Loading from "./Pages/Loading";
 import ExchangeRates from "./Pages/ExchangeRates";
+import GstRate from "./Pages/GstRate";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 
@@ -140,6 +141,7 @@ function App() {
             <Route path="add-io" element={<AddInsertionOrder />} />
             <Route path="add-invoice" element={<AddInvoice />} />
             <Route path="exchange-rates" element={<ExchangeRates />} />
+            <Route path="gst-rate" element={<GstRate />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
